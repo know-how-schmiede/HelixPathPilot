@@ -4,6 +4,18 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.2.1 – 2026-09-28 – Entwicklung
+
+**GitHub:** Abschnittsverwaltung im Helix-Dialog integriert. Mehrteilige Helices
+mit linear veränderlichem Durchmesser und variabler Steigung erzeugen;
+Gesamtlänge und Windungszahl werden direkt angezeigt.
+
+- Bis zu 32 Abschnitte hinzufügen, bearbeiten und entfernen; Startdurchmesser folgen automatisch dem vorherigen Abschnitt.
+- Winkel aus der entlang der Achse veränderlichen Steigung berechnet; durchgehende Position und Phase an Abschnittsgrenzen.
+- Eine 3D-Skizze mit verbundenen Splines; gemeinsame Endpunkte erhalten mögliche Knicke an Übergängen.
+- 42 automatisierte Tests bestanden. Dialog und variable Ausgabe noch in Fusion prüfen.
+- Benutzer bestätigt den vorherigen Stand 0.2.0 als lauffähig. Achslängenübernahme bleibt für später vorgemerkt.
+
 ## 0.2.0 – 2026-09-28 – Entwicklung
 
 **GitHub:** Datenmodell für mehrteilige Helices ergänzt: Abschnittslänge,
@@ -17,6 +29,7 @@ in Deutsch und Englisch mit Vorschau in beiden READMEs.
 - Unveränderliche Segmentliste, Gesamtlänge und Übernahme bestehender Helix-Parameter implementiert.
 - Vier Screenshots aus v0.1.2 mit Bildunterschriften eingebunden; Struktur für weitere Versionen angelegt. Reine Dokumentationsergänzung ohne Änderung der Add-in-Version.
 - Gemeinsame Validierung für einfache und mehrteilige Helix; 29 automatisierte Tests bestanden.
+- Laufende Version 0.2.0 anschließend vom Benutzer bestätigt.
 - Benutzer bestätigt Menüposition, Icons und Ausrichtung an beliebiger Achse aus 0.1.2.
 - Vorgemerkt: Helix-Gesamtlänge aus endlicher Skizzenlinie oder Körperkante übernehmen. Unendliche Achsen und ungültige Längen ausschließen; Umsetzung in einer späteren Version.
 

@@ -14,7 +14,7 @@ APP_AUTHOR = "Know-How-Schmiede"
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 2
-VERSION_PATCH = 0
+VERSION_PATCH = 1
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 __version__ = VERSION
@@ -22,7 +22,7 @@ __version__ = VERSION
 RELEASE_STAGE = "development"
 RELEASE_DATE = "2026-09-28"
 
-PROJECT_STATUS = "variable helix segment model / development"
+PROJECT_STATUS = "variable helix editor and sketch output / development"
 
 
 def get_version():

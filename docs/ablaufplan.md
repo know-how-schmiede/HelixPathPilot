@@ -73,23 +73,25 @@ Mehrere Abschnitte mit unterschiedlichen Parametern ermöglichen.
 ## Schritte
 
 - [x] Datenmodell für Helix-Segmente erstellen
-- [ ] Segmentliste / Abschnittsverwaltung implementieren
-- [ ] variable Durchmesser unterstützen
-- [ ] variable Steigungen unterstützen
-- [ ] lineare Übergänge umsetzen
-- [ ] Berechnungslogik überarbeiten
-- [ ] segmentierte Helix als 3D-Skizze erzeugen
-- [~] Testfälle ergänzen (Datenmodell geprüft; variable Geometrie folgt)
+- [x] Segmentliste / Abschnittsverwaltung implementieren
+- [x] variable Durchmesser unterstützen
+- [x] variable Steigungen unterstützen
+- [x] lineare Übergänge umsetzen
+- [x] Berechnungslogik überarbeiten
+- [x] segmentierte Helix als 3D-Skizze erzeugen
+- [x] Testfälle ergänzen (42 automatisierte Tests insgesamt)
+- [ ] Abschnittsdialog und variable Skizzenausgabe in Fusion prüfen
 
 ## Zielversion
 
-**0.2.0**
+**0.2.x**
 
-Stand 2026-09-28: **0.2.0 (development)** enthält das Fusion-unabhängige
-Segment-Datenmodell mit Abschnittslänge, Start-/Enddurchmesser und Start-/Endsteigung.
-Die bisherige einfache Helix nutzt dessen Validierung. Abschnittsverwaltung und
-variable Skizzenerzeugung sind noch offen; die Zielstufe 0.2.x ist noch nicht vollständig.
-Nächster Schritt: Segmentliste und Abschnittsverwaltung im Dialog implementieren.
+Stand 2026-09-28: **0.2.1 (development)** enthält Datenmodell, Abschnittsverwaltung
+und variable Skizzenausgabe. Bis zu 32 Abschnitte mit linearem Durchmesser- und
+Steigungsverlauf sind möglich; gemeinsame Grenzen werden verbunden.
+Der vorherige Stand 0.2.0 wurde vom Benutzer als lauffähig bestätigt.
+Nächster Schritt: neuen Dialog und variable Geometrie in Fusion prüfen;
+anschließend Surface-Helix-Grundlage gemäß 0.3.x.
 
 # Version 0.3.x – Surface Helix
 

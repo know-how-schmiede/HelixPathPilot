@@ -66,13 +66,14 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-Development version **0.2.0** lives in `Fusion_addin/HelixPathPilot/`.
-**Solid → Create → HelixPathPilot v0.2.0** creates a 3D spline around a selected axis
-with configurable diameter, length, pitch, handedness and start angle.
+Development version **0.2.1** lives in `Fusion_addin/HelixPathPilot/`.
+**Solid → Create → HelixPathPilot v0.2.1** creates a 3D sketch around a selected axis.
+Add or remove up to 32 sections with individual lengths, start/end diameters
+and start/end pitches. Handedness and start angle apply to the whole helix.
 Construction axes, straight edges and sketch lines are supported, with global Z
 as the default. The user confirmed the basic command, axis selection and icons work.
-The multi-segment data model is ready; the segment editor and variable helix
-generation will follow.
+The segment editor and variable helix output are implemented and covered by
+automated tests; runtime validation of 0.2.1 in Fusion is still pending.
 The top-level `HelixPathPilot/` folder is the inactive 0.1.0 scaffold.
 
 See [development setup and smoke checks](docs/development.md) for loading the add-in in Fusion.

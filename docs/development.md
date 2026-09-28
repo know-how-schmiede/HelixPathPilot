@@ -1,6 +1,6 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.2.0 (development)
+## Aktiver Stand – 0.2.1 (development)
 
 Die Implementierung ersetzt die Vorlage unter `Fusion_addin/HelixPathPilot/`.
 Nur diesen Ordner in Fusion laden. `HelixPathPilot/` im Repo-Hauptverzeichnis
@@ -8,6 +8,8 @@ ist der inaktive Altstand 0.1.0.
 
 - `core/helix_math.py`: Fusion-unabhängige Berechnung (Längen in cm, Winkel in rad).
 - `core/helix_segments.py`: validiertes Datenmodell für mehrere Abschnitte.
+- `core/variable_helix.py`: Winkelintegration, Punktbudget und variable Kurvenberechnung.
+- `commands/createParametricHelix/segment_editor.py`: Abschnittsverwaltung im Dialog.
 - `core/axis.py`: Achskoordinatensystem und räumliche Transformation.
 - `commands/createParametricHelix/axis_selection.py`: Fusion-Auswahl in Weltkoordinaten.
 - `commands/createParametricHelix/entry.py`: Dialog, Validierung und Events.
@@ -15,8 +17,11 @@ ist der inaktive Altstand 0.1.0.
 - `version.py`: aktive Versionsquelle; Manifest-Version synchron halten.
 - `lib/fusionAddInUtils/`: Autodesk-Hilfsmodule mit ursprünglichen Lizenzhinweisen.
 
-Der Command erzeugt eine räumliche Fitted Spline mit 32 Abschnitten pro Windung,
-maximal 4097 Punkten / 128 Windungen. Auch angebrochene Windungen sind möglich.
+Der Command erzeugt eine 3D-Skizze mit einer räumlichen Fitted Spline pro Abschnitt.
+Benachbarte Splines teilen ihren Endpunkt. Die Abtastung erfolgt mit mindestens
+32 Intervallen pro Windung und zwei Intervallen pro Abschnitt. Grenzen:
+32 Abschnitte, 128 Windungen insgesamt und 4097 eindeutige Stützpunkte.
+Auch angebrochene Windungen sind möglich.
 Die Kurve nähert die mathematische Helix an. Es gibt noch keine Live-Vorschau
 oder nachträgliche Änderung über gespeicherte Helix-Parameter.
 Rechtsdrehend bedeutet positive Rotation um die gewählte Achsrichtung bei
@@ -40,7 +45,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.2.0** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.2.1** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -54,12 +59,13 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.2.0** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.2.1** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
-3. Standardwerte bestätigen: Durchmesser 20 mm, Länge 50 mm, Steigung 5 mm.
+3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
+   Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
    Erwartet: eine Skizze `HelixPathPilot – Helix` in der Hauptkomponente,
    zehn Windungen, Start (10, 0, 0) mm und Ende (10, 0, 50) mm.
-4. Linksdrall, Startwinkel 90° und Länge 12 mm bei Steigung 5 mm prüfen.
+4. Linksdrall, Startwinkel 90° und Abschnittslänge 12 mm bei beiden Steigungen 5 mm prüfen.
    Erwartet: Start (0, 10, 0) mm, 2,4 Windungen mit umgekehrter Drehrichtung.
 5. Null, negative Werte, ungültige Ausdrücke und mehr als 128 Windungen eingeben:
    OK bleibt gesperrt. Unterschiedliche Längeneinheiten ausprobieren.
@@ -75,6 +81,18 @@ Menüposition und Icondateien folgen der
     an der ausgewählten Weltgeometrie liegen. Kreis- und Splinekanten sind nicht auswählbar.
 11. Auswahl löschen: globale Z-Achse wird wieder verwendet. Linksdrall und
     Startwinkel 90° an einer schrägen Achse prüfen.
+12. Abschnitt 1 auf Länge 50 mm, Durchmesser 20 → 30 mm und Steigung 5 → 10 mm
+    setzen. Abschnitt hinzufügen; Länge 25 mm, Enddurchmesser 20 mm und Steigung
+    10 → 5 mm setzen. Erwartet: Gesamtlänge 75 mm, etwa 10,397 Windungen,
+    zwei verbundene Splines. Der Startdurchmesser von Abschnitt 2 ist gesperrt
+    und folgt dem Enddurchmesser von Abschnitt 1.
+13. Drei Abschnitte anlegen, den mittleren und danach den ersten entfernen:
+    Nummerierung und Durchmesserverknüpfungen werden angepasst. Mindestens ein
+    Abschnitt bleibt erhalten. Erneut hinzufügen und Eingaben prüfen.
+14. Einen ungültigen Ausdruck eingeben und einen Abschnitt hinzufügen:
+    Fehlermeldung statt Verlust bestehender Werte. Eingabe korrigieren und wiederholen.
+15. Bei mehreren Abschnitten Achsrichtung, Linksdrall und Startwinkel prüfen;
+    Abbrechen hinterlässt keine Geometrie, Rückgängig entfernt die gesamte Skizze.
 
 Die Registrierung beschreibt die [Autodesk-Anleitung](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/UsingSamplesFromGitHub_UM.htm).
 Die Skizzenausgabe folgt dem [Autodesk-Beispiel für räumliche Splines](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/SketchFittedSplines_add_Sample.htm).
@@ -87,13 +105,23 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 29 Tests bestanden am 2026-09-28. Sie benötigen keine Fusion-Installation und
-prüfen Mathematik, Segmentmodell, Achstransformation, Metadaten, Icons und Fusion-Adapter mit Testdoubles.
+Alle 42 Tests bestanden am 2026-09-28. Sie benötigen keine Fusion-Installation und
+prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
+Icons und Fusion-Adapter mit Testdoubles.
 Der Benutzer hat die grundsätzliche Funktion von 0.1.1 sowie Menüposition, Icons
-und beliebige Achsausrichtung von 0.1.2 bestätigt. Der neue Stand 0.2.0 ist
-automatisiert geprüft; ein erneuter Fusion-Test und die macOS-Prüfung bleiben offen.
+und beliebige Achsausrichtung von 0.1.2 sowie den Stand 0.2.0 bestätigt.
+Der Abschnittsdialog und die variable Ausgabe von 0.2.1 sind noch in Fusion zu prüfen.
+Die macOS-Prüfung bleibt offen.
 
-## Segment-Datenmodell (Vorbereitung für variable Helices)
+## Abschnittsverwaltung und variable Helices
+
+Jeder Abschnitt besitzt eine aufklappbare Gruppe mit Länge, Start-/Enddurchmesser
+und Start-/Endsteigung. Neue Abschnitte übernehmen Länge sowie Enddurchmesser
+und Endsteigung des vorherigen Abschnitts als konstante Anfangswerte.
+Jeder Abschnitt kann entfernt werden, solange mindestens einer verbleibt.
+Abschnitte werden in ihrer angezeigten Reihenfolge erzeugt; Umordnen und
+Speichern als Preset sind noch nicht implementiert. Nach dem Schließen des
+Dialogs werden die Eingaben nicht für einen weiteren Aufruf gespeichert.
 
 `HelixSegment` enthält positive, endliche Werte für `length`, `diameter_start`,
 `diameter_end`, `pitch_start` und `pitch_end`. Alle Längen verwenden dieselbe
@@ -105,12 +133,16 @@ Die Interpolation bezieht sich auf die axiale Länge, nicht auf den Drehwinkel.
 Startwinkel (rad) und eine gemeinsame Drehrichtung. Die Gesamtlänge ist die
 Summe der Abschnittslängen. Benachbarte Durchmesser müssen übereinstimmen
 (Toleranz: relativ 1e-9 oder absolut 1e-9 in der verwendeten Längeneinheit).
-Steigungssprünge sind erlaubt; sie bedeuten später einen Knick in der Tangente.
-Ein weicher Übergang entsteht durch passende Start-/Endsteigungen.
+Steigungssprünge sind erlaubt; sie bedeuten einen Knick in der Tangente.
+Auch wechselnde Durchmessergradienten können einen Knick verursachen.
+Eine Glättung zwischen Abschnitten ist nicht implementiert.
 
 `HelixParameters.as_segmented()` bildet die bisherige Helix auf einen konstanten
 Abschnitt ab. Die Basis-Validierung verwendet bereits dieses Modell; die
 Punktberechnung der einfachen Helix und ihr Limit bleiben erhalten.
-Das Modell berechnet noch keine variable Helix-Kurve und kein Gesamtpunktbudget.
-Abschnittsverwaltung, Winkelintegration und segmentierte Skizzenausgabe folgen
-in den nächsten Schritten. Die Achslängenübernahme ist separat im Backlog vorgemerkt.
+`variable_helix.py` integriert die Windungszahl als Integral von `1 / Steigung(z)`
+über die axiale Länge. Für linear veränderliche Steigung wird die logarithmische
+Lösung verwendet; bei konstanter Steigung gilt weiterhin Länge / Steigung.
+Die inverse Funktion liefert axiale Positionen für gleichmäßige Winkelschritte.
+Der Durchmesser wird an diesen axialen Positionen linear interpoliert.
+Die Achslängenübernahme ist separat im Backlog vorgemerkt.

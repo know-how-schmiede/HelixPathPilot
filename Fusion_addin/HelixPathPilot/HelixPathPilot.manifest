@@ -3,9 +3,9 @@
     "type": "addin",
     "author": "Know-How-Schmiede",
     "description": {
-        "": "Create constant-pitch helix curves around construction axes, straight edges or sketch lines. Development version."
+        "": "Create multi-section helices with variable diameter and pitch around a selected axis. Development version."
     },
-    "version": "0.2.0",
+    "version": "0.2.1",
     "runOnStartup": false,
     "supportedOS": "windows|mac",
     "editEnabled": true,

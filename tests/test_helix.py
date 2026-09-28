@@ -17,6 +17,7 @@ ADDIN = ROOT / 'Fusion_addin' / 'HelixPathPilot'
 sys.path.insert(0, str(ADDIN.parent))
 from HelixPathPilot.core.helix_math import HelixParameters, helix_points
 from HelixPathPilot.core.axis import AxisFrame
+from HelixPathPilot.core.helix_segments import HelixSegment, SegmentedHelix
 
 
 class HelixTests(unittest.TestCase):
@@ -131,6 +132,23 @@ class SketchAdapterTests(unittest.TestCase):
         points = self.sketch.sketchCurves.sketchFittedSplines.add.call_args.args[0]
         for actual, expected in zip(points[-1], (15, 21, 30)):
             self.assertAlmostEqual(actual, expected)
+
+    def test_sections_share_fusion_endpoint(self):
+        add = self.sketch.sketchCurves.sketchFittedSplines.add
+        first, second = Mock(), Mock()
+        add.side_effect = [first, second]
+        model = SegmentedHelix((HelixSegment.constant(2, 2, 1), HelixSegment(2, 2, 3, 1, 2)))
+        self.adapter.create_sketch(self.design, model)
+        self.assertEqual(add.call_count, 2)
+        self.assertIs(add.call_args_list[1].args[0][0], first.endSketchPoint)
+
+    def test_later_section_failure_removes_entire_sketch(self):
+        add = self.sketch.sketchCurves.sketchFittedSplines.add
+        add.side_effect = [Mock(), RuntimeError('Second segment failed')]
+        model = SegmentedHelix((HelixSegment.constant(2, 2, 1),) * 2)
+        with self.assertRaises(RuntimeError):
+            self.adapter.create_sketch(self.design, model)
+        self.sketch.deleteMe.assert_called_once()
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-"""Create a constant-pitch helix around a selected axis."""
+"""Create a section-based helix around a selected axis."""
 
 from pathlib import Path
 
@@ -6,11 +6,12 @@ import adsk.core
 import adsk.fusion
 
 from ... import config
-from ...core.helix_math import HelixParameters
+from ...core.variable_helix import sampling_plan
 from ...lib import fusionAddInUtils as futil
 from ...version import APP_NAME, VERSION
 from .sketch_builder import create_sketch
 from .axis_selection import selected_axis
+from .segment_editor import SegmentEditor
 
 CMD_ID = f'{config.COMPANY_NAME}_{config.ADDIN_NAME}_createParametricHelix'
 CMD_NAME = f'{APP_NAME} v{VERSION}'
@@ -35,7 +36,7 @@ def start():
         raise RuntimeError('Das Erstellen-Panel im Volumenkörper-Bereich fehlt.')
     try:
         definition = ui.commandDefinitions.addButtonDefinition(
-            CMD_ID, CMD_NAME, 'Helix mit konstantem Durchmesser und konstanter Steigung erstellen.',
+            CMD_ID, CMD_NAME, 'Helix mit mehreren Abschnitten, variablem Durchmesser und variabler Steigung erstellen.',
             ICON_FOLDER,
         )
         futil.add_handler(definition.commandCreated, command_created,
@@ -67,18 +68,12 @@ def stop():
     _sessions.clear()
 
 
-def _parameters(inputs):
-    for name in ('diameter', 'length', 'pitch', 'start_angle'):
-        if not inputs.itemById(name).isValidExpression:
-            raise ValueError('Bitte gültige Werte mit passenden Einheiten eingeben.')
-    parameters = HelixParameters(
-        diameter=inputs.itemById('diameter').value,
-        length=inputs.itemById('length').value,
-        pitch=inputs.itemById('pitch').value,
-        start_angle=inputs.itemById('start_angle').value,
-        right_handed=inputs.itemById('right_handed').value,
-    )
-    parameters.segment_count()
+def _parameters(inputs, editor):
+    if not inputs.itemById('start_angle').isValidExpression:
+        raise ValueError('Bitte einen gültigen Startwinkel eingeben.')
+    parameters = editor.read(inputs.itemById('start_angle').value,
+                             inputs.itemById('right_handed').value)
+    sampling_plan(parameters)
     return parameters
 
 
@@ -104,37 +99,46 @@ def command_created(args):
     axis_input.isUseCurrentSelections = False
     inputs.addBoolValueInput('reverse_axis', 'Achsrichtung umkehren', True, '', False)
     units = design.unitsManager.defaultLengthUnits
-    for name, label, default in (
-        ('diameter', 'Durchmesser', '20 mm'),
-        ('length', 'Länge', '50 mm'),
-        ('pitch', 'Steigung', '5 mm'),
-    ):
-        inputs.addValueInput(name, label, units, adsk.core.ValueInput.createByString(default))
     inputs.addValueInput('start_angle', 'Startwinkel', 'deg',
                          adsk.core.ValueInput.createByString('0 deg'))
     inputs.addBoolValueInput('right_handed', 'Rechtsdrehend', True, '', True)
+    editor = SegmentEditor(inputs, units)
+    inputs.addTextBoxCommandInput('section_info', '',
+        'Durchmesser und Steigung ändern sich linear entlang der Abschnittslänge. '
+        'Ab Abschnitt 2 wird der Startdurchmesser vom vorherigen Ende übernommen.', 2, True)
+    summary = inputs.addTextBoxCommandInput('summary', '', '', 2, True)
     inputs.addTextBoxCommandInput('error', '', '', 2, True)
     handlers = []
     _sessions.append(handlers)
 
     def validate(event):
         try:
-            _parameters(inputs)
+            model = _parameters(inputs, editor)
             selected_axis(axis_input, inputs.itemById('reverse_axis').value)
+            length = design.unitsManager.formatValue(model.total_length, units)
+            turns = sum(t for t, _ in sampling_plan(model))
+            summary.text = f'{len(model.segments)} Abschnitt(e) · Gesamtlänge: {length} · Windungen: {turns:.3f}'
             inputs.itemById('error').text = ''
             event.areInputsValid = True
         except ValueError as error:
+            summary.text = ''
             inputs.itemById('error').text = str(error)
             event.areInputsValid = False
 
     def execute(event):
         try:
             axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
-            create_sketch(design, _parameters(inputs), axis)
+            create_sketch(design, _parameters(inputs, editor), axis)
         except Exception as error:
             event.executeFailed = True
             event.executeFailedMessage = str(error)
             futil.handle_error(CMD_NAME)
+
+    def input_changed(event):
+        try:
+            editor.changed(event.input.id)
+        except ValueError as error:
+            inputs.itemById('error').text = str(error)
 
     def destroy(event):
         for index, session in enumerate(_sessions):
@@ -144,5 +148,6 @@ def command_created(args):
         handlers.clear()
 
     futil.add_handler(command.validateInputs, validate, local_handlers=handlers)
+    futil.add_handler(command.inputChanged, input_changed, local_handlers=handlers)
     futil.add_handler(command.execute, execute, local_handlers=handlers)
     futil.add_handler(command.destroy, destroy, local_handlers=handlers)
