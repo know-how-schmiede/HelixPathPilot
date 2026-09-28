@@ -47,7 +47,7 @@ Technische Grundlage schaffen und eine erste einfache Helix erzeugen.
 - [x] Startwinkel integrieren
 - [x] erste 3D-Skizzenerzeugung umsetzen
 - [x] erste lauffähige Basisversion testen (0.1.1 grundsätzlich vom Benutzer bestätigt)
-- [ ] Achsauswahl und neue Menüplatzierung von 0.1.2 in Fusion prüfen
+- [x] Achsauswahl und neue Menüplatzierung von 0.1.2 in Fusion prüfen (vom Benutzer bestätigt, inklusive Icons)
 
 ## Zielversion
 
@@ -61,7 +61,7 @@ Ohne Auswahl bleibt die globale Z-Achse aktiv; die Achsrichtung ist umkehrbar.
 Button mit Versionsnummer und eigenen Icons unter Volumenkörper → Erstellen.
 Die eingegebenen Werte werden
 nicht als nachträglich editierbare Helix-Parameter gespeichert.
-Nächster Schritt: Achsauswahl in Fusion prüfen, danach Segment-Datenmodell für 0.2.x.
+Die Projektbasis einschließlich Achsauswahl, Menüposition und Icons wurde vom Benutzer bestätigt.
 Ladeanleitung und manuelle Prüfschritte: [Entwicklung](development.md).
 
 # Version 0.2.x – Variable Helix
@@ -72,18 +72,24 @@ Mehrere Abschnitte mit unterschiedlichen Parametern ermöglichen.
 
 ## Schritte
 
-- [ ] Datenmodell für Helix-Segmente erstellen
+- [x] Datenmodell für Helix-Segmente erstellen
 - [ ] Segmentliste / Abschnittsverwaltung implementieren
 - [ ] variable Durchmesser unterstützen
 - [ ] variable Steigungen unterstützen
 - [ ] lineare Übergänge umsetzen
 - [ ] Berechnungslogik überarbeiten
 - [ ] segmentierte Helix als 3D-Skizze erzeugen
-- [ ] Testfälle ergänzen
+- [~] Testfälle ergänzen (Datenmodell geprüft; variable Geometrie folgt)
 
 ## Zielversion
 
 **0.2.0**
+
+Stand 2026-09-28: **0.2.0 (development)** enthält das Fusion-unabhängige
+Segment-Datenmodell mit Abschnittslänge, Start-/Enddurchmesser und Start-/Endsteigung.
+Die bisherige einfache Helix nutzt dessen Validierung. Abschnittsverwaltung und
+variable Skizzenerzeugung sind noch offen; die Zielstufe 0.2.x ist noch nicht vollständig.
+Nächster Schritt: Segmentliste und Abschnittsverwaltung im Dialog implementieren.
 
 # Version 0.3.x – Surface Helix
 
@@ -180,7 +186,7 @@ Projekt für Anwender und Mitwirkende verständlicher machen.
 - [ ] Dokumentation erweitern
 - [ ] Beispielanwendungen ergänzen
 - [ ] Beispiel-Presets anlegen
-- [ ] Screenshots / Visuals einpflegen
+- [~] Screenshots / Visuals einpflegen (v0.1.2 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
 - [ ] Installationshinweise vorbereiten
 - [ ] Bedienkonzept prüfen
 - [ ] Benennungen und Texte im UI verbessern
@@ -248,6 +254,7 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 
 # Backlog / neue Ideen
 
+- [ ] Helixlänge aus der gewählten endlichen Achsgeometrie übernehmen (für eine spätere Version vorgemerkt): Länge einer geraden Skizzenlinie oder Körperkante als axiale Helix-Gesamtlänge verwenden. Nur endliche Geometrie mit positiver, endlicher Länge zulassen; unendliche Konstruktionsachsen ausschließen. Bei mehreren Abschnitten die Verteilung der Gesamtlänge festlegen.
 - [ ] direkter Sweep-Output
 - [ ] Drahtdurchmesser als Komfortfunktion
 - [ ] automatische Federerzeugung

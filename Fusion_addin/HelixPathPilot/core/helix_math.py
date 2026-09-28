@@ -7,6 +7,8 @@ Right-handed means positive rotation about +Z as Z increases.
 from dataclasses import dataclass
 import math
 
+from .helix_segments import HelixSegment, SegmentedHelix
+
 SAMPLES_PER_TURN = 32
 MAX_POINTS = 4097
 
@@ -19,16 +21,15 @@ class HelixParameters:
     start_angle: float = 0.0
     right_handed: bool = True
 
+    def as_segmented(self):
+        """Represent the basic helix as one constant segment for future editors."""
+        return SegmentedHelix(
+            (HelixSegment.constant(self.length, self.diameter, self.pitch),),
+            self.start_angle, self.right_handed,
+        )
+
     def segment_count(self):
-        for name, value in (
-            ('Durchmesser', self.diameter),
-            ('Länge', self.length),
-            ('Steigung', self.pitch),
-        ):
-            if not math.isfinite(value) or value <= 0:
-                raise ValueError(f'{name} muss größer als null und endlich sein.')
-        if not math.isfinite(self.start_angle):
-            raise ValueError('Der Startwinkel muss endlich sein.')
+        self.as_segmented()
         turns = self.length / self.pitch
         if not math.isfinite(turns) or turns > (MAX_POINTS - 1) / SAMPLES_PER_TURN:
             raise ValueError('Maximal 128 Windungen pro Helix sind möglich.')

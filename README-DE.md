@@ -66,17 +66,28 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.1.2** liegt unter `Fusion_addin/HelixPathPilot/`.
-**Volumenkörper → Erstellen → HelixPathPilot v0.1.2** erzeugt eine 3D-Spline um eine gewählte Achse
+Der Entwicklungsstand **0.2.0** liegt unter `Fusion_addin/HelixPathPilot/`.
+**Volumenkörper → Erstellen → HelixPathPilot v0.2.0** erzeugt eine 3D-Spline um eine gewählte Achse
 mit einstellbarem Durchmesser, Länge, Steigung, Drehrichtung und Startwinkel.
 Konstruktionsachsen, gerade Kanten und Skizzenlinien werden unterstützt;
-ohne Auswahl gilt die globale Z-Achse. Der Basis-Command wurde vom Benutzer
-bestätigt, die neue Achsauswahl ist noch in Fusion zu prüfen.
+ohne Auswahl gilt die globale Z-Achse. Basis-Command, Achsauswahl und Icons wurden
+vom Benutzer bestätigt. Das Datenmodell für mehrere Abschnitte ist vorbereitet;
+Abschnittsverwaltung und variable Helix-Erzeugung folgen.
 Der Ordner `HelixPathPilot/` im Repo-Hauptverzeichnis ist der inaktive Altstand 0.1.0.
 
 Die [Entwicklungsanleitung](docs/development.md) beschreibt das Laden und die manuelle Prüfung in Fusion.
 
 Die genaue Funktionalität und Benutzeroberfläche kann sich während der Entwicklung verändern.
+
+## Screenshots
+
+Helices entlang einer schrägen Achse in **v0.1.2**:
+
+[![Helix-Kurven um eine schräge Achse in Fusion, Version 0.1.2](docs/images/screenshots/v0-1-2/HelixPathPilot_v0-1-2_-00.png)](docs/screenshots-DE.md#v012)
+
+Die [Screenshot-Galerie nach Versionen](docs/screenshots-DE.md) zeigt zusätzlich
+den Parameterdialog, das Erstellen-Menü und die Symbolleiste. Die Bilder
+dokumentieren die angegebene Version; neuere Versionen können davon abweichen.
 
 ## Weiterführende Projektdokumente
 

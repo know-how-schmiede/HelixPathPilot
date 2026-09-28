@@ -4,6 +4,22 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.2.0 – 2026-09-28 – Entwicklung
+
+**GitHub:** Datenmodell für mehrteilige Helices ergänzt: Abschnittslänge,
+Start-/Enddurchmesser und Start-/Endsteigung mit linearer Interpolation und
+Validierung. Grundlage für die kommende Abschnittsverwaltung; der Dialog
+erzeugt weiterhin die einfache Helix.
+
+Die Dokumentation ergänzt eine nach Versionen gegliederte Screenshot-Galerie
+in Deutsch und Englisch mit Vorschau in beiden READMEs.
+
+- Unveränderliche Segmentliste, Gesamtlänge und Übernahme bestehender Helix-Parameter implementiert.
+- Vier Screenshots aus v0.1.2 mit Bildunterschriften eingebunden; Struktur für weitere Versionen angelegt. Reine Dokumentationsergänzung ohne Änderung der Add-in-Version.
+- Gemeinsame Validierung für einfache und mehrteilige Helix; 29 automatisierte Tests bestanden.
+- Benutzer bestätigt Menüposition, Icons und Ausrichtung an beliebiger Achse aus 0.1.2.
+- Vorgemerkt: Helix-Gesamtlänge aus endlicher Skizzenlinie oder Körperkante übernehmen. Unendliche Achsen und ungültige Längen ausschließen; Umsetzung in einer späteren Version.
+
 ## 0.1.2 – 2026-09-28 – Entwicklung
 
 **GitHub:** HelixPathPilot mit Versionsanzeige nach Volumenkörper → Erstellen
@@ -14,7 +30,7 @@ mit umkehrbarer Richtung ergänzt.
 - Buttonname aus `version.py`; Manifest auf 0.1.2 aktualisiert. Synchronisierungsskript und Versionstest sichern den Abgleich.
 - Ohne Auswahl weiterhin globale Z-Achse; räumliche Orientierung der Helix in der Hauptkomponente.
 - Skalierbare SVG-Icons und PNG-Dateien in 16, 32 und 64 Pixeln; Add-in-Listenicon angeglichen.
-- 19 automatisierte Tests bestanden. Neue Menüplatzierung und Achsauswahl noch in Fusion zu prüfen.
+- 19 automatisierte Tests bestanden. Menüplatzierung, Icons und Achsauswahl anschließend vom Benutzer in Fusion bestätigt.
 - Benutzer bestätigt die grundsätzliche Funktion des bisherigen Basis-Commands 0.1.1.
 
 ## 0.1.1 – 2026-09-28 – Entwicklung

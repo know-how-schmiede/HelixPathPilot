@@ -1,12 +1,13 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.1.2 (development)
+## Aktiver Stand – 0.2.0 (development)
 
 Die Implementierung ersetzt die Vorlage unter `Fusion_addin/HelixPathPilot/`.
 Nur diesen Ordner in Fusion laden. `HelixPathPilot/` im Repo-Hauptverzeichnis
 ist der inaktive Altstand 0.1.0.
 
 - `core/helix_math.py`: Fusion-unabhängige Berechnung (Längen in cm, Winkel in rad).
+- `core/helix_segments.py`: validiertes Datenmodell für mehrere Abschnitte.
 - `core/axis.py`: Achskoordinatensystem und räumliche Transformation.
 - `commands/createParametricHelix/axis_selection.py`: Fusion-Auswahl in Weltkoordinaten.
 - `commands/createParametricHelix/entry.py`: Dialog, Validierung und Events.
@@ -39,7 +40,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.1.2** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.2.0** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -53,7 +54,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.1.2** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.2.0** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte bestätigen: Durchmesser 20 mm, Länge 50 mm, Steigung 5 mm.
    Erwartet: eine Skizze `HelixPathPilot – Helix` in der Hauptkomponente,
@@ -86,7 +87,30 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 19 Tests bestanden am 2026-09-28. Sie benötigen keine Fusion-Installation und
-prüfen Mathematik, Achstransformation, Metadaten, Icons und Fusion-Adapter mit Testdoubles.
-Der Benutzer hat die grundsätzliche Funktion von 0.1.1 bestätigt. Die neue
-Menüplatzierung und Achsauswahl von 0.1.2 sowie die macOS-Prüfung bleiben offen.
+Alle 29 Tests bestanden am 2026-09-28. Sie benötigen keine Fusion-Installation und
+prüfen Mathematik, Segmentmodell, Achstransformation, Metadaten, Icons und Fusion-Adapter mit Testdoubles.
+Der Benutzer hat die grundsätzliche Funktion von 0.1.1 sowie Menüposition, Icons
+und beliebige Achsausrichtung von 0.1.2 bestätigt. Der neue Stand 0.2.0 ist
+automatisiert geprüft; ein erneuter Fusion-Test und die macOS-Prüfung bleiben offen.
+
+## Segment-Datenmodell (Vorbereitung für variable Helices)
+
+`HelixSegment` enthält positive, endliche Werte für `length`, `diameter_start`,
+`diameter_end`, `pitch_start` und `pitch_end`. Alle Längen verwenden dieselbe
+Einheit (in Fusion cm). `values_at(fraction)` liefert Durchmesser und Steigung
+an einer relativen axialen Position von 0 bis 1, linear zwischen den Endwerten.
+Die Interpolation bezieht sich auf die axiale Länge, nicht auf den Drehwinkel.
+
+`SegmentedHelix` besitzt eine unveränderliche Abschnittsliste, einen gemeinsamen
+Startwinkel (rad) und eine gemeinsame Drehrichtung. Die Gesamtlänge ist die
+Summe der Abschnittslängen. Benachbarte Durchmesser müssen übereinstimmen
+(Toleranz: relativ 1e-9 oder absolut 1e-9 in der verwendeten Längeneinheit).
+Steigungssprünge sind erlaubt; sie bedeuten später einen Knick in der Tangente.
+Ein weicher Übergang entsteht durch passende Start-/Endsteigungen.
+
+`HelixParameters.as_segmented()` bildet die bisherige Helix auf einen konstanten
+Abschnitt ab. Die Basis-Validierung verwendet bereits dieses Modell; die
+Punktberechnung der einfachen Helix und ihr Limit bleiben erhalten.
+Das Modell berechnet noch keine variable Helix-Kurve und kein Gesamtpunktbudget.
+Abschnittsverwaltung, Winkelintegration und segmentierte Skizzenausgabe folgen
+in den nächsten Schritten. Die Achslängenübernahme ist separat im Backlog vorgemerkt.
