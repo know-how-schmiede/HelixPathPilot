@@ -1,4 +1,7 @@
 # HelixPathPilot
+<p align="center">
+  <img src="docs/images/banner.png" alt="HelixPathPilot Banner">
+</p>
 
 **HelixPathPilot** is an Autodesk Fusion add-in for creating parametric and surface-driven helix curves.
 
