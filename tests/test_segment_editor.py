@@ -13,10 +13,15 @@ sys.path.insert(0, str(ADDIN.parent))
 
 class Input:
     def __init__(self, identifier, name, value=None):
-        self.id, self.name, self.value = identifier, name, value
+        self.id, self._name, self.value = identifier, name, value
         self.isValidExpression = True
         self.isEnabled = True
         self.deleted = False
+
+    @property
+    def name(self):
+        # Fusion CommandInput.name is read-only, including GroupCommandInput.
+        return self._name
 
     def deleteMe(self):
         self.deleted = True
@@ -74,7 +79,7 @@ class EditorTests(unittest.TestCase):
         group, _, remove = self.editor.rows[1]
         self.editor.changed(remove.id)
         self.assertTrue(group.deleted)
-        self.assertEqual(self.editor.rows[1][0].name, 'Abschnitt 2')
+        self.assertEqual(self.editor.rows[1][0].name, 'Abschnitt 3')
         self.assertEqual(self.editor.read().segments[1].diameter_start, 7)
 
     def test_first_deletion_unlocks_start_and_last_cannot_be_removed(self):
@@ -105,6 +110,28 @@ class EditorTests(unittest.TestCase):
         other = self.editor_type(Inputs(), 'in')
         self.assertEqual(len(other.rows), 1)
         self.assertEqual(len(self.editor.rows), 32)
+
+    def test_initial_heading_and_read_only_name(self):
+        self.assertEqual(self.editor.rows[0][0].name, 'Abschnitt 1')
+        self.assertFalse(self.editor.rows[0][2].isEnabled)
+        with self.assertRaises(AttributeError):
+            self.editor.rows[0][0].name = 'Invalid write'
+
+    def test_axis_length_preserves_proportions_and_other_values(self):
+        self.editor.changed('add_section')
+        self.editor.rows[1][1]['length'].value = 10
+        self.editor.fit_total_length(6)
+        model = self.editor.read()
+        self.assertEqual([s.length for s in model.segments], [2, 4])
+        self.assertEqual(model.total_length, 6)
+        self.assertEqual(model.segments[0].pitch_start, 0.5)
+        self.assertFalse(self.editor.busy)
+
+    def test_invalid_axis_length_does_not_change_inputs(self):
+        for length in (0, -1, float('inf'), float('nan'), 1000):
+            with self.subTest(length=length), self.assertRaises(ValueError):
+                self.editor.fit_total_length(length)
+            self.assertEqual(self.editor.read().total_length, 5)
 
 
 if __name__ == '__main__':

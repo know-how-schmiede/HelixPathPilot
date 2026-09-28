@@ -111,6 +111,24 @@ class SelectionTests(unittest.TestCase):
         entity.geometry.kind = 'circle'
         with self.assertRaises(ValueError):
             self.module.selected_axis(self.selection(entity))
+
+    def test_finite_lengths_and_infinite_axis_rejection(self):
+        geometry = types.SimpleNamespace(kind='line', startPoint=Vector(10, 20, 30), endPoint=Vector(13, 24, 30))
+        for kind in ('SketchLine', 'BRepEdge'):
+            entity = types.SimpleNamespace(kind=kind, isValid=True, worldGeometry=geometry, geometry=geometry)
+            self.assertEqual(self.module.selected_axis_length(self.selection(entity)), 5)
+        axis = types.SimpleNamespace(kind='ConstructionAxis', isValid=True)
+        with self.assertRaises(ValueError):
+            self.module.selected_axis_length(self.selection(axis))
+        with self.assertRaises(ValueError):
+            self.module.selected_axis_length(self.selection())
+
+    def test_invalid_line_lengths(self):
+        for endpoint in ((0, 0, 0), (float('inf'), 0, 0), (float('nan'), 0, 0)):
+            entity = types.SimpleNamespace(kind='SketchLine', isValid=True,
+                worldGeometry=types.SimpleNamespace(startPoint=Vector(0, 0, 0), endPoint=Vector(*endpoint)))
+            with self.assertRaises(ValueError):
+                self.module.selected_axis_length(self.selection(entity))
         entity.isValid = False
         with self.assertRaises(ValueError):
             self.module.selected_axis(self.selection(entity))

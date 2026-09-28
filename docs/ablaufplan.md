@@ -79,18 +79,22 @@ Mehrere Abschnitte mit unterschiedlichen Parametern ermöglichen.
 - [x] lineare Übergänge umsetzen
 - [x] Berechnungslogik überarbeiten
 - [x] segmentierte Helix als 3D-Skizze erzeugen
-- [x] Testfälle ergänzen (42 automatisierte Tests insgesamt)
-- [ ] Abschnittsdialog und variable Skizzenausgabe in Fusion prüfen
+- [x] Optionale tangentiale Abschnittsübergänge (G1) ergänzen (0.2.3)
+- [x] Testfälle ergänzen (50 automatisierte Tests insgesamt)
+- [ ] Tangentialbedingungen und Sweep an Abschnittsgrenzen in Fusion prüfen
+- [~] Fusion-Prüfung von 0.2.2: grundsätzliche Funktion vom Benutzer bestätigt; Sonderfälle gemäß Entwicklungsanleitung noch offen
 
 ## Zielversion
 
 **0.2.x**
 
-Stand 2026-09-28: **0.2.1 (development)** enthält Datenmodell, Abschnittsverwaltung
+Stand 2026-09-28: **0.2.3 (development)** enthält Datenmodell, Abschnittsverwaltung
 und variable Skizzenausgabe. Bis zu 32 Abschnitte mit linearem Durchmesser- und
 Steigungsverlauf sind möglich; gemeinsame Grenzen werden verbunden.
 Der vorherige Stand 0.2.0 wurde vom Benutzer als lauffähig bestätigt.
-Nächster Schritt: neuen Dialog und variable Geometrie in Fusion prüfen;
+Der Dialogaufbaufehler von 0.2.1 ist behoben; Achslängenübernahme wurde vorgezogen.
+Für sichtbare Sweep-Übergänge wurden Tangentialbedingungen (G1) als aktivierbare Option ergänzt.
+Nächster Schritt: G1-Übergänge und Sweep-Ergebnis in Fusion prüfen;
 anschließend Surface-Helix-Grundlage gemäß 0.3.x.
 
 # Version 0.3.x – Surface Helix
@@ -188,7 +192,7 @@ Projekt für Anwender und Mitwirkende verständlicher machen.
 - [ ] Dokumentation erweitern
 - [ ] Beispielanwendungen ergänzen
 - [ ] Beispiel-Presets anlegen
-- [~] Screenshots / Visuals einpflegen (v0.1.2 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
+- [~] Screenshots / Visuals einpflegen (v0.1.2 und v0.2.2 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
 - [ ] Installationshinweise vorbereiten
 - [ ] Bedienkonzept prüfen
 - [ ] Benennungen und Texte im UI verbessern
@@ -256,11 +260,11 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 
 # Backlog / neue Ideen
 
-- [ ] Helixlänge aus der gewählten endlichen Achsgeometrie übernehmen (für eine spätere Version vorgemerkt): Länge einer geraden Skizzenlinie oder Körperkante als axiale Helix-Gesamtlänge verwenden. Nur endliche Geometrie mit positiver, endlicher Länge zulassen; unendliche Konstruktionsachsen ausschließen. Bei mehreren Abschnitten die Verteilung der Gesamtlänge festlegen.
+- [x] Helixlänge aus endlicher Skizzenlinie oder gerader Körperkante einmalig übernehmen (0.2.2): positive, endliche Länge prüfen, unendliche Konstruktionsachsen ausschließen, Abschnittslängen proportional skalieren. Fusion-Prüfung noch offen.
 - [ ] direkter Sweep-Output
 - [ ] Drahtdurchmesser als Komfortfunktion
 - [ ] automatische Federerzeugung
-- [ ] zusätzliche Übergangstypen (smooth)
+- [ ] Krümmungsstetige Übergänge (G2) untersuchen; G1-Tangentialbedingungen sind seit 0.2.3 implementiert
 - [ ] verbesserte Validierung für Surface-Geometrien
 - [ ] zusätzliche Beispiel-Presets
 - [ ] mehrsprachige UI

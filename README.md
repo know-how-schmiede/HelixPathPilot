@@ -66,14 +66,17 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-Development version **0.2.1** lives in `Fusion_addin/HelixPathPilot/`.
-**Solid → Create → HelixPathPilot v0.2.1** creates a 3D sketch around a selected axis.
+Development version **0.2.3** lives in `Fusion_addin/HelixPathPilot/`.
+**Solid → Create → HelixPathPilot v0.2.3** creates a 3D sketch around a selected axis.
 Add or remove up to 32 sections with individual lengths, start/end diameters
 and start/end pitches. Handedness and start angle apply to the whole helix.
+“Achslänge übernehmen” fits the total length to a finite straight line or edge once.
+The new “Tangentiale Übergänge (G1)” option aligns section tangents for sweeping;
+runtime validation of this option in Fusion is still pending.
 Construction axes, straight edges and sketch lines are supported, with global Z
 as the default. The user confirmed the basic command, axis selection and icons work.
 The segment editor and variable helix output are implemented and covered by
-automated tests; runtime validation of 0.2.1 in Fusion is still pending.
+automated tests; the user has confirmed the basic functionality of 0.2.2 in Fusion.
 The top-level `HelixPathPilot/` folder is the inactive 0.1.0 scaffold.
 
 See [development setup and smoke checks](docs/development.md) for loading the add-in in Fusion.
@@ -82,12 +85,12 @@ Features and user interface details may change during development.
 
 ## Screenshots
 
-Helices aligned with an inclined axis in **v0.1.2**:
+Application example using **v0.2.2** helix paths, with subsequent body modeling in Fusion:
 
-[![Helix curves around an inclined axis in Fusion, version 0.1.2](docs/images/screenshots/v0-1-2/HelixPathPilot_v0-1-2_-00.png)](docs/screenshots.md#v012)
+[![Spring-shaped body with varying coil spacing in Fusion, version 0.2.2 example](docs/images/screenshots/v0-2-2/HelixPathPilot_v0-2-2_-00.png)](docs/screenshots.md#v022)
 
-See the [versioned screenshot gallery](docs/screenshots.md) for the parameter dialog,
-Create menu and toolbar. Screenshots document the version shown; newer versions
+See the [versioned screenshot gallery](docs/screenshots.md) for the section editor
+and earlier versions, including the Create menu and toolbar. Screenshots document the version shown; newer versions
 may look different.
 
 ## Additional Project Documents

@@ -10,7 +10,7 @@ from ...core.variable_helix import sampling_plan
 from ...lib import fusionAddInUtils as futil
 from ...version import APP_NAME, VERSION
 from .sketch_builder import create_sketch
-from .axis_selection import selected_axis
+from .axis_selection import selected_axis, selected_axis_length
 from .segment_editor import SegmentEditor
 
 CMD_ID = f'{config.COMPANY_NAME}_{config.ADDIN_NAME}_createParametricHelix'
@@ -98,10 +98,17 @@ def command_created(args):
     axis_input.setSelectionLimits(0, 1)
     axis_input.isUseCurrentSelections = False
     inputs.addBoolValueInput('reverse_axis', 'Achsrichtung umkehren', True, '', False)
+    fit_length = inputs.addBoolValueInput('fit_axis_length', 'Achslänge übernehmen', False, '', False)
+    fit_length.isEnabled = False
+    fit_length.tooltip = 'Gesamtlänge einmalig aus einer endlichen Linie oder geraden Kante übernehmen. Abschnitte werden proportional skaliert.'
     units = design.unitsManager.defaultLengthUnits
     inputs.addValueInput('start_angle', 'Startwinkel', 'deg',
                          adsk.core.ValueInput.createByString('0 deg'))
     inputs.addBoolValueInput('right_handed', 'Rechtsdrehend', True, '', True)
+    tangent_joins = inputs.addBoolValueInput('tangent_joins', 'Tangentiale Übergänge (G1)', True, '', True)
+    tangent_joins.tooltip = ('Gleicht die Tangenten benachbarter Splines für einen knickfreien Pfad an. '
+                            'Fusion kann die Kurvenform am Übergang anpassen. '
+                            'Gleiche Krümmung (G2) wird nicht erzwungen.')
     editor = SegmentEditor(inputs, units)
     inputs.addTextBoxCommandInput('section_info', '',
         'Durchmesser und Steigung ändern sich linear entlang der Abschnittslänge. '
@@ -128,15 +135,28 @@ def command_created(args):
     def execute(event):
         try:
             axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
-            create_sketch(design, _parameters(inputs, editor), axis)
+            create_sketch(design, _parameters(inputs, editor), axis,
+                          tangent_joins=tangent_joins.value)
         except Exception as error:
             event.executeFailed = True
             event.executeFailedMessage = str(error)
             futil.handle_error(CMD_NAME)
 
     def input_changed(event):
+        if editor.busy:
+            return
         try:
-            editor.changed(event.input.id)
+            changed_id = event.input.id
+            if changed_id == 'fit_axis_length':
+                editor.fit_total_length(selected_axis_length(axis_input))
+            else:
+                editor.changed(changed_id)
+            if changed_id == 'axis':
+                try:
+                    selected_axis_length(axis_input)
+                    fit_length.isEnabled = True
+                except ValueError:
+                    fit_length.isEnabled = False
         except ValueError as error:
             inputs.itemById('error').text = str(error)
 

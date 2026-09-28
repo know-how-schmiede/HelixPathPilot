@@ -66,14 +66,17 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.2.1** liegt unter `Fusion_addin/HelixPathPilot/`.
-**Volumenkörper → Erstellen → HelixPathPilot v0.2.1** erzeugt eine 3D-Skizze um eine gewählte Achse.
+Der Entwicklungsstand **0.2.3** liegt unter `Fusion_addin/HelixPathPilot/`.
+**Volumenkörper → Erstellen → HelixPathPilot v0.2.3** erzeugt eine 3D-Skizze um eine gewählte Achse.
 Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endsteigung
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
+„Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.
+Die neue Option „Tangentiale Übergänge (G1)“ gleicht Abschnittstangenten für den Sweep an;
+der Fusion-Laufzeittest dieser Option steht noch aus.
 Konstruktionsachsen, gerade Kanten und Skizzenlinien werden unterstützt;
 ohne Auswahl gilt die globale Z-Achse. Basis-Command, Achsauswahl und Icons wurden
 vom Benutzer bestätigt. Abschnittsverwaltung und variable Ausgabe sind implementiert
-und automatisiert geprüft; der Fusion-Laufzeittest für 0.2.1 steht noch aus.
+und automatisiert geprüft; der Benutzer bestätigt die grundsätzliche Funktion von 0.2.2.
 Der Ordner `HelixPathPilot/` im Repo-Hauptverzeichnis ist der inaktive Altstand 0.1.0.
 
 Die [Entwicklungsanleitung](docs/development.md) beschreibt das Laden und die manuelle Prüfung in Fusion.
@@ -82,12 +85,12 @@ Die genaue Funktionalität und Benutzeroberfläche kann sich während der Entwic
 
 ## Screenshots
 
-Helices entlang einer schrägen Achse in **v0.1.2**:
+Anwendungsbeispiel mit Helix-Pfaden aus **v0.2.2** und anschließender Körpermodellierung in Fusion:
 
-[![Helix-Kurven um eine schräge Achse in Fusion, Version 0.1.2](docs/images/screenshots/v0-1-2/HelixPathPilot_v0-1-2_-00.png)](docs/screenshots-DE.md#v012)
+[![Federförmiger Körper mit unterschiedlichen Windungsabständen in Fusion, Beispiel zu Version 0.2.2](docs/images/screenshots/v0-2-2/HelixPathPilot_v0-2-2_-00.png)](docs/screenshots-DE.md#v022)
 
 Die [Screenshot-Galerie nach Versionen](docs/screenshots-DE.md) zeigt zusätzlich
-den Parameterdialog, das Erstellen-Menü und die Symbolleiste. Die Bilder
+den Abschnittsdialog und frühere Versionen mit Erstellen-Menü und Symbolleiste. Die Bilder
 dokumentieren die angegebene Version; neuere Versionen können davon abweichen.
 
 ## Weiterführende Projektdokumente

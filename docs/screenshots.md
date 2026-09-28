@@ -8,7 +8,26 @@ development version. The Fusion interface in these screenshots is German.
 
 ## Versions
 
+- [v0.2.2](#v022) — application example and section editor
 - [v0.1.2](#v012) — axis alignment, parameter dialog, menu and toolbar
+
+## v0.2.2
+
+### Application example
+
+A spring-shaped body with varying coil spacing around an inclined axis, alongside
+helix sketch geometry. HelixPathPilot generates the sketch paths; body creation
+is a separate modeling step in Fusion.
+
+![Spring-shaped body with varying coil spacing and helix sketch geometry in Fusion](images/screenshots/v0-2-2/HelixPathPilot_v0-2-2_-00.png)
+
+### Section editor
+
+The complete dialog with **Section 1**, start/end diameter and pitch, section
+controls, total length and turn count. **Achslänge übernehmen** (use axis length)
+is disabled here because no finite line or edge is selected.
+
+![HelixPathPilot v0.2.2 section editor showing one section, 50 mm total length and 10 turns](images/screenshots/v0-2-2/HelixPathPilot_v0-2-2_-01.png)
 
 ## v0.1.2
 

@@ -141,6 +141,32 @@ class SketchAdapterTests(unittest.TestCase):
         self.adapter.create_sketch(self.design, model)
         self.assertEqual(add.call_count, 2)
         self.assertIs(add.call_args_list[1].args[0][0], first.endSketchPoint)
+        self.sketch.geometricConstraints.addTangent.assert_not_called()
+
+    def test_tangent_constraints_join_each_adjacent_pair(self):
+        splines = [Mock(), Mock(), Mock()]
+        self.sketch.sketchCurves.sketchFittedSplines.add.side_effect = splines
+        model = SegmentedHelix((HelixSegment.constant(2, 2, 1),) * 3)
+        self.adapter.create_sketch(self.design, model, tangent_joins=True)
+        tangent = self.sketch.geometricConstraints.addTangent
+        self.assertEqual(tangent.call_count, 2)
+        self.assertEqual(tangent.call_args_list[0].args, (splines[0], splines[1]))
+        self.assertEqual(tangent.call_args_list[1].args, (splines[1], splines[2]))
+        self.sketch.deleteMe.assert_not_called()
+
+    def test_one_section_needs_no_tangent_constraint(self):
+        self.adapter.create_sketch(self.design, HelixParameters(2, 5, 0.5), tangent_joins=True)
+        self.sketch.geometricConstraints.addTangent.assert_not_called()
+
+    def test_failed_tangent_constraint_removes_whole_sketch(self):
+        model = SegmentedHelix((HelixSegment.constant(2, 2, 1),) * 3)
+        for failure in (None, RuntimeError('Solver error')):
+            with self.subTest(failure=failure):
+                self.sketch.deleteMe.reset_mock()
+                self.sketch.geometricConstraints.addTangent.side_effect = [Mock(), failure]
+                with self.assertRaisesRegex(RuntimeError, 'Abschnitt 2 und 3'):
+                    self.adapter.create_sketch(self.design, model, tangent_joins=True)
+                self.sketch.deleteMe.assert_called_once()
 
     def test_later_section_failure_removes_entire_sketch(self):
         add = self.sketch.sketchCurves.sketchFittedSplines.add

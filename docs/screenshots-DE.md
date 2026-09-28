@@ -8,7 +8,26 @@ müssen daher nicht dem aktuellen Entwicklungsstand entsprechen.
 
 ## Versionen
 
+- [v0.2.2](#v022) – Anwendungsbeispiel und Abschnittsdialog
 - [v0.1.2](#v012) – Achsausrichtung, Parameterdialog, Menü und Symbolleiste
+
+## v0.2.2
+
+### Anwendungsbeispiel
+
+Ein federförmiger Körper mit unterschiedlichen Windungsabständen entlang einer
+schrägen Achse, daneben Helix-Skizzengeometrie. HelixPathPilot erzeugt die
+Skizzenpfade; die Körpererzeugung erfolgt als eigener Modellierungsschritt in Fusion.
+
+![Federförmiger Körper mit unterschiedlichen Windungsabständen und Helix-Skizzengeometrie in Fusion](images/screenshots/v0-2-2/HelixPathPilot_v0-2-2_-00.png)
+
+### Abschnittsdialog
+
+Der vollständige Dialog mit **Abschnitt 1**, Start-/Enddurchmesser und -steigung,
+Abschnittsverwaltung, Gesamtlänge und Windungszahl. **Achslänge übernehmen** ist
+hier deaktiviert, da keine endliche Linie oder Kante ausgewählt ist.
+
+![Abschnittsdialog von HelixPathPilot v0.2.2 mit einem Abschnitt, 50 mm Gesamtlänge und 10 Windungen](images/screenshots/v0-2-2/HelixPathPilot_v0-2-2_-01.png)
 
 ## v0.1.2
 

@@ -2,8 +2,26 @@
 
 import adsk.core
 import adsk.fusion
+import math
 
 from ...core.axis import AxisFrame
+
+
+def selected_axis_length(selection_input):
+    """Return a finite straight line's length in cm; infinite axes have no length."""
+    if selection_input.selectionCount != 1:
+        raise ValueError('Bitte eine endliche Skizzenlinie oder gerade Körperkante auswählen.')
+    entity = selection_input.selection(0).entity
+    if not entity.isValid:
+        raise ValueError('Die gewählte Linie ist nicht mehr gültig.')
+    if not (adsk.fusion.SketchLine.cast(entity) or adsk.fusion.BRepEdge.cast(entity)):
+        raise ValueError('Unendliche Konstruktionsachsen haben keine übernehmbare Länge.')
+    # For finite lines selected_axis keeps the full endpoint vector, not a unit vector.
+    frame = selected_axis(selection_input)
+    length = math.hypot(*frame.direction)
+    if not math.isfinite(length) or length <= 0:
+        raise ValueError('Die gewählte Linie muss eine positive, endliche Länge haben.')
+    return length
 
 
 def selected_axis(selection_input, reverse=False):

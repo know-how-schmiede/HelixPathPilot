@@ -4,6 +4,31 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.2.3 – 2026-09-28 – Entwicklung
+
+**GitHub:** Option „Tangentiale Übergänge (G1)“ ergänzt. Benachbarte Helix-Splines
+erhalten Tangentialbedingungen, um Richtungssprünge an Abschnittsgrenzen beim
+Sweep zu vermeiden. Die Option ist standardmäßig aktiviert.
+
+- Ursache sichtbarer Übergänge: gemeinsame Endpunkte ohne angeglichene Tangenten; Steigungs- und Durchmessergradienten können springen.
+- Fusion gleicht die Tangenten über `addTangent` an; dabei kann sich die Kurvenform ändern. Keine G2-Krümmungsangleichung.
+- Bei fehlgeschlagener Tangentialbedingung wird die gesamte neue Skizze entfernt und die betreffende Abschnittsgrenze gemeldet.
+- 50 automatisierte Tests bestanden. Tangentiallösung und Sweep-Ergebnis müssen noch in Fusion geprüft werden.
+- G2-Übergänge als möglicher weiterer Ausbau vorgemerkt.
+
+## 0.2.2 – 2026-09-28 – Entwicklung
+
+**GitHub:** Abbruch beim Aufbau des Abschnittsdialogs behoben. Abschnittstitel
+werden beim Anlegen gesetzt. Neue Funktion „Achslänge übernehmen“ skaliert die
+Helix einmalig auf die Länge einer endlichen Linie oder geraden Körperkante.
+
+- Ursache: Schreibzugriff auf die schreibgeschützte Fusion-Eigenschaft `CommandInput.name`; bisherige Testdoubles waren hier zu großzügig.
+- Abschnittsnummern bleiben beim Entfernen anderer Abschnitte stabil; mindestens ein Abschnitt bleibt erhalten.
+- Mehrere Abschnittslängen werden proportional verteilt. Unendliche Achsen, Null-/ungültige Längen und überschrittene Kurvenlimits werden abgewiesen.
+- 47 automatisierte Tests bestanden, einschließlich Regression für schreibgeschützte Namen. Benutzer bestätigt die grundsätzliche Funktion von 0.2.2.
+- Zwei Screenshots von v0.2.2 in beiden Versionsgalerien ergänzt und README-Vorschauen aktualisiert; ältere Bilder bleiben erhalten. Add-in-Version unverändert.
+- Surface-Helix-Grundlage zugunsten dieser Fehlerkorrektur und der bereits gewünschten Längenübernahme nachgeordnet.
+
 ## 0.2.1 – 2026-09-28 – Entwicklung
 
 **GitHub:** Abschnittsverwaltung im Helix-Dialog integriert. Mehrteilige Helices
