@@ -1,45 +1,54 @@
-# Entwicklung und erster Funktionstest
+# Entwicklung und Funktionstest
 
-## Projektbasis – 0.1.0 (development)
+## Aktiver Stand – 0.1.1 (development)
 
-`Fusion_addin/HelixPathPilot/` bleibt die ursprüngliche Vorlage.
-Das zu entwickelnde Add-in liegt separat unter `HelixPathPilot/`:
+Die Implementierung ersetzt die Vorlage unter `Fusion_addin/HelixPathPilot/`.
+Nur diesen Ordner in Fusion laden. `HelixPathPilot/` im Repo-Hauptverzeichnis
+ist der inaktive Altstand 0.1.0.
 
-- `HelixPathPilot.py`: Fusion-Einstiegspunkte `run` und `stop`, Logging und Fehlerbehandlung.
-- `HelixPathPilot.manifest`: Fusion-Metadaten; Version mit `version.py` synchron halten.
-- `commands/`: leere Registrierung und vorbereitete Pakete für die drei geplanten Commands.
-- `core/`: reserviert für Fusion-unabhängige Mathematik und Datenmodelle.
-- `lib/fusionAddInUtils/`: unveränderte Hilfsmodule der Autodesk-Vorlage inklusive Lizenzhinweisen.
-- `presets/builtin/` und `presets/user/`: vorbereitet; lokale Benutzer-Presets werden nicht versioniert.
-- `resources/`: vorbereitete Ordner für Icons, Banner und Logo.
+- `core/helix_math.py`: Fusion-unabhängige Berechnung (Längen in cm, Winkel in rad).
+- `commands/createParametricHelix/entry.py`: Dialog, Validierung und Events.
+- `commands/createParametricHelix/sketch_builder.py`: Ausgabe in die Hauptkomponente.
+- `version.py`: aktive Versionsquelle; Manifest-Version synchron halten.
+- `lib/fusionAddInUtils/`: Autodesk-Hilfsmodule mit ursprünglichen Lizenzhinweisen.
 
-Demo-Commands und Demo-Paletten sind nur in der Vorlage enthalten.
-Das neue Add-in erzeugt in diesem Schritt noch keine Buttons oder Geometrie.
-Die aktive Versionsquelle ist `HelixPathPilot/version.py`; die Versionsdatei in
-der Vorlage beschreibt nur deren ursprünglichen Stand.
+Der Command erzeugt eine räumliche Fitted Spline mit 32 Abschnitten pro Windung,
+maximal 4097 Punkten / 128 Windungen. Auch angebrochene Windungen sind möglich.
+Die Kurve nähert die mathematische Helix an. Es gibt noch keine Live-Vorschau,
+freie Achsauswahl oder nachträgliche Änderung über gespeicherte Helix-Parameter.
+Rechtsdrehend bedeutet positive Rotation um +Z bei zunehmendem Z; der Startwinkel
+wird von +X in Richtung +Y gemessen. Die Länge bezeichnet die axiale Höhe.
 
-## In Fusion laden
+## In Fusion prüfen
 
-1. In Fusion den Dialog **Skripte und Zusatzmodule / Scripts and Add-Ins** öffnen.
-2. Ein vorhandenes Add-in hinzufügen und den Unterordner
-   `<Repo>/HelixPathPilot/` wählen, der die gleichnamigen `.py`- und `.manifest`-Dateien enthält.
-3. HelixPathPilot starten. Die Vorlage gleichen Namens dabei nicht parallel laden.
-4. In den Textbefehlen / Text Commands die Meldung
-   `HelixPathPilot v0.1.0 (development) started` prüfen (`DEBUG = True`).
-5. Add-in stoppen und die entsprechende `stopped`-Meldung prüfen.
-6. Starten und Stoppen wiederholen; es sollen keine Fehlermeldungen erscheinen.
+1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
+   das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
+2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Dienstprogramme /
+   Zusatzmodule** im Design-Arbeitsbereich erscheint **Helix erstellen**.
+3. Standardwerte bestätigen: Durchmesser 20 mm, Länge 50 mm, Steigung 5 mm.
+   Erwartet: eine Skizze `HelixPathPilot – Helix` in der Hauptkomponente,
+   zehn Windungen, Start (10, 0, 0) mm und Ende (10, 0, 50) mm.
+4. Linksdrall, Startwinkel 90° und Länge 12 mm bei Steigung 5 mm prüfen.
+   Erwartet: Start (0, 10, 0) mm, 2,4 Windungen mit umgekehrter Drehrichtung.
+5. Null, negative Werte, ungültige Ausdrücke und mehr als 128 Windungen eingeben:
+   OK bleibt gesperrt. Unterschiedliche Längeneinheiten ausprobieren.
+6. Abbrechen oder zu einem anderen Command wechseln: keine neue Skizze.
+7. Ausführen und Rückgängig prüfen; bei aktivierter Unterkomponente muss die
+   Helix weiterhin um die globale Z-Achse in der Hauptkomponente liegen.
+8. Add-in stoppen: Button verschwindet. Erneut starten: genau ein Button.
+   Ohne Design-Dokument muss eine verständliche Meldung erscheinen.
 
-Die Registrierung eines vorhandenen Add-in-Ordners beschreibt die
-[Autodesk-Anleitung](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/UsingSamplesFromGitHub_UM.htm).
-Der Aufbau folgt der [Autodesk-Python-Vorlage](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/PythonTemplate_UM.htm).
+Die Registrierung beschreibt die [Autodesk-Anleitung](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/UsingSamplesFromGitHub_UM.htm).
+Die Skizzenausgabe folgt dem [Autodesk-Beispiel für räumliche Splines](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/SketchFittedSplines_add_Sample.htm).
 
-## Prüfstatus
+## Automatisierte Prüfungen
 
-Die 13 Python-Dateien wurden auf gültige Syntax geprüft. Manifest-Version,
-Icon-Pfad, unveränderte Hilfsmodul-Kopien und Start/Stop der leeren
-Command-Registrierung wurden erfolgreich geprüft.
+Mit Python aus dem Repo-Hauptverzeichnis:
 
-Syntax und Manifest lassen sich außerhalb von Fusion prüfen. Die Fusion-API
-(`adsk`) benötigt für einen aussagekräftigen Laufzeittest die Fusion-Anwendung.
-Der manuelle Start-/Stop-Test in Fusion ist noch offen; ebenso die macOS-Prüfung.
-Die Angabe `windows|mac` im Manifest wurde aus der Vorlage übernommen.
+```text
+python -B -m unittest discover -s tests -v
+```
+
+Alle neun Tests bestanden am 2026-09-28. Sie benötigen keine Fusion-Installation und prüfen die Mathematik,
+Metadaten und Fehlerbereinigung des Skizzenadapters mit einem API-Testdouble.
+Der manuelle Fusion-Laufzeittest und die macOS-Prüfung bleiben offen.

@@ -1,1 +1,3 @@
-Hier das leere Fusion-360-Beispiel-AddIn als Vorlage ablegen.
+Aktives Fusion-Add-in: HelixPathPilot/
+Die ursprüngliche Vorlage wurde durch die Projektimplementierung ersetzt.
+Ladeanleitung und Prüfstatus: ../docs/development.md

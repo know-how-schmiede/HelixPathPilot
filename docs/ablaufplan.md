@@ -40,23 +40,24 @@ Technische Grundlage schaffen und eine erste einfache Helix erzeugen.
 - [x] `docs/ablaufplan.md` anlegen
 - [x] `docs/codex_plan.md` anlegen
 - [x] README-Dateien ergänzen
-- [ ] Basis-Command für Helix-Erzeugung anlegen
+- [x] Basis-Command für Helix-Erzeugung anlegen
 - [ ] Achsauswahl integrieren
-- [ ] Durchmesser, Länge und Steigung integrieren
-- [ ] Drehrichtung integrieren
-- [ ] Startwinkel integrieren
-- [ ] erste 3D-Skizzenerzeugung umsetzen
+- [x] Durchmesser, Länge und Steigung integrieren
+- [x] Drehrichtung integrieren
+- [x] Startwinkel integrieren
+- [x] erste 3D-Skizzenerzeugung umsetzen
 - [ ] erste lauffähige Basisversion testen
 
 ## Zielversion
 
-**0.1.0**
+**0.1.x** – Projektbasis wird in Entwicklungsständen vervollständigt.
 
-Stand 2026-09-28: Projektbasis unter `HelixPathPilot/` angelegt, mit
-Start-/Stop-Einstieg, leerer Command-Registrierung und Hilfsmodulen aus der
-unveränderten Vorlage. Version 0.1.0 bleibt ein Entwicklungsstand; die
-Helix-Erzeugung und der Laufzeittest in Fusion sind noch offen.
-Nächster Schritt: Basis-Command für die parametrische Helix.
+Stand 2026-09-28, **0.1.1 (development)**: Aktives Add-in unter
+`Fusion_addin/HelixPathPilot/`. Basis-Command mit Durchmesser, Länge, Steigung,
+Drehrichtung und Startwinkel implementiert; Ausgabe als angenäherte 3D-Spline
+um die globale Z-Achse in der Hauptkomponente. Die eingegebenen Werte werden
+nicht als nachträglich editierbare Helix-Parameter gespeichert.
+Nächster Schritt: freie Achsauswahl und Laufzeittest in Fusion.
 Ladeanleitung und manuelle Prüfschritte: [Entwicklung](development.md).
 
 # Version 0.2.x – Variable Helix

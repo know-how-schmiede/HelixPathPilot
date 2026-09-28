@@ -1,113 +1,28 @@
 # Timeline – HelixPathPilot
 
-Dieses Dokument dient als fortlaufende Chronik des Projekts.
+Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbaren
+Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
+Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
-Hier werden festgehalten:
+## 0.1.1 – 2026-09-28 – Entwicklung
 
-- umgesetzte Funktionen
-- wichtige Entscheidungen
-- geänderte Anforderungen
-- neue Ideen
-- technische Richtungsänderungen
-- Meilensteine
+**GitHub:** Basis-Command für Helices mit konstantem Durchmesser und konstanter
+Steigung ergänzt. Dialog mit Länge, Drehrichtung und Startwinkel; Ausgabe als
+3D-Spline um die globale Z-Achse. Aktives Add-in unter `Fusion_addin/HelixPathPilot/`.
 
-## Verwendung
+- Vorlage auf Benutzerwunsch durch die Implementierung ersetzt; Demo-Commands entfernt.
+- Fusion-unabhängige Helix-Berechnung, Eingabevalidierung und Begrenzung auf 128 Windungen.
+- Neun automatisierte Tests für Geometrie, Validierung, Metadaten und Skizzenadapter bestanden.
+- Die Kurve ist eine Spline-Näherung, keine nachträglich parametrisch verknüpfte Helix.
+- Timeline nach Versionsnummer zusammengefasst. Freie Achsauswahl und Fusion-Laufzeittest offen.
+- `HelixPathPilot/` im Repo-Hauptverzeichnis bleibt als Altstand 0.1.0 erhalten und wird nicht weiterentwickelt.
 
-Bei jeder relevanten Änderung soll ein neuer Eintrag ergänzt werden.
+## 0.1.0 – 2026-09-28 – Entwicklung
 
-### Typen
+**GitHub:** Projektbasis für HelixPathPilot angelegt: Fusion-Einstiegspunkte,
+Command-Struktur, Versionsverwaltung und zweisprachige Projektdokumentation.
 
-- **Feature**
-- **Change**
-- **Fix**
-- **Docs**
-- **Decision**
-- **Idea**
-- **Refactor**
-- **Release**
-
-## Eintragsvorlage
-
-```md
-### YYYY-MM-DD – v0.0.0 – Typ
-
-**Kurzbeschreibung:**  
-...
-
-**Details:**  
-- ...
-- ...
-```
-
-## Projektverlauf
-
-### 2026-09-28 – v0.1.0 (development) – Feature
-
-**Kurzbeschreibung:**
-
-Ersten Umsetzungsschritt abgeschlossen: separate Add-in-Projektbasis angelegt.
-
-**Details:**
-
-- `HelixPathPilot/` mit Fusion-Einstiegspunkten, Manifest, Icon und zentraler Version angelegt.
-- Start-/Stop-Struktur an die Vorlage angelehnt, Hilfsmodule unverändert übernommen.
-- Leere Command-Registrierung sowie Ordner für Kernlogik, spätere Commands, Presets und Ressourcen vorbereitet.
-- Vorlage unter `Fusion_addin/` unverändert erhalten; Demo-Commands nicht in das aktive Add-in übernommen.
-- Git-Ausnahmen für notwendige Fusion-Manifeste und Python-Hilfsmodule ergänzt, die zuvor ignoriert wurden.
-- README-Dateien, Ablaufplan und Entwicklungsanleitung aktualisiert.
-- Noch keine Helix-Erzeugung; Laufzeittest in Fusion bleibt offen.
-
-### 2026-09-28 – v0.1.0 – Decision
-
-**Kurzbeschreibung:**  
-Projektname auf **HelixPathPilot** festgelegt.
-
-**Details:**  
-- Der Name passt zur bestehenden Plugin-Familie.
-- Das Projekt fokussiert sich nicht nur auf Federn, sondern auf allgemeine Helix-Pfade.
-
-### 2026-09-28 – v0.1.0 – Decision
-
-**Kurzbeschreibung:**  
-Zwei Hauptmodi für die Geometrieerzeugung festgelegt.
-
-**Details:**  
-- Parametric Helix
-- Surface Helix
-- Surface Helix soll sich zunächst auf rotationssymmetrische Körper stützen.
-
-### 2026-09-28 – v0.1.0 – Decision
-
-**Kurzbeschreibung:**  
-Dokumentationsstruktur definiert.
-
-**Details:**  
-- `version.py` dient als zentrale Versionsquelle.
-- `docs/timeline.md` dokumentiert die Entwicklungshistorie.
-- `docs/ablaufplan.md` dokumentiert den geplanten Umsetzungsweg.
-- README-Dateien bleiben auf die Projektübersicht fokussiert.
-
-### 2026-09-28 – v0.1.0 – Docs
-
-**Kurzbeschreibung:**  
-Erste GitHub-Dokumentation erstellt.
-
-**Details:**  
-- README in Deutsch erstellt
-- README in Englisch erstellt
-- zusätzliche Projektdokumente verlinkt
-
-### 2026-09-28 – v0.1.0 – Idea
-
-**Kurzbeschreibung:**  
-Setup EXE mit Inno Setup für Version 0.9 vorgesehen.
-
-**Details:**  
-- Installer soll den Add-in-Installationsprozess vereinfachen.
-- Packaging und Versionsabgleich sollen vorbereitet werden.
-
-## Pflegehinweis
-
-Neue Ideen sollen hier zeitnah als Entscheidung, Idee oder Änderung dokumentiert werden.
-
-Wenn sich dadurch der geplante Umsetzungsweg verändert, muss zusätzlich `docs/ablaufplan.md` angepasst werden.
+- Projektname und Hauptmodi Parametric Helix / Surface Helix festgelegt.
+- Add-in-Gerüst mit Autodesk-Hilfsmodulen zunächst separat unter `HelixPathPilot/` angelegt.
+- Ordner für Mathematik, Commands, Presets und Ressourcen vorbereitet; Git-Ausnahmen für Manifest und Hilfsmodule ergänzt.
+- Ablaufplan und Dokumentationsregeln definiert. Inno-Setup-Installer für Version 0.9 vorgesehen.

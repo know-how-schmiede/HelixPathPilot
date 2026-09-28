@@ -1,24 +1,23 @@
-# Assuming you have not changed the general structure of the template no modification is needed in this file.
+"""Fusion entry points, based on the supplied Autodesk add-in template."""
+
 from . import commands
 from .lib import fusionAddInUtils as futil
+from .version import get_full_version_label
 
 
 def run(context):
     try:
-        # This will run the start function in each of your commands as defined in commands/__init__.py
         commands.start()
-
-    except:
-        futil.handle_error('run')
+        futil.log(f'{get_full_version_label()} started')
+    except Exception:
+        futil.handle_error('run', show_message_box=True)
 
 
 def stop(context):
     try:
-        # Remove all of the event handlers your app has created
-        futil.clear_handlers()
-
-        # This will run the start function in each of your commands as defined in commands/__init__.py
         commands.stop()
-
-    except:
-        futil.handle_error('stop')
+        futil.log(f'{get_full_version_label()} stopped')
+    except Exception:
+        futil.handle_error('stop', show_message_box=True)
+    finally:
+        futil.clear_handlers()

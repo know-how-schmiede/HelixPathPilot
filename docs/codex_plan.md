@@ -24,60 +24,34 @@ CodeX soll das Projekt so entwickeln, dass:
 4. neue Ideen und Änderungen nicht verloren gehen,
 5. jede größere Änderung in `version.py`, `docs/timeline.md` und `docs/ablaufplan.md` dokumentiert wird.
 
-## Vorlage-Add-in
+## Aktives Add-in
 
-Im Ordner:
+Auf Benutzerwunsch vom 2026-09-28 wird die Vorlage direkt unter
+`Fusion_addin/HelixPathPilot/` durch die Implementierung ersetzt.
+Dieser Ordner ist die einzige aktive Entwicklungs- und Installationsquelle.
+Der Ordner `HelixPathPilot/` im Repo-Hauptverzeichnis bleibt als Altstand 0.1.0 erhalten.
 
-```text
-Fusion_addin/
-```
-
-legt der Benutzer ein **leeres Beispiel-AddIn** als Vorlage ab.
-
-CodeX soll dieses Add-in als technische Ausgangsbasis verwenden und die eigentliche Projektstruktur darauf aufbauen bzw. daran anlehnen.
-
-Die Vorlage soll nicht unkontrolliert überschrieben werden.
-
-## Empfohlene Projektstruktur
+## Projektstruktur
 
 ```text
-HelixPathPilot/
-│
-├── Fusion_addin/
-│   └── <leeres Beispiel-AddIn als Vorlage>
-│
-├── HelixPathPilot/
-│   ├── commands/
-│   │   ├── createParametricHelix/
-│   │   ├── createSurfaceHelix/
-│   │   └── presetManager/
-│   ├── core/
-│   │   ├── helix_math.py
-│   │   ├── helix_segments.py
-│   │   ├── surface_helix.py
-│   │   ├── preview_builder.py
-│   │   ├── sketch_builder.py
-│   │   └── preset_model.py
-│   ├── presets/
-│   │   ├── builtin/
-│   │   └── user/
-│   ├── resources/
-│   │   ├── icons/
-│   │   ├── banner/
-│   │   └── logo/
-│   ├── lib/
-│   └── version.py
-│
-├── docs/
-│   ├── codex_plan.md
-│   ├── ablaufplan.md
-│   └── timeline.md
-│
-├── README.md
-├── README-DE.md
-├── LICENSE
-└── .gitignore
+Fusion_addin/HelixPathPilot/
+  HelixPathPilot.py
+  HelixPathPilot.manifest
+  commands/                 # Fusion-Dialoge und Skizzenerzeugung
+    createParametricHelix/
+    createSurfaceHelix/
+    presetManager/
+  core/                     # Fusion-unabhängige Mathematik / Datenmodelle
+  presets/builtin/
+  presets/user/
+  resources/
+  lib/
+  version.py                # zentrale aktive Versionsquelle
 ```
+
+`docs/` enthält Planung, Timeline und Entwicklungsanleitung.
+Die Timeline wird pro Versionsnummer zusammengefasst. Jeder Versionseintrag
+enthält einen kurzen Veröffentlichungstext mit der Kennzeichnung **GitHub:**.
 
 ## Architekturprinzipien
 

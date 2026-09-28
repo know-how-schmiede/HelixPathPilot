@@ -66,9 +66,11 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-The initial project scaffold (0.1.0, development) is available in `HelixPathPilot/`.
-It includes the Fusion entry points, command registry and template helpers.
-Helix generation is not implemented yet. The supplied template remains in `Fusion_addin/`.
+Development version **0.1.1** lives in `Fusion_addin/HelixPathPilot/`.
+The **Helix erstellen** command creates a 3D spline around the global Z axis
+with configurable diameter, length, pitch, handedness and start angle.
+Arbitrary axis selection and runtime validation in Fusion are still pending.
+The top-level `HelixPathPilot/` folder is the inactive 0.1.0 scaffold.
 
 See [development setup and smoke checks](docs/development.md) for loading the add-in in Fusion.
 

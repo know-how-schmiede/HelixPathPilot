@@ -66,9 +66,11 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Die Projektbasis (0.1.0, Entwicklungsstand) liegt unter `HelixPathPilot/`.
-Sie enthält die Fusion-Einstiegspunkte, die Command-Registrierung und die Hilfsmodule der Vorlage.
-Die Helix-Erzeugung ist noch nicht implementiert. Die bereitgestellte Vorlage bleibt unter `Fusion_addin/` erhalten.
+Der Entwicklungsstand **0.1.1** liegt unter `Fusion_addin/HelixPathPilot/`.
+Der Command **Helix erstellen** erzeugt eine 3D-Spline um die globale Z-Achse
+mit einstellbarem Durchmesser, Länge, Steigung, Drehrichtung und Startwinkel.
+Freie Achsauswahl und der Laufzeittest in Fusion stehen noch aus.
+Der Ordner `HelixPathPilot/` im Repo-Hauptverzeichnis ist der inaktive Altstand 0.1.0.
 
 Die [Entwicklungsanleitung](docs/development.md) beschreibt das Laden und die manuelle Prüfung in Fusion.
 

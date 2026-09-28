@@ -14,15 +14,15 @@ APP_AUTHOR = "Know-How-Schmiede"
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 1
-VERSION_PATCH = 0
+VERSION_PATCH = 1
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 __version__ = VERSION
 
 RELEASE_STAGE = "development"
-RELEASE_DATE = "TBD"
+RELEASE_DATE = "2026-09-28"
 
-PROJECT_STATUS = "concept / development"
+PROJECT_STATUS = "basic helix command / development"
 
 
 def get_version():

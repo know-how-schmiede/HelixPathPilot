@@ -230,3 +230,6 @@ __marimo__/
 # Local user presets; retain the directory in a fresh checkout.
 /HelixPathPilot/presets/user/*
 !/HelixPathPilot/presets/user/.gitkeep
+
+/Fusion_addin/HelixPathPilot/presets/user/*
+!/Fusion_addin/HelixPathPilot/presets/user/.gitkeep
