@@ -72,7 +72,7 @@ Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endste
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
 „Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.
 Die neue Option „Tangentiale Übergänge (G1)“ gleicht Abschnittstangenten für den Sweep an;
-der Fusion-Laufzeittest dieser Option steht noch aus.
+der Benutzer bestätigt einen verbesserten Übergang im Sweep-Beispiel.
 Konstruktionsachsen, gerade Kanten und Skizzenlinien werden unterstützt;
 ohne Auswahl gilt die globale Z-Achse. Basis-Command, Achsauswahl und Icons wurden
 vom Benutzer bestätigt. Abschnittsverwaltung und variable Ausgabe sind implementiert
@@ -85,9 +85,9 @@ Die genaue Funktionalität und Benutzeroberfläche kann sich während der Entwic
 
 ## Screenshots
 
-Anwendungsbeispiel mit Helix-Pfaden aus **v0.2.2** und anschließender Körpermodellierung in Fusion:
+Verbesserter Abschnittsübergang mit **v0.2.3**, dargestellt in der Zebraanalyse eines anschließend in Fusion modellierten Sweeps:
 
-[![Federförmiger Körper mit unterschiedlichen Windungsabständen in Fusion, Beispiel zu Version 0.2.2](docs/images/screenshots/v0-2-2/HelixPathPilot_v0-2-2_-00.png)](docs/screenshots-DE.md#v022)
+[![Zebraanalyse mit markiertem Abschnittsübergang, HelixPathPilot v0.2.3](docs/images/screenshots/c0-2-3/HelixPathPilot_v0-2-3_-03.png)](docs/screenshots-DE.md#v023)
 
 Die [Screenshot-Galerie nach Versionen](docs/screenshots-DE.md) zeigt zusätzlich
 den Abschnittsdialog und frühere Versionen mit Erstellen-Menü und Symbolleiste. Die Bilder

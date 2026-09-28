@@ -152,7 +152,8 @@ aufgeführten Sonderfälle sind damit nicht einzeln als geprüft dokumentiert.
 Die macOS-Prüfung bleibt offen.
 Für 0.2.3 prüfen Testdoubles das Setzen aller Tangentialbedingungen und die
 Fehlerbereinigung. Die eigentliche Fusion-Solver-Geometrie und der Sweep sind
-damit nicht geprüft; die oben genannten G1-Laufzeittests bleiben offen.
+damit nicht geprüft. Der Benutzer bestätigt einen verbesserten Übergang im
+Sweep-Beispiel; die weiteren G1-Sonderfälle bleiben offen. Bilder: [Galerie v0.2.3](screenshots-DE.md#v023).
 
 ## Abschnittsverwaltung und variable Helices
 

@@ -1,1 +1,0 @@
-"""HelixPathPilot add-in package."""

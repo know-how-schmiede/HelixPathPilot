@@ -8,8 +8,38 @@ müssen daher nicht dem aktuellen Entwicklungsstand entsprechen.
 
 ## Versionen
 
+- [v0.2.3](#v023) – tangentiale Übergänge, drei Abschnitte und Zebraanalyse
 - [v0.2.2](#v022) – Anwendungsbeispiel und Abschnittsdialog
 - [v0.1.2](#v012) – Achsausrichtung, Parameterdialog, Menü und Symbolleiste
+
+## v0.2.3
+
+### Sweep-Körper und Helix-Pfad
+
+Eine Helix mit drei Abschnitten und verändertem Durchmesser- und Steigungsverlauf:
+als Skizzenpfad und als anschließend in Fusion modellierter Sweep-Körper.
+Die Körpererzeugung erfolgt in einem eigenen Modellierungsschritt.
+
+| Sweep-Körper | Helix-Pfad mit Stützpunkten |
+| --- | --- |
+| <img src="images/screenshots/c0-2-3/HelixPathPilot_v0-2-3_-00.png" alt="Sweep-Körper aus drei Abschnitten mit verjüngten Enden" width="200"> | <img src="images/screenshots/c0-2-3/HelixPathPilot_v0-2-3_-01.png" alt="Zugehöriger Helix-Skizzenpfad mit Spline-Stützpunkten" width="200"> |
+
+### Abschnittsdialog mit aktivierten G1-Übergängen
+
+**Tangentiale Übergänge (G1)** ist aktiviert. Das Beispiel verwendet drei
+Abschnitte mit jeweils 50 mm Länge, insgesamt 150 mm axialer Länge und einer
+angezeigten Windungszahl von 35,541.
+
+![Dialog von HelixPathPilot v0.2.3 mit drei Abschnitten und aktivierten tangentialen Übergängen](images/screenshots/c0-2-3/HelixPathPilot_v0-2-3_-02.png)
+
+### Übergangsdetail mit Zebraanalyse
+
+Der rote Pfeil markiert einen Abschnittsübergang am Sweep-Körper. Der Benutzer
+bestätigt eine verbesserte Darstellung nach der G1-Angleichung. Die Zebraansicht
+dokumentiert das Erscheinungsbild dieses Beispiels; sie belegt keine
+G2-Krümmungsstetigkeit.
+
+![Zebraanalyse des Helix-Sweeps mit rotem Pfeil am verbesserten Abschnittsübergang](images/screenshots/c0-2-3/HelixPathPilot_v0-2-3_-03.png)
 
 ## v0.2.2
 

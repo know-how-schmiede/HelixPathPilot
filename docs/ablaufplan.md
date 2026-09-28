@@ -81,7 +81,7 @@ Mehrere Abschnitte mit unterschiedlichen Parametern ermöglichen.
 - [x] segmentierte Helix als 3D-Skizze erzeugen
 - [x] Optionale tangentiale Abschnittsübergänge (G1) ergänzen (0.2.3)
 - [x] Testfälle ergänzen (50 automatisierte Tests insgesamt)
-- [ ] Tangentialbedingungen und Sweep an Abschnittsgrenzen in Fusion prüfen
+- [~] Tangentialbedingungen und Sweep prüfen: Benutzer bestätigt verbesserten Übergang im Beispiel; weitere Sonderfälle bleiben offen
 - [~] Fusion-Prüfung von 0.2.2: grundsätzliche Funktion vom Benutzer bestätigt; Sonderfälle gemäß Entwicklungsanleitung noch offen
 
 ## Zielversion
@@ -192,7 +192,7 @@ Projekt für Anwender und Mitwirkende verständlicher machen.
 - [ ] Dokumentation erweitern
 - [ ] Beispielanwendungen ergänzen
 - [ ] Beispiel-Presets anlegen
-- [~] Screenshots / Visuals einpflegen (v0.1.2 und v0.2.2 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
+- [~] Screenshots / Visuals einpflegen (v0.1.2, v0.2.2 und v0.2.3 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
 - [ ] Installationshinweise vorbereiten
 - [ ] Bedienkonzept prüfen
 - [ ] Benennungen und Texte im UI verbessern

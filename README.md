@@ -72,7 +72,7 @@ Add or remove up to 32 sections with individual lengths, start/end diameters
 and start/end pitches. Handedness and start angle apply to the whole helix.
 “Achslänge übernehmen” fits the total length to a finite straight line or edge once.
 The new “Tangentiale Übergänge (G1)” option aligns section tangents for sweeping;
-runtime validation of this option in Fusion is still pending.
+the user reports an improved transition in the sweep example.
 Construction axes, straight edges and sketch lines are supported, with global Z
 as the default. The user confirmed the basic command, axis selection and icons work.
 The segment editor and variable helix output are implemented and covered by
@@ -85,9 +85,9 @@ Features and user interface details may change during development.
 
 ## Screenshots
 
-Application example using **v0.2.2** helix paths, with subsequent body modeling in Fusion:
+Improved section transition in **v0.2.3**, shown with zebra analysis on a subsequently modeled sweep in Fusion:
 
-[![Spring-shaped body with varying coil spacing in Fusion, version 0.2.2 example](docs/images/screenshots/v0-2-2/HelixPathPilot_v0-2-2_-00.png)](docs/screenshots.md#v022)
+[![Zebra analysis highlighting a section transition, HelixPathPilot v0.2.3](docs/images/screenshots/c0-2-3/HelixPathPilot_v0-2-3_-03.png)](docs/screenshots.md#v023)
 
 See the [versioned screenshot gallery](docs/screenshots.md) for the section editor
 and earlier versions, including the Create menu and toolbar. Screenshots document the version shown; newer versions

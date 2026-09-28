@@ -13,7 +13,8 @@ Sweep zu vermeiden. Die Option ist standardmäßig aktiviert.
 - Ursache sichtbarer Übergänge: gemeinsame Endpunkte ohne angeglichene Tangenten; Steigungs- und Durchmessergradienten können springen.
 - Fusion gleicht die Tangenten über `addTangent` an; dabei kann sich die Kurvenform ändern. Keine G2-Krümmungsangleichung.
 - Bei fehlgeschlagener Tangentialbedingung wird die gesamte neue Skizze entfernt und die betreffende Abschnittsgrenze gemeldet.
-- 50 automatisierte Tests bestanden. Tangentiallösung und Sweep-Ergebnis müssen noch in Fusion geprüft werden.
+- 50 automatisierte Tests bestanden. Benutzer bestätigt einen besser aussehenden Übergang im Sweep-Beispiel; weitergehende Sonderfälle bleiben offen.
+- Vier Screenshots von v0.2.3 mit Sweep-Körper, Helix-Pfad, Abschnittsdialog und Zebraanalyse in beiden Galerien ergänzt; README-Vorschauen aktualisiert. Add-in-Version unverändert.
 - G2-Übergänge als möglicher weiterer Ausbau vorgemerkt.
 
 ## 0.2.2 – 2026-09-28 – Entwicklung
