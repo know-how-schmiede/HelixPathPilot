@@ -216,3 +216,17 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Fusion add-in sources are not Python build output / PyInstaller manifests.
+!/HelixPathPilot/lib/
+!/HelixPathPilot/lib/**/
+!/HelixPathPilot/lib/**/*.py
+!/HelixPathPilot/HelixPathPilot.manifest
+!/Fusion_addin/HelixPathPilot/lib/
+!/Fusion_addin/HelixPathPilot/lib/**/
+!/Fusion_addin/HelixPathPilot/lib/**/*.py
+!/Fusion_addin/HelixPathPilot/HelixPathPilot.manifest
+
+# Local user presets; retain the directory in a fresh checkout.
+/HelixPathPilot/presets/user/*
+!/HelixPathPilot/presets/user/.gitkeep

@@ -1,0 +1,13 @@
+{
+	"autodeskProduct":	"Fusion",
+	"type":	"addin",
+	"author":	"Rene Triebenstein",
+	"description":	{
+		"":	"**HelixPathPilot** is an Autodesk Fusion add-in for creating parametric and surface-driven helix curves."
+	},
+	"version":	"",
+	"runOnStartup":	false,
+	"supportedOS":	"windows|mac",
+	"editEnabled":	true,
+	"iconFilename":	"AddInIcon.svg"
+}

@@ -41,6 +41,22 @@ Bei jeder relevanten Änderung soll ein neuer Eintrag ergänzt werden.
 
 ## Projektverlauf
 
+### 2026-09-28 – v0.1.0 (development) – Feature
+
+**Kurzbeschreibung:**
+
+Ersten Umsetzungsschritt abgeschlossen: separate Add-in-Projektbasis angelegt.
+
+**Details:**
+
+- `HelixPathPilot/` mit Fusion-Einstiegspunkten, Manifest, Icon und zentraler Version angelegt.
+- Start-/Stop-Struktur an die Vorlage angelehnt, Hilfsmodule unverändert übernommen.
+- Leere Command-Registrierung sowie Ordner für Kernlogik, spätere Commands, Presets und Ressourcen vorbereitet.
+- Vorlage unter `Fusion_addin/` unverändert erhalten; Demo-Commands nicht in das aktive Add-in übernommen.
+- Git-Ausnahmen für notwendige Fusion-Manifeste und Python-Hilfsmodule ergänzt, die zuvor ignoriert wurden.
+- README-Dateien, Ablaufplan und Entwicklungsanleitung aktualisiert.
+- Noch keine Helix-Erzeugung; Laufzeittest in Fusion bleibt offen.
+
 ### 2026-09-28 – v0.1.0 – Decision
 
 **Kurzbeschreibung:**  

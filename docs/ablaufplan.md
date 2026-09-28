@@ -33,13 +33,13 @@ Technische Grundlage schaffen und eine erste einfache Helix erzeugen.
 
 ## Schritte
 
-- [ ] Projektstruktur anlegen
-- [ ] Vorlage aus `Fusion_addin/` integrieren
-- [ ] `version.py` anlegen
-- [ ] `docs/timeline.md` anlegen
-- [ ] `docs/ablaufplan.md` anlegen
-- [ ] `docs/codex_plan.md` anlegen
-- [ ] README-Dateien ergänzen
+- [x] Projektstruktur anlegen
+- [x] Vorlage aus `Fusion_addin/` integrieren
+- [x] `version.py` anlegen
+- [x] `docs/timeline.md` anlegen
+- [x] `docs/ablaufplan.md` anlegen
+- [x] `docs/codex_plan.md` anlegen
+- [x] README-Dateien ergänzen
 - [ ] Basis-Command für Helix-Erzeugung anlegen
 - [ ] Achsauswahl integrieren
 - [ ] Durchmesser, Länge und Steigung integrieren
@@ -51,6 +51,13 @@ Technische Grundlage schaffen und eine erste einfache Helix erzeugen.
 ## Zielversion
 
 **0.1.0**
+
+Stand 2026-09-28: Projektbasis unter `HelixPathPilot/` angelegt, mit
+Start-/Stop-Einstieg, leerer Command-Registrierung und Hilfsmodulen aus der
+unveränderten Vorlage. Version 0.1.0 bleibt ein Entwicklungsstand; die
+Helix-Erzeugung und der Laufzeittest in Fusion sind noch offen.
+Nächster Schritt: Basis-Command für die parametrische Helix.
+Ladeanleitung und manuelle Prüfschritte: [Entwicklung](development.md).
 
 # Version 0.2.x – Variable Helix
 

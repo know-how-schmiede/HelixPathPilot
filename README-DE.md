@@ -66,7 +66,11 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-HelixPathPilot befindet sich derzeit in der Konzept- und Entwicklungsphase.
+Die Projektbasis (0.1.0, Entwicklungsstand) liegt unter `HelixPathPilot/`.
+Sie enthält die Fusion-Einstiegspunkte, die Command-Registrierung und die Hilfsmodule der Vorlage.
+Die Helix-Erzeugung ist noch nicht implementiert. Die bereitgestellte Vorlage bleibt unter `Fusion_addin/` erhalten.
+
+Die [Entwicklungsanleitung](docs/development.md) beschreibt das Laden und die manuelle Prüfung in Fusion.
 
 Die genaue Funktionalität und Benutzeroberfläche kann sich während der Entwicklung verändern.
 

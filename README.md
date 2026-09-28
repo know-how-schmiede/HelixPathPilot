@@ -66,7 +66,11 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-HelixPathPilot is currently in the concept and development phase.
+The initial project scaffold (0.1.0, development) is available in `HelixPathPilot/`.
+It includes the Fusion entry points, command registry and template helpers.
+Helix generation is not implemented yet. The supplied template remains in `Fusion_addin/`.
+
+See [development setup and smoke checks](docs/development.md) for loading the add-in in Fusion.
 
 Features and user interface details may change during development.
 
