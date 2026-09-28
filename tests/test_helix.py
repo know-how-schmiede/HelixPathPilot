@@ -9,12 +9,14 @@ import runpy
 import sys
 import types
 import unittest
+import xml.etree.ElementTree as ET
 from unittest.mock import Mock, patch
 
 ROOT = Path(__file__).resolve().parents[1]
 ADDIN = ROOT / 'Fusion_addin' / 'HelixPathPilot'
 sys.path.insert(0, str(ADDIN.parent))
 from HelixPathPilot.core.helix_math import HelixParameters, helix_points
+from HelixPathPilot.core.axis import AxisFrame
 
 
 class HelixTests(unittest.TestCase):
@@ -68,6 +70,9 @@ class HelixTests(unittest.TestCase):
         version = runpy.run_path(str(ADDIN / 'version.py'))
         self.assertEqual(manifest['version'], version['VERSION'])
         self.assertTrue((ADDIN / manifest['iconFilename']).is_file())
+        for size in (16, 32, 64):
+            icon = ADDIN / 'resources/icons/helix' / f'{size}x{size}.svg'
+            self.assertEqual(ET.parse(icon).getroot().attrib['viewBox'], '0 0 32 32')
 
 
 class SketchAdapterTests(unittest.TestCase):
@@ -119,6 +124,13 @@ class SketchAdapterTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.adapter.create_sketch(self.design, HelixParameters(0, 5, 0.5))
         self.design.rootComponent.sketches.add.assert_not_called()
+
+    def test_selected_axis_is_applied_before_sketch_conversion(self):
+        self.adapter.create_sketch(self.design, HelixParameters(2, 5, 0.5),
+                                   AxisFrame((10, 20, 30), (1, 0, 0)))
+        points = self.sketch.sketchCurves.sketchFittedSplines.add.call_args.args[0]
+        for actual, expected in zip(points[-1], (15, 21, 30)):
+            self.assertAlmostEqual(actual, expected)
 
 
 if __name__ == '__main__':

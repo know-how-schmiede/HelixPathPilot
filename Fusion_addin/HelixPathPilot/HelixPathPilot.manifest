@@ -3,9 +3,9 @@
     "type": "addin",
     "author": "Know-How-Schmiede",
     "description": {
-        "": "Create constant-pitch helix curves around the global Z axis. Development version."
+        "": "Create constant-pitch helix curves around construction axes, straight edges or sketch lines. Development version."
     },
-    "version": "0.1.1",
+    "version": "0.1.2",
     "runOnStartup": false,
     "supportedOS": "windows|mac",
     "editEnabled": true,

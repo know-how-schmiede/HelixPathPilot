@@ -3,10 +3,11 @@
 import adsk.core
 
 from ...core.helix_math import helix_points
+from ...core.axis import AxisFrame
 
 
-def create_sketch(design, parameters):
-    coordinates = helix_points(parameters)
+def create_sketch(design, parameters, axis=None):
+    coordinates = (axis or AxisFrame()).transform(helix_points(parameters))
     root = design.rootComponent
     sketch = root.sketches.add(root.xYConstructionPlane)
     try:

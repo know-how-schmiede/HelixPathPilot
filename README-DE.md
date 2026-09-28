@@ -66,10 +66,12 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.1.1** liegt unter `Fusion_addin/HelixPathPilot/`.
-Der Command **Helix erstellen** erzeugt eine 3D-Spline um die globale Z-Achse
+Der Entwicklungsstand **0.1.2** liegt unter `Fusion_addin/HelixPathPilot/`.
+**Volumenkörper → Erstellen → HelixPathPilot v0.1.2** erzeugt eine 3D-Spline um eine gewählte Achse
 mit einstellbarem Durchmesser, Länge, Steigung, Drehrichtung und Startwinkel.
-Freie Achsauswahl und der Laufzeittest in Fusion stehen noch aus.
+Konstruktionsachsen, gerade Kanten und Skizzenlinien werden unterstützt;
+ohne Auswahl gilt die globale Z-Achse. Der Basis-Command wurde vom Benutzer
+bestätigt, die neue Achsauswahl ist noch in Fusion zu prüfen.
 Der Ordner `HelixPathPilot/` im Repo-Hauptverzeichnis ist der inaktive Altstand 0.1.0.
 
 Die [Entwicklungsanleitung](docs/development.md) beschreibt das Laden und die manuelle Prüfung in Fusion.

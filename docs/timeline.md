@@ -4,6 +4,19 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.1.2 – 2026-09-28 – Entwicklung
+
+**GitHub:** HelixPathPilot mit Versionsanzeige nach Volumenkörper → Erstellen
+verschoben und mit Helix-Icons für Menü und Symbolleiste ausgestattet.
+Freie Achsauswahl über Konstruktionsachsen, gerade Modellkanten und Skizzenlinien
+mit umkehrbarer Richtung ergänzt.
+
+- Buttonname aus `version.py`; Manifest auf 0.1.2 aktualisiert. Synchronisierungsskript und Versionstest sichern den Abgleich.
+- Ohne Auswahl weiterhin globale Z-Achse; räumliche Orientierung der Helix in der Hauptkomponente.
+- Skalierbare SVG-Icons und PNG-Dateien in 16, 32 und 64 Pixeln; Add-in-Listenicon angeglichen.
+- 19 automatisierte Tests bestanden. Neue Menüplatzierung und Achsauswahl noch in Fusion zu prüfen.
+- Benutzer bestätigt die grundsätzliche Funktion des bisherigen Basis-Commands 0.1.1.
+
 ## 0.1.1 – 2026-09-28 – Entwicklung
 
 **GitHub:** Basis-Command für Helices mit konstantem Durchmesser und konstanter

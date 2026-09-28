@@ -1,4 +1,6 @@
-"""Create a constant-pitch helix around the global Z axis."""
+"""Create a constant-pitch helix around a selected axis."""
+
+from pathlib import Path
 
 import adsk.core
 import adsk.fusion
@@ -6,12 +8,16 @@ import adsk.fusion
 from ... import config
 from ...core.helix_math import HelixParameters
 from ...lib import fusionAddInUtils as futil
+from ...version import APP_NAME, VERSION
 from .sketch_builder import create_sketch
+from .axis_selection import selected_axis
 
 CMD_ID = f'{config.COMPANY_NAME}_{config.ADDIN_NAME}_createParametricHelix'
-CMD_NAME = 'Helix erstellen'
+CMD_NAME = f'{APP_NAME} v{VERSION}'
 WORKSPACE_ID = 'FusionSolidEnvironment'
-PANEL_ID = 'SolidScriptsAddinsPanel'
+PANEL_ID = 'SolidCreatePanel'
+LEGACY_PANEL_ID = 'SolidScriptsAddinsPanel'
+ICON_FOLDER = str(Path(__file__).resolve().parents[2] / 'resources' / 'icons' / 'helix')
 _definition_handlers = []
 _sessions = []
 
@@ -26,14 +32,16 @@ def start():
     stop()
     panel = _panel(ui)
     if panel is None:
-        raise RuntimeError('Das Zusatzmodule-Panel im Design-Arbeitsbereich fehlt.')
+        raise RuntimeError('Das Erstellen-Panel im Volumenkörper-Bereich fehlt.')
     try:
         definition = ui.commandDefinitions.addButtonDefinition(
-            CMD_ID, CMD_NAME, 'Helix mit konstantem Durchmesser und konstanter Steigung erstellen.'
+            CMD_ID, CMD_NAME, 'Helix mit konstantem Durchmesser und konstanter Steigung erstellen.',
+            ICON_FOLDER,
         )
         futil.add_handler(definition.commandCreated, command_created,
                           local_handlers=_definition_handlers)
         control = panel.controls.addCommand(definition)
+        control.isPromotedByDefault = True
         control.isPromoted = True
     except Exception:
         stop()
@@ -42,10 +50,14 @@ def start():
 
 def stop():
     ui = adsk.core.Application.get().userInterface
-    panel = _panel(ui)
-    control = panel.controls.itemById(CMD_ID) if panel else None
-    if control:
-        control.deleteMe()
+    workspace = ui.workspaces.itemById(WORKSPACE_ID)
+    if workspace:
+        # Also remove a control left at the old location during an update.
+        for panel_id in (PANEL_ID, LEGACY_PANEL_ID):
+            panel = workspace.toolbarPanels.itemById(panel_id)
+            control = panel.controls.itemById(CMD_ID) if panel else None
+            if control:
+                control.deleteMe()
     definition = ui.commandDefinitions.itemById(CMD_ID)
     if definition:
         definition.deleteMe()
@@ -80,9 +92,17 @@ def command_created(args):
     command.isExecutedWhenPreEmpted = False
     inputs = command.commandInputs
     inputs.addTextBoxCommandInput(
-        'axis_info', '', 'Achse: globale Z-Achse. Ausgabe in der Hauptkomponente. '
-        'Die Länge wird entlang +Z gemessen; die Steigung gilt pro Windung.', 3, True
+        'axis_info', '', 'Ohne Auswahl: globale Z-Achse. Bei Linien beginnt die Helix am '
+        'Linienanfang, bei Konstruktionsachsen am Achsursprung. '
+        'Ausgabe in der Hauptkomponente; Steigung pro Windung.', 3, True
     )
+    axis_input = inputs.addSelectionInput('axis', 'Achse (optional)',
+                                          'Konstruktionsachse, gerade Kante oder Skizzenlinie wählen')
+    for selection_filter in ('ConstructionLines', 'LinearEdges', 'SketchLines'):
+        axis_input.addSelectionFilter(selection_filter)
+    axis_input.setSelectionLimits(0, 1)
+    axis_input.isUseCurrentSelections = False
+    inputs.addBoolValueInput('reverse_axis', 'Achsrichtung umkehren', True, '', False)
     units = design.unitsManager.defaultLengthUnits
     for name, label, default in (
         ('diameter', 'Durchmesser', '20 mm'),
@@ -100,6 +120,7 @@ def command_created(args):
     def validate(event):
         try:
             _parameters(inputs)
+            selected_axis(axis_input, inputs.itemById('reverse_axis').value)
             inputs.itemById('error').text = ''
             event.areInputsValid = True
         except ValueError as error:
@@ -108,7 +129,8 @@ def command_created(args):
 
     def execute(event):
         try:
-            create_sketch(design, _parameters(inputs))
+            axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
+            create_sketch(design, _parameters(inputs), axis)
         except Exception as error:
             event.executeFailed = True
             event.executeFailedMessage = str(error)

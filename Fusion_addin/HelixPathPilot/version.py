@@ -14,7 +14,7 @@ APP_AUTHOR = "Know-How-Schmiede"
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 1
-VERSION_PATCH = 1
+VERSION_PATCH = 2
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 __version__ = VERSION
@@ -22,7 +22,7 @@ __version__ = VERSION
 RELEASE_STAGE = "development"
 RELEASE_DATE = "2026-09-28"
 
-PROJECT_STATUS = "basic helix command / development"
+PROJECT_STATUS = "axis selection and toolbar integration / development"
 
 
 def get_version():
