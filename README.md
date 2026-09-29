@@ -66,7 +66,13 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-Development version **0.6.1** lives in `Fusion_addin/HelixPathPilot/`.
+Development version **0.6.3** lives in `Fusion_addin/HelixPathPilot/`.
+
+0.6.3 reduces unnecessary wire-clearance comparisons by choosing the least
+crowded sweep coordinate. Collision thresholds remain unchanged.
+
+0.6.2 adds repeated-interaction stability tests and fixes a logging regression
+found in the working tree. All 160 automated tests pass.
 
 0.6.1 adds timestamps and version labels to log entries and prevents logging
 failures from interrupting error handling.
@@ -94,7 +100,7 @@ section throughout the full chain.
 New Settings and Info tabs provide the G1 option, project logo and links.
 Surface Helix creates a 3D sketch on full cylindrical and conical faces with
 constant or linearly varying axial pitch, a fast preview and a choice of starting rim.
-**Solid → Create → HelixPathPilot v0.6.1** creates a 3D sketch around a selected axis.
+**Solid → Create → HelixPathPilot v0.6.3** creates a 3D sketch around a selected axis.
 Add or remove up to 32 sections with individual lengths, start/end diameters
 and start/end pitches. Handedness and start angle apply to the whole helix.
 “Achslänge übernehmen” fits the total length to a finite straight line or edge once.

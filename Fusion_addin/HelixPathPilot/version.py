@@ -14,7 +14,7 @@ APP_AUTHOR = "Know-How-Schmiede"
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 6
-VERSION_PATCH = 0
+VERSION_PATCH = 3
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 __version__ = VERSION
@@ -22,7 +22,7 @@ __version__ = VERSION
 RELEASE_STAGE = "development"
 RELEASE_DATE = "2026-09-29"
 
-PROJECT_STATUS = "output error recovery / development"
+PROJECT_STATUS = "adaptive wire clearance sweep / development"
 
 
 def get_version():

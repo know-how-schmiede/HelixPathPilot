@@ -6,6 +6,26 @@ from the distance test; their admissibility is checked by curvature instead.
 """
 
 import math
+import heapq
+
+
+def _sweep_axis(edges, clearance):
+    """Choose the coordinate with the fewest overlapping expanded intervals.
+
+    Counting via heaps is O(n log n), without enumerating candidate pairs.
+    This avoids comparing every turn with every other turn along a radial axis.
+    """
+    costs = []
+    for axis in range(3):
+        active, count = [], 0
+        for edge in sorted(edges, key=lambda e: e[5][axis]):
+            low = edge[5][axis]
+            while active and active[0] + clearance < low:
+                heapq.heappop(active)
+            count += len(active)
+            heapq.heappush(active, edge[6][axis])
+        costs.append(count)
+    return min(range(3), key=costs.__getitem__)
 
 
 def validate_diameter(diameter):
@@ -44,7 +64,7 @@ def check_clearance(points, diameter, tolerance):
     """Check a stroked curve with its stated chord tolerance.
 
     Reject contact as well as overlap, allowing two chord-error margins.
-    A sweep along x reduces pair checks; a work limit fails closed rather than
+    A sweep along the least crowded coordinate reduces pair checks; a work limit fails closed rather than
     hanging Fusion on exceptionally dense paths.
     """
     validate_diameter(diameter)
@@ -62,10 +82,12 @@ def check_clearance(points, diameter, tolerance):
         high = tuple(max(x, y) for x, y in zip(a, b))
         edges.append((low[0], high[0], index, a, b, low, high, length, length + step))
         length += step
+    axis = _sweep_axis(edges, clearance)
+    remaining_axes = tuple(k for k in range(3) if k != axis)
     active, checks = [], 0
-    for edge in sorted(edges):
-        low_x, _, index, a, b, low, high, start, end = edge
-        active = [other for other in active if other[1] + clearance >= low_x]
+    for edge in sorted(edges, key=lambda e: e[5][axis]):
+        _, _, index, a, b, low, high, start, end = edge
+        active = [other for other in active if other[6][axis] + clearance >= low[axis]]
         for other in active:
             checks += 1
             if checks > 2000000:
@@ -76,7 +98,7 @@ def check_clearance(points, diameter, tolerance):
             gap = max(start - finish, begin - end)
             if gap < math.pi * diameter / 2:
                 continue
-            if any(low[k] > hi[k] + clearance or lo[k] > high[k] + clearance for k in (1, 2)):
+            if any(low[k] > hi[k] + clearance or lo[k] > high[k] + clearance for k in remaining_axes):
                 continue
             if segment_distance(a, b, c, d) <= clearance:
                 raise ValueError('Drahtdurchmesser zu groß: Windungen oder Abschnitte berühren '

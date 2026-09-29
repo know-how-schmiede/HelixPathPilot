@@ -9,9 +9,10 @@
 #  AUTODESK, INC. DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 #  UNINTERRUPTED OR ERROR FREE.
 
-import os
+from datetime import datetime, timezone
 import traceback
 import adsk.core
+from ...version import APP_NAME, VERSION
 
 app = adsk.core.Application.get()
 ui = app.userInterface
@@ -33,17 +34,28 @@ def log(message: str, level: adsk.core.LogLevels = adsk.core.LogLevels.InfoLogLe
     force_console -- Forces the message to be written to the Text Command window. 
     """    
     # Always print to console, only seen through IDE.
-    print(message)  
+    timestamp = datetime.now(timezone.utc).isoformat(timespec='seconds')
+    message = f'[{timestamp}] [{APP_NAME} {VERSION}] {message}'
+    try:
+        print(message)
+    except Exception:
+        pass
 
     # Log all errors to Fusion log file.
     if level == adsk.core.LogLevels.ErrorLogLevel:
         log_type = adsk.core.LogTypes.FileLogType
-        app.log(message, level, log_type)
+        try:
+            app.log(message, level, log_type)
+        except Exception:
+            pass
 
     # If config.DEBUG is True write all log messages to the console.
     if DEBUG or force_console:
         log_type = adsk.core.LogTypes.ConsoleLogType
-        app.log(message, level, log_type)
+        try:
+            app.log(message, level, log_type)
+        except Exception:
+            pass
 
 
 def handle_error(name: str, show_message_box: bool = False):
@@ -56,9 +68,11 @@ def handle_error(name: str, show_message_box: bool = False):
                         and logged to the log file.                        
     """    
 
-    log('===== Error =====', adsk.core.LogLevels.ErrorLogLevel)
     log(f'{name}\n{traceback.format_exc()}', adsk.core.LogLevels.ErrorLogLevel)
 
     # If desired you could show an error as a message box.
     if show_message_box:
-        ui.messageBox(f'{name}\n{traceback.format_exc()}')
+        try:
+            ui.messageBox(f'{name}\n{traceback.format_exc()}')
+        except Exception:
+            pass

@@ -117,6 +117,41 @@ class DialogTests(unittest.TestCase):
         self.create = self.root.itemById('create_tab').children
         self.preset_fields = self.root.itemById('presets_tab').children.itemById('presets').children
 
+    def test_repeated_dialog_open_close_releases_sessions(self):
+        self.callbacks['destroy'](types.SimpleNamespace())
+        for _ in range(20):
+            self.command.commandInputs = Inputs()
+            self.entry.command_created(types.SimpleNamespace(command=self.command))
+            self.assertEqual(len(self.entry._sessions), 1)
+            self.assertEqual(len(self.entry._previews), 1)
+            self.callbacks['preview'](types.SimpleNamespace())
+            self.callbacks['destroy'](types.SimpleNamespace())
+            self.assertEqual(self.entry._sessions, [])
+            self.assertEqual(self.entry._previews, [])
+
+    def test_invalid_valid_mode_cycles_recover_without_creating_geometry(self):
+        mode = self.create.itemById('helix_mode')
+        angle = self.create.itemById('parameter_group').children.itemById('start_angle')
+        with patch.object(self.entry, 'create_sketch') as sketch:
+            for _ in range(10):
+                angle.isValidExpression = False
+                self.callbacks['changed'](types.SimpleNamespace(input=angle))
+                event = types.SimpleNamespace()
+                self.callbacks['validate'](event)
+                self.assertFalse(event.areInputsValid)
+                angle.isValidExpression = True
+                mode.listItems.item(1).isSelected = True
+                self.callbacks['changed'](types.SimpleNamespace(input=mode))
+                self.callbacks['validate'](event)
+                self.assertFalse(event.areInputsValid)  # Surface requires a face.
+                mode.listItems.item(0).isSelected = True
+                self.callbacks['changed'](types.SimpleNamespace(input=mode))
+                self.callbacks['validate'](event)
+                self.assertTrue(event.areInputsValid)
+                self.callbacks['preview'](event)
+                self.assertFalse(event.isValidResult)
+            sketch.assert_not_called()
+
     def test_wire_is_optional_and_sweeps_only_on_execute(self):
         enabled = self.create.itemById('wire_enabled')
         diameter = self.create.itemById('wire_diameter')

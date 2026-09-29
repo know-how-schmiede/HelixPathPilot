@@ -4,6 +4,26 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.6.3 – 2026-09-29 – Entwicklung
+
+**GitHub:** Drahtprüfung bei vielen Windungen beschleunigt: Prüfrichtung anhand
+der geringsten Anzahl überlappender Segmentintervalle wählen statt immer X.
+
+- Benutzer meldet Aufwandlimit aus einer installierten Version 0.6.0. Die alte radiale Vorauswahl zählt unnötig viele räumlich getrennte Windungspaare.
+- Kandidatenzahl in allen drei Koordinaten effizient vorab bestimmen; Abstandsberechnung, Kollisionsschwelle und Sicherheitslimits bleiben unverändert.
+- Regressionstest mit 50 Windungen und 12801 Punkten in drei Achslagen sowie Kollisionsfälle in drei Achslagen ergänzt. 162 Tests bestanden; konkretes Benutzermodell in Fusion noch prüfen.
+- Ältere Logging-Datei erneut im Arbeitsstand vorgefunden und korrigiert. Beim Aktualisieren vollständigen aktiven Add-in-Ordner verwenden und angezeigte Version kontrollieren.
+
+## 0.6.2 – 2026-09-29 – Entwicklung
+
+**GitHub:** Stabilitätstests für wiederholte Dialog-/Vorschauabläufe und
+Sweep-Fehler ergänzt. Dabei gefundene Logging-Regression korrigiert.
+
+- 20 Öffnen-/Schließen-Zyklen, zehn Wechsel zwischen ungültigen Eingaben und Modi sowie 30 Vorschauzyklen automatisiert geprüft; nach Dialogende keine registrierten Sitzungen/Vorschauen.
+- Ungültig gewordene Grafikgruppen werden neu erstellt; nicht geschlossene oder mehrteilige Sweep-Ergebnisse abgewiesen. Fehlgeschlagene Profilbereinigung verhindert den Löschversuch der Ebene nicht.
+- Im vorgefundenen Stand enthielt `general_utils.py` die alte Logging-Implementierung. Zeitstempel, Version und gegen Ausgabefehler geschützte Protokollierung wiederhergestellt; Ursache der Abweichung nicht festgestellt.
+- 160 automatisierte Tests bestanden. Native Fusion-Stabilität, Rückgängig und Langzeitverhalten bleiben manuell zu prüfen.
+
 ## 0.6.1 – 2026-09-29 – Entwicklung
 
 **GitHub:** Protokolleinträge um UTC-Zeitstempel und Add-in-Version ergänzt.

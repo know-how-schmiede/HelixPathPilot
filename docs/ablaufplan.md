@@ -192,7 +192,7 @@ Technische Qualität erhöhen und spätere Erweiterungen vorbereiten.
 - [~] Fehlerbehandlung verbessern (0.6.0: ursprüngliche Ursache bei Löschfehlern erhalten, alle Hilfsobjekte weiter bereinigen und Restobjekte benennen; automatisiert geprüft, Fusion-Test offen)
 - [x] Optionaler Sweep-Output vorgezogen auf Benutzerwunsch in 0.4.5: Drahtdurchmesser, numerische Vorprüfung und neuer Körper; Funktion in Fusion vom Benutzer bestätigt, Screenshots dokumentiert
 - [x] Logging verbessern (0.6.1: UTC-Zeitstempel, Version, zusammenhängende Fehlerdatensätze, Vorlagenfehler und gegen Ausgabefehler geschützter Handler; 154 Tests bestanden, native Fusion-Prüfung offen)
-- [ ] Stabilitätstests durchführen
+- [~] Stabilitätstests durchführen (0.6.2: 160 Tests bestanden, wiederholte Dialog-/Vorschauzyklen und Sweep-Fehler automatisiert geprüft; natives Fusion-Kurzprotokoll in der Entwicklungsanleitung offen)
 
 ## Zielversion
 
@@ -293,6 +293,7 @@ anschließend passende Geschwindigkeit und Vorschau sowie korrekte Abschnittsdur
 
 ## Weitere Ideen
 
+- [x] Aufwandlimit bei vielen Drahtwindungen adressieren (0.6.3: günstigste Prüfrichtung wählen; 50 Windungen in drei Achslagen automatisiert geprüft, gemeldetes Fusion-Modell noch prüfen)
 - [x] Helixlänge aus endlicher Skizzenlinie oder gerader Körperkante einmalig übernehmen (0.2.2): positive, endliche Länge prüfen, unendliche Konstruktionsachsen ausschließen, Abschnittslängen proportional skalieren. Fusion-Prüfung noch offen.
 - [x] direkter Sweep-Output (0.4.5, vom Benutzer in Fusion bestätigt; einzelne Grenzfälle weiterhin offen)
 - [x] Drahtdurchmesser als Komfortfunktion (0.4.5, beide Modi, numerische Selbstüberschneidungsprüfung)

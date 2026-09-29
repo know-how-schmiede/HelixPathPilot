@@ -90,6 +90,25 @@ class PreviewTests(unittest.TestCase):
         self.preview.clear()
         self.group.deleteMe.assert_called_once()
 
+    def test_repeated_preview_cycles_leave_no_cached_group(self):
+        for i in range(30):
+            self.preview.show(self.model, AxisFrame((i, 0, 0)))
+            self.preview.clear()
+            self.assertIsNone(self.preview.group)
+            self.assertIsNone(self.preview.key)
+        self.assertEqual(self.group.deleteMe.call_count, 30)
+        self.assertEqual(self.group.addLines.call_count, 90)
+
+    def test_rolled_back_group_is_recreated_even_with_identical_parameters(self):
+        self.preview.show(self.model, AxisFrame())
+        self.group.isValid = False
+        replacement = Mock()
+        self.design.rootComponent.customGraphicsGroups.add.return_value = replacement
+        self.preview.show(self.model, AxisFrame())
+        self.assertIs(self.preview.group, replacement)
+        self.assertEqual(replacement.addLines.call_count, 3)
+        self.group.deleteMe.assert_not_called()
+
     def test_failed_graphics_creation_cleans_up(self):
         self.group.addLines.side_effect = None
         self.group.addLines.return_value = None

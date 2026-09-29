@@ -1,6 +1,46 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.6.1 (development)
+## Aktiver Stand – 0.6.3 (development)
+
+### Aufwandlimit der Drahtprüfung (0.6.3)
+
+Die feste X-Prüfrichtung konnte viele Paare weit auseinanderliegender Windungen
+zählen und dadurch das Limit von zwei Millionen Kandidaten überschreiten.
+Jetzt werden die Intervallüberlappungen für X, Y und Z mit einer Heap-Struktur
+gezählt und die günstigste Richtung gewählt. Andere Koordinaten und der genaue
+Segmentabstand werden unverändert geprüft. Sicherheitsabstände und Limits sind
+nicht erhöht oder abgeschaltet. Sehr dichte Fälle können weiterhin am Limit scheitern.
+
+162 Tests bestanden, einschließlich einer 50-Windungen-Helix in drei Achslagen.
+Das gemeldete Fusion-Modell muss mit dem aktualisierten Add-in erneut geprüft werden.
+Das Benutzerprotokoll zeigte 0.6.0 aus dem installierten AddIns-Verzeichnis:
+Fusion beenden, den vollständigen Inhalt von `Fusion_addin/HelixPathPilot/` in
+die verwendete Installation übernehmen, Fusion neu starten und im Dialog
+**0.6.3** kontrollieren. Nur Dateien aus dem aktiven Quellordner verwenden,
+nicht den historischen Ordner `HelixPathPilot/` im Repository-Hauptverzeichnis.
+
+### Stabilitätsprüfungen (0.6.2)
+
+160 Tests bestanden. Neu sind wiederholte Dialog-/Vorschauzyklen, Wiederherstellung
+nach ungültigen Eingaben und Moduswechseln, durch Fusion ungültig gewordene
+Grafikgruppen sowie abgewiesene Sweep-Ergebnisse und teilweise fehlgeschlagene
+Bereinigung. Die Fusion-API wird dabei durch Test-Doubles ersetzt: Das prüft
+unsere Ablaufsteuerung, nicht native Speicherverwaltung oder CAD-Kernel-Stabilität.
+Die vollständige Suite fand außerdem eine ältere Logging-Implementierung im
+Arbeitsstand; die abgesicherte Fassung ist wiederhergestellt.
+
+Manuelles Kurzprotokoll in Fusion (offen):
+
+| Ablauf | Erwartung |
+| --- | --- |
+| Dialog zehnmal öffnen, Vorschau ändern und abbrechen | Keine Restskizzen oder Vorschaugrafiken |
+| Ungültige Eingabe korrigieren, Modi wechseln | Gültige Vorschau und OK werden wieder verfügbar |
+| Draht erstellen, rückgängig machen, erneut erstellen | Korrekte Körperausgabe ohne verbliebene Hilfsobjekte |
+| Zu großen Draht abweisen, anschließend kleineren erstellen | Verständlicher Hinweis, danach erfolgreiche Ausgabe |
+| Add-in stoppen und erneut starten | Ein Menüeintrag, keine alte Vorschau |
+
+Bei Rückmeldungen bitte Ablauf, Fusion-Version und Ergebnis angeben. Bisherige
+allgemeine Funktionsbestätigungen ersetzen diese noch offenen Einzelprüfungen nicht.
 
 ### Protokollierung (0.6.1)
 

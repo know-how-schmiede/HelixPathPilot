@@ -15,6 +15,20 @@ class ClearanceTests(unittest.TestCase):
         return [(math.cos(i*math.tau/256), math.sin(i*math.tau/256), pitch*i/256)
                 for i in range(turns*256+1)]
 
+    def test_many_turns_do_not_exhaust_budget_on_radial_coordinate(self):
+        points = self.helix(turns=50)
+        for permutation in ((0, 1, 2), (2, 0, 1), (1, 2, 0)):
+            with self.subTest(permutation=permutation):
+                transformed = [tuple(p[k] for k in permutation) for p in points]
+                check_clearance(transformed, 0.1, 0.0001)
+
+    def test_collision_detection_independent_of_sweep_coordinate(self):
+        points = self.helix()
+        for permutation in ((0, 1, 2), (2, 0, 1), (1, 2, 0)):
+            with self.subTest(permutation=permutation):
+                with self.assertRaisesRegex(ValueError, 'überschneiden'):
+                    check_clearance([tuple(p[k] for k in permutation) for p in points], 0.6, 0.0001)
+
     def test_valid_thin_wire(self):
         check_clearance(self.helix(), 0.1, 0.0001)
 
@@ -143,6 +157,26 @@ class WireBuilderTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, 'invalid'):
             self.builder.create_wire(self.design, self.sketch, 0.1)
         self.feature.deleteMe.assert_called_once()
+
+    def test_non_solid_or_multiple_bodies_are_rejected_and_cleaned(self):
+        for count, solid in ((0, True), (2, True), (1, False)):
+            with self.subTest(count=count, solid=solid):
+                self.feature.bodies.count = count
+                self.feature.bodies.item.return_value.isSolid = solid
+                self.feature.errorOrWarningMessage = 'unusable body'
+                self.feature.deleteMe.reset_mock()
+                with self.assertRaisesRegex(RuntimeError, 'unusable body'):
+                    self.builder.create_wire(self.design, self.sketch, 0.1)
+                self.feature.deleteMe.assert_called_once()
+
+    def test_partial_cleanup_keeps_kernel_cause_and_tries_plane(self):
+        self.design.rootComponent.features.sweepFeatures.add.side_effect = RuntimeError('kernel failure')
+        self.profile.deleteMe.side_effect = RuntimeError('profile locked')
+        with self.assertRaises(RuntimeError) as raised:
+            self.builder.create_wire(self.design, self.sketch, 0.1)
+        self.assertIn('kernel failure', str(raised.exception))
+        self.assertIn('profile locked', str(raised.exception))
+        self.plane.deleteMe.assert_called_once()
 
     def test_failed_evaluation_is_not_silently_accepted(self):
         self.spline.worldGeometry.evaluator.getStrokes.return_value = (False, [])
