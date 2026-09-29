@@ -163,6 +163,7 @@ class DialogTests(unittest.TestCase):
         fields = self.create.itemById('surface_group').children
         fields.itemById('surface_reverse').value = True
         fields.itemById('surface_offset').value = 0.5
+        fields.itemById('surface_pitch_end').value = 1.5
         event = types.SimpleNamespace()
         with patch.object(self.entry, 'selected_surface_profile', return_value=profile), \
              patch.object(self.entry, 'selected_surface_kind', return_value='Kegelmantelfläche'), \
@@ -172,7 +173,7 @@ class DialogTests(unittest.TestCase):
             self.callbacks['preview'](event)
             model, axis = self.graphics.show.call_args.args
             from HelixPathPilot.core.surface_helix import surface_helix
-            expected_model, expected_axis = surface_helix(profile, 0.5, reverse=True, offset=0.5)
+            expected_model, expected_axis = surface_helix(profile, 0.5, reverse=True, offset=0.5, pitch_end=1.5)
             self.assertEqual(model, expected_model)
             self.assertEqual(axis, expected_axis)
             create.assert_not_called()
@@ -180,6 +181,25 @@ class DialogTests(unittest.TestCase):
             self.assertEqual(create.call_args.args[1:], (model, axis))
             self.assertFalse(create.call_args.kwargs['tangent_joins'])
             self.assertEqual(create.return_value.name, 'HelixPathPilot – Surface Helix')
+            end_pitch = fields.itemById('surface_pitch_end')
+            end_pitch.isValidExpression = False
+            self.callbacks['changed'](types.SimpleNamespace(input=end_pitch))
+            self.graphics.clear.assert_called()
+            self.callbacks['validate'](event)
+            self.assertFalse(event.areInputsValid)
+            self.graphics.show.reset_mock()
+            self.callbacks['preview'](event)
+            self.graphics.show.assert_not_called()
+            create.reset_mock()
+            self.callbacks['execute'](event)
+            create.assert_not_called()
+            end_pitch.isValidExpression = True
+            self.callbacks['validate'](event)
+            self.assertTrue(event.areInputsValid)
+            end_pitch.value = -1
+            self.callbacks['validate'](event)
+            self.assertFalse(event.areInputsValid)
+            end_pitch.value = 1.5
             fields.itemById('surface_pitch').value = 0
             self.callbacks['validate'](event)
             self.assertFalse(event.areInputsValid)

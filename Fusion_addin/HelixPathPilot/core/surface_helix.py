@@ -8,10 +8,13 @@ from .helix_segments import HelixSegment, SegmentedHelix
 from .variable_helix import sampling_plan
 
 
-def surface_helix(profile, pitch, start_angle=0, right_handed=True, reverse=False, offset=0):
+def surface_helix(profile, pitch, start_angle=0, right_handed=True, reverse=False, offset=0,
+                  *, pitch_end=None):
     """Normal offset away from the axis; cone rims shift axially as well.
 
-    Pitch and axial span are unchanged. Offset direction does not depend on
+    Pitch varies linearly along axial travel from pitch to pitch_end (default:
+    constant pitch). Start/end pitches follow travel direction after reversal.
+    Pitch and axial span are unchanged by offset. Offset direction does not depend on
     face orientation (inside/outside of a solid) or helix travel direction.
     """
     _finite(offset, 'Surface Offset')
@@ -29,7 +32,8 @@ def surface_helix(profile, pitch, start_angle=0, right_handed=True, reverse=Fals
         origin = axis.transform([(0, 0, profile.length)])[0]
         axis = AxisFrame(origin, tuple(-v for v in axis.direction))
         first, last = last, first
-    model = SegmentedHelix((HelixSegment(profile.length, 2*first, 2*last, pitch, pitch),),
+    model = SegmentedHelix((HelixSegment(profile.length, 2*first, 2*last, pitch,
+                                        pitch if pitch_end is None else pitch_end),),
                            start_angle, right_handed)
     sampling_plan(model)
     return model, axis

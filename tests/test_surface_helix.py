@@ -9,10 +9,50 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'Fusion_addin'))
 from HelixPathPilot.core.axis import AxisFrame
 from HelixPathPilot.core.surface_profile import SurfaceProfile
 from HelixPathPilot.core.surface_helix import surface_helix
-from HelixPathPilot.core.variable_helix import segmented_points
+from HelixPathPilot.core.variable_helix import segmented_points, segment_turns
 
 
 class SurfaceHelixTests(unittest.TestCase):
+    def test_variable_pitch_angle_and_offset_mantle(self):
+        for radius_end in (2, 4, 1):
+            profile = SurfaceProfile(AxisFrame((10, 20, 30), (1, 2, 3)), 5, 2, radius_end)
+            direction = profile.axis.basis()[2]
+            slope = (radius_end - 2) / 5
+            for start, end in ((0.5, 1.5), (1.5, 0.5), (0.5, 0.5)):
+                for reverse in (False, True):
+                    for right in (False, True):
+                        for offset in (-0.25, 0, 0.75):
+                            model, axis = surface_helix(profile, start, 0.3, right,
+                                reverse, offset, pitch_end=end)
+                            points = segmented_points(model)[0]
+                            self.assertEqual(points[0][2], 0)
+                            self.assertEqual(points[-1][2], 5)
+                            self.assertEqual(model.segments[0].pitch_start, start)
+                            self.assertEqual(model.segments[0].pitch_end, end)
+                            expected_turns = 5/start if start == end else 5*math.log(end/start)/(end-start)
+                            self.assertAlmostEqual(segment_turns(model.segments[0]), expected_turns)
+                            for x, y, height in points:
+                                turns = height/start if start == end else 5*math.log1p(
+                                    (end-start)*height/(5*start))/(end-start)
+                                angle = 0.3 + (1 if right else -1)*math.tau*turns
+                                radius = math.hypot(x, y)
+                                self.assertAlmostEqual(x, radius*math.cos(angle))
+                                self.assertAlmostEqual(y, radius*math.sin(angle))
+                            for point in axis.transform(points):
+                                delta = tuple(point[i]-profile.axis.origin[i] for i in range(3))
+                                height = sum(a*b for a, b in zip(delta, direction))
+                                radius = math.hypot(*(delta[i]-height*direction[i] for i in range(3)))
+                                self.assertAlmostEqual((radius-2-slope*height)/math.hypot(1, slope), offset)
+
+    def test_invalid_end_pitch_and_variable_sampling_limit(self):
+        profile = SurfaceProfile(AxisFrame(), 5, 2, 2)
+        for end in (0, -1, math.nan, math.inf, True):
+            with self.assertRaises(ValueError):
+                surface_helix(profile, 1, pitch_end=end)
+        with self.assertRaises(ValueError):
+            surface_helix(profile, 0.001, pitch_end=0.002)
+        self.assertEqual(surface_helix(profile, 1), surface_helix(profile, 1, pitch_end=1))
+
     def test_cylinder_and_cone_on_tilted_axis_both_directions(self):
         for radius_end in (2, 4):
             profile = SurfaceProfile(AxisFrame((10, 20, 30), (1, 2, 3)), 5, 2, radius_end)

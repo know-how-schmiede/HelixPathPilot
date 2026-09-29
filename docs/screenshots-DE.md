@@ -8,11 +8,32 @@ müssen daher nicht dem aktuellen Entwicklungsstand entsprechen.
 
 ## Versionen
 
+- [v0.3.5](#v035) – variable Surface-Steigung auf Zylinder und Kegel
 - [v0.3.4](#v034) – Surface Offset und Vorschau mit positivem und negativem Abstand
 - [v0.3.3](#v033) – Surface Helix auf Zylinder und Kegel, Vorschau und Anwendungsbeispiele
 - [v0.2.3](#v023) – tangentiale Übergänge, drei Abschnitte und Zebraanalyse
 - [v0.2.2](#v022) – Anwendungsbeispiel und Abschnittsdialog
 - [v0.1.2](#v012) – Achsausrichtung, Parameterdialog, Menü und Symbolleiste
+
+## v0.3.5
+
+### Zunehmende Steigung am Zylinder
+
+Die Vorschau zeigt eine Startsteigung von 5 mm und eine Endsteigung von 30 mm
+bei 110 mm axialer Länge. Mit +5 mm Offset beträgt der Helixradius 55 mm;
+der Dialog zeigt 7,884 Windungen. Die Windungsabstände nehmen entlang der Laufrichtung zu.
+
+![Surface-Helix-Dialog v0.3.5 mit Zylindervorschau, Steigung 5 → 30 mm und 5 mm Offset](images/screenshots/v0.3.5/HelixPathPilot_v0-3-5_-00.png)
+
+### Abnehmende Steigung am Kegel
+
+Die Steigung nimmt von 20 mm auf 2 mm ab. Bei 60 mm axialer Länge und +5 mm
+Normalabstand zeigt der Dialog 7,675 Windungen sowie Helixradien von
+54,472 → 24,472 mm. Zum schmalen Ende hin liegen die Windungen dichter zusammen.
+
+![Surface-Helix-Dialog v0.3.5 mit Kegelvorschau, Steigung 20 → 2 mm und 5 mm Offset](images/screenshots/v0.3.5/HelixPathPilot_v0-3-5_-01.png)
+
+Der Benutzer bestätigt die Funktion der variablen Surface-Steigung in Fusion.
 
 ## v0.3.4
 

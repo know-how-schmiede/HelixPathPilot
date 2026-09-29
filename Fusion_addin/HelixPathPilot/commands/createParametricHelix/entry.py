@@ -113,8 +113,14 @@ def command_created(args):
     surface_input.setSelectionLimits(0, 1)
     surface_input.isUseCurrentSelections = False
     units = design.unitsManager.defaultLengthUnits
-    surface_pitch = surface_inputs.addValueInput('surface_pitch', 'Steigung', units,
+    surface_pitch = surface_inputs.addValueInput('surface_pitch', 'Startsteigung', units,
         adsk.core.ValueInput.createByReal(0.5))
+    surface_pitch_end = surface_inputs.addValueInput('surface_pitch_end', 'Endsteigung', units,
+        adsk.core.ValueInput.createByReal(0.5))
+    surface_pitch.tooltip = 'Axiale Steigung am gewählten Startrand; muss positiv sein.'
+    surface_pitch_end.tooltip = ('Steigung am Zielrand, linear entlang der axialen Länge. '
+        'Gleiche Start- und Endwerte ergeben konstante Steigung. '
+        'Beim Randwechsel gelten die Werte weiterhin in Laufrichtung.')
     surface_offset = surface_inputs.addValueInput('surface_offset', 'Surface Offset', units,
         adsk.core.ValueInput.createByReal(0.0))
     surface_offset.tooltip = ('Senkrechter Abstand zur Mantelfläche. Positiv: von der Achse weg; '
@@ -161,10 +167,12 @@ def command_created(args):
     _previews.append(graphics)
 
     def surface_parameters():
-        if any(not field.isValidExpression for field in (surface_pitch, surface_angle, surface_offset)):
+        if any(not field.isValidExpression for field in
+               (surface_pitch, surface_pitch_end, surface_angle, surface_offset)):
             raise ValueError('Bitte gültige Werte für Steigung, Startwinkel und Surface Offset eingeben.')
         return surface_helix(selected_surface_profile(surface_input), surface_pitch.value,
-            surface_angle.value, surface_right.value, surface_reverse.value, surface_offset.value)
+            surface_angle.value, surface_right.value, surface_reverse.value, surface_offset.value,
+            pitch_end=surface_pitch_end.value)
 
     def current_parameters():
         if mode.selectedItem.index == 1:

@@ -1,6 +1,30 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.3.4 (development)
+## Aktiver Stand – 0.3.5 (development)
+
+### Variable Surface-Steigung (0.3.5)
+
+Der Benutzer bestätigt die Funktion in Fusion. Zwei [Screenshots von 0.3.5](screenshots-DE.md#v035)
+zeigen zunehmende Steigung am Zylinder und abnehmende Steigung am Kegel,
+jeweils mit positivem Offset. Die folgenden Sonderfälle sind damit nicht einzeln bestätigt.
+
+Start- und Endsteigung sind unabhängig einstellbar (Standard jeweils 5 mm).
+Gleiche Werte ergeben konstante Steigung. Der Verlauf ist linear entlang der
+axialen Länge, nicht entlang des Drehwinkels. Beim Wechsel des Startrands
+bleiben Start-/Endwerte der jeweiligen Laufrichtung zugeordnet.
+Offset verändert diesen Verlauf und die Windungszahl nicht.
+Vorschau und Ausgabe verwenden dasselbe Modell; beide Steigungen müssen
+positiv und endlich sein. Die bisherigen Windungs-/Punktlimits bleiben aktiv.
+
+Manuell in Fusion prüfen (noch offen):
+
+- Zylinder R=10 mm, Länge=50 mm, Steigung 5 → 10 mm: etwa 6,931 Windungen;
+  bei 5 → 5 mm weiterhin 10 Windungen.
+- 10 → 5 mm, Randwechsel, Linksdrall und Startwinkel 90° prüfen.
+- Kegel mit zwei Kreisrändern: zunehmende/abnehmende Steigung mit positivem
+  und negativem Offset kombinieren; Vorschau mit finaler Skizze vergleichen.
+- Endsteigung 0, negativ oder ungültiger Ausdruck: Ausführen gesperrt,
+  alte Vorschau entfernt; gültigen Wert wiederherstellen.
 
 ### Surface Offset (0.3.4)
 
@@ -36,8 +60,8 @@ und anschließende Modellierungsbeispiele. Die unten genannten Sonderfälle
 sind damit nicht einzeln als geprüft dokumentiert.
 
 Im Modus „Surface Helix“ eine vollständige Zylinder- oder Kegelmantelfläche
-auswählen. Die Helix läuft über die gesamte erkannte axiale Länge mit konstant
-einstellbarer Steigung (Standard 5 mm pro Windung). Startwinkel und Drehrichtung
+auswählen. Die Helix läuft über die gesamte erkannte axiale Länge mit einstellbarer
+Start-/Endsteigung (Standard jeweils 5 mm pro Windung). Startwinkel und Drehrichtung
 beziehen sich auf die jeweilige Laufrichtung. „Am anderen Rand starten“ setzt
 den Ursprung zum gegenüberliegenden Rand und kehrt Achse sowie Radiusverlauf um.
 Die automatische Achse und Radien sind unabhängig von den verdeckten
@@ -47,7 +71,7 @@ Ausführen erzeugt `HelixPathPilot – Surface Helix` als einzelne 3D-Spline in
 der Hauptkomponente. Die berechneten Stützpunkte liegen auf der analytischen
 Mantelfläche; die Spline dazwischen ist eine Näherung. Es entsteht keine
 assoziative Bindung an den Körper. G1 hat bei dieser einzelnen Spline keine
-Wirkung. Surface Offset ist seit 0.3.4 enthalten; variable Surface-Steigung folgt.
+Wirkung. Surface Offset ist seit 0.3.4 enthalten; variable Surface-Steigung ist seit 0.3.5 enthalten.
 
 In Fusion prüfen: Zylinder Radius 10 mm / Länge 50 mm / Steigung 5 mm ergibt
 zehn Windungen. Kegelstumpf mit Radien 10 und 20 mm entsprechend prüfen;
@@ -118,7 +142,7 @@ geteilte Kreisränder und andere Flächentypen werden abgelehnt. Die Maßanzeige
 verwendet die Dokumenteinheit. Der Start liegt am Rand mit der kleineren
 Koordinate entlang der Flächenachse, nicht zwingend am räumlich unteren Rand.
 Bei gültiger Fläche und Steigung sind Vorschau und Skizzenausgabe verfügbar.
-Variable Steigung auf der Oberfläche folgt später; Offset ist seit 0.3.4 verfügbar.
+Variable Steigung auf der Oberfläche ist seit 0.3.5 verfügbar; Offset ist seit 0.3.4 verfügbar.
 
 Neue manuelle Prüffälle: Zylinder mit Radius 10 mm und Länge 50 mm ergibt
 50 mm / 10 mm / 10 mm; Kegelstumpf mit Radien 10 und 20 mm und Höhe 50 mm
@@ -204,7 +228,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.3.4** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.3.5** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -218,7 +242,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.3.4** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.3.5** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -276,7 +300,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 80 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 82 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

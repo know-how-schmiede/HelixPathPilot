@@ -8,11 +8,32 @@ development version. The Fusion interface in these screenshots is German.
 
 ## Versions
 
+- [v0.3.5](#v035) — variable Surface Helix pitch on cylinders and cones
 - [v0.3.4](#v034) — Surface Offset previews with positive and negative distances
 - [v0.3.3](#v033) — Surface Helix on cylinders and cones, previews and application examples
 - [v0.2.3](#v023) — tangent transitions, three-section example and zebra analysis
 - [v0.2.2](#v022) — application example and section editor
 - [v0.1.2](#v012) — axis alignment, parameter dialog, menu and toolbar
+
+## v0.3.5
+
+### Increasing pitch on a cylinder
+
+The preview shows a start pitch of 5 mm and an end pitch of 30 mm over an axial
+length of 110 mm. A +5 mm offset gives a helix radius of 55 mm; the dialog shows
+7.884 turns. Coil spacing increases along the direction of travel.
+
+![Surface Helix v0.3.5 dialog and cylinder preview with 5 → 30 mm pitch and a 5 mm offset](images/screenshots/v0.3.5/HelixPathPilot_v0-3-5_-00.png)
+
+### Decreasing pitch on a cone
+
+Pitch decreases from 20 mm to 2 mm. With an axial length of 60 mm and a +5 mm
+normal offset, the dialog shows 7.675 turns and helix radii of
+54.472 → 24.472 mm. The coils become more closely spaced toward the narrow end.
+
+![Surface Helix v0.3.5 dialog and cone preview with 20 → 2 mm pitch and a 5 mm offset](images/screenshots/v0.3.5/HelixPathPilot_v0-3-5_-01.png)
+
+The user has confirmed that variable Surface Helix pitch works in Fusion.
 
 ## v0.3.4
 

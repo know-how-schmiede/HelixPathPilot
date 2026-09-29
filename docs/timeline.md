@@ -4,6 +4,18 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.3.5 – 2026-09-29 – Entwicklung
+
+**GitHub:** Variable Steigung für Surface Helix ergänzt. Start- und Endsteigung
+verlaufen linear entlang der axialen Länge auf Zylinder- und Kegelmänteln,
+einschließlich Surface Offset, Randwechsel und schneller Vorschau.
+
+- Gleiche Werte erhalten konstante Steigung; Standard jeweils 5 mm. Start-/Endwerte gelten in Laufrichtung, auch nach Randwechsel.
+- Gemeinsame Berechnung für Vorschau und Skizzenausgabe; positive endliche Steigungen und bisherige Windungs-/Punktlimits werden geprüft.
+- 82 automatisierte Tests bestanden: analytischer Winkelverlauf, Mantelabstand auf schrägen Achsen, beide Steigungsverläufe, Drehrichtungen und Randwechsel sowie Dialogvalidierung und Vorschau-/Ausgabeübergabe.
+- Benutzer bestätigt die Funktion der variablen Surface-Steigung in Fusion; weitere Sonderfälle gemäß Entwicklungsanleitung bleiben offen. Nächster Schritt: Testmodelle definieren.
+- Zwei Screenshots von 0.3.5 in deutscher und englischer Galerie ergänzt: zunehmende Steigung am Zylinder und abnehmende Steigung am Kegel, jeweils mit positivem Offset. README-Vorschauen aktualisiert; Version unverändert.
+
 ## 0.3.4 – 2026-09-29 – Entwicklung
 
 **GitHub:** Surface Offset ergänzt. Helix-Pfade lassen sich mit positivem oder
