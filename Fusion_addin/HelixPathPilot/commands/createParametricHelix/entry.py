@@ -14,7 +14,7 @@ from .axis_selection import selected_axis, selected_axis_length
 from .segment_editor import SegmentEditor
 from .dialog_tabs import add_settings_and_info
 from .preview_graphics import HelixPreview
-from ..createSurfaceHelix.surface_selection import selected_surface_kind
+from ..createSurfaceHelix.surface_selection import selected_surface_kind, selected_surface_profile
 
 CMD_ID = f'{config.COMPANY_NAME}_{config.ADDIN_NAME}_createParametricHelix'
 CMD_NAME = f'{APP_NAME} v{VERSION}'
@@ -104,14 +104,14 @@ def command_created(args):
     surface_group.isVisible = False
     surface_inputs = surface_group.children
     surface_inputs.addTextBoxCommandInput('surface_help', '',
-        'Entwicklungsschritt: Zylinder- und Kegelmantelflächen erkennen. '
+        'Zylinder- und Kegelmantelflächen mit zwei vollständigen Kreisrändern prüfen. '
         'Hier wird noch keine Helix erzeugt; Ausführen bleibt gesperrt. '
         'Bitte eine einzelne Mantelfläche am Körper auswählen.', 3, True)
     surface_input = surface_inputs.addSelectionInput('surface', 'Mantelfläche', 'Mantelfläche auswählen')
     surface_input.addSelectionFilter('Faces')
     surface_input.setSelectionLimits(0, 1)
     surface_input.isUseCurrentSelections = False
-    surface_status = surface_inputs.addTextBoxCommandInput('surface_status', '', '', 3, True)
+    surface_status = surface_inputs.addTextBoxCommandInput('surface_status', '', '', 5, True)
     parameter_group = create_inputs.addGroupCommandInput('parameter_group', 'Helix-Parameter')
     parameter_group.isExpanded = True
     inputs = parameter_group.children
@@ -150,8 +150,14 @@ def command_created(args):
     def validate(event):
         if mode.selectedItem.index == 1:
             try:
-                surface_status.text = (selected_surface_kind(surface_input) + ' erkannt. '
-                    'Die Konturableitung und Helix-Berechnung folgen im nächsten Ausbau.')
+                kind = selected_surface_kind(surface_input)
+                profile = selected_surface_profile(surface_input)
+                fmt = lambda value: design.unitsManager.formatValue(value, units)
+                surface_status.text = (f'{kind}: vollständiger 360°-Mantel.\n'
+                    f'Axiale Länge: {fmt(profile.length)}\n'
+                    f'Startradius: {fmt(profile.radius_start)} · Endradius: {fmt(profile.radius_end)}\n'
+                    'Start am ersten Rand in Richtung der Flächenachse. '
+                    'Helix-Berechnung und Offset folgen im nächsten Ausbau.')
             except ValueError as error:
                 surface_status.text = str(error)
             event.areInputsValid = False

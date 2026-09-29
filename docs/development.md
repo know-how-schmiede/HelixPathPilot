@@ -1,6 +1,6 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.3.1 (development)
+## Aktiver Stand – 0.3.2 (development)
 
 ### Live-Vorschau und Abschnittsmarkierungen (0.3.1)
 
@@ -49,12 +49,28 @@ API-Grundlagen: [Fusion Custom Graphics](https://help.autodesk.com/cloudhelp/ENU
 gespeichert). „Info“ zeigt das mitgelieferte Logo, die zentrale Versionsnummer,
 Projektinformationen und anklickbare Links entsprechend der Layoutvorlage.
 
-Der neue Modus „Surface Helix – Flächenprüfung“ erlaubt die Auswahl einer
-einzelnen Körperfläche. Analytische Zylinder- und Kegelmantelflächen werden
-erkannt; andere Typen werden mit einem Hinweis abgelehnt. Eine erkannte Fläche
-ist noch nicht auf vollständige Umfangsabdeckung oder Beschnitt geprüft.
+Der Modus „Surface Helix – Flächenprüfung“ erlaubt die Auswahl einer einzelnen
+Körperfläche. Analytische Zylinder- und Kegelmäntel mit zwei vollständigen,
+koaxialen Kreisrändern werden geprüft. Die Randmittelpunkte werden auf die
+Flächenachse projiziert und entlang dieser Achse sortiert: ihre Differenz ergibt
+die axiale Länge, die Kreisradien ergeben Anfang und Ende des Radiusverlaufs.
+Die Vorschrift `radius_at(distance)` interpoliert innerhalb dieses Bereichs.
+Damit sind auch verschobene und schräge Achsen abgedeckt, ohne achsparallele
+Bounding Box oder Annahmen zur UV-Parametrisierung.
+
+Der Flächeninhalt muss zum vollen 360°-Mantel passen (relative Toleranz 1e-6,
+absolute Flächentoleranz 1e-8 cm²). Zusätzliche Konturen, Teilflächen, Spitzen,
+geteilte Kreisränder und andere Flächentypen werden abgelehnt. Die Maßanzeige
+verwendet die Dokumenteinheit. Der Start liegt am Rand mit der kleineren
+Koordinate entlang der Flächenachse, nicht zwingend am räumlich unteren Rand.
 Es gibt in diesem Modus noch keine Skizzenausgabe; Ausführen ist gesperrt.
-Konturableitung, variable Steigung auf der Oberfläche und Offset folgen später.
+Helix-Berechnung, variable Steigung auf der Oberfläche und Offset folgen später.
+
+Neue manuelle Prüffälle: Zylinder mit Radius 10 mm und Länge 50 mm ergibt
+50 mm / 10 mm / 10 mm; Kegelstumpf mit Radien 10 und 20 mm und Höhe 50 mm
+ergibt 50 mm und die beiden Radien in Achsreihenfolge. Beide Modelle auch
+schräg und in verschobenen Unterkomponenten prüfen. Halbmantel, Querbohrung,
+schräger Anschnitt und Kegelspitze müssen einen Ablehnungshinweis ergeben.
 
 Manuell in Fusion prüfen:
 
@@ -134,7 +150,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.3.1** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.3.2** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -148,7 +164,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.3.1** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.3.2** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -206,7 +222,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 68 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 74 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

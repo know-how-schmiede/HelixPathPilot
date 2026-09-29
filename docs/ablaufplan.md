@@ -106,8 +106,8 @@ Helix anhand einer Rotationsoberfläche bzw. eines Rotationskörpers erzeugen.
 ## Schritte
 
 - [x] Auswahl von Körper / Fläche vorbereiten (0.3.0: einzelne Mantelfläche am Körper)
-- [~] Prüfung auf geeignete Rotationsgeometrie einbauen (0.3.0: analytische Zylinder-/Kegelflächen erkennen; Beschnitt und weitere Rotationsflächen offen)
-- [ ] Radius aus Oberflächenkontur ableiten
+- [~] Prüfung auf geeignete Rotationsgeometrie einbauen (vollständige analytische Zylinder-/Kegelmäntel mit zwei Kreisrändern geprüft; weitere Rotationsflächen offen)
+- [x] Radius aus Oberflächenkontur ableiten (axiale Länge, Start-/Endradius, linearer Radiusverlauf; Fusion-Prüfung offen)
 - [ ] Helix auf der Oberfläche berechnen
 - [ ] Surface Offset integrieren
 - [ ] Kombination mit variabler Steigung ermöglichen
@@ -123,8 +123,11 @@ und Flächentypprüfung. Surface Helix erzeugt noch keine Geometrie; Ausführen
 bleibt in diesem Modus gesperrt. Parametrische Helices bleiben verfügbar.
 Zusätzlich umgesetzt: Dialogreiter „Helix erstellen“, „Einstellungen“ und
 „Info“ mit Logo, Versionsanzeige und Projektlinks nach Benutzervorlage.
-Nächster Implementierungsschritt: Radius und axialen Bereich aus der
-Oberflächenkontur ableiten; anschließend Oberflächenhelix und Offset.
+Erweiterung in 0.3.2: Radius und axialer Bereich werden
+aus zwei koaxialen Kreisrändern abgeleitet. Der Flächeninhalt wird mit dem
+vollständigen Zylinder-/Kegelmantel verglichen; Teilflächen und Ausschnitte
+werden abgelehnt. Kegelspitzen und geteilte Kreisränder sind noch nicht unterstützt.
+Nächster Implementierungsschritt: Oberflächenhelix berechnen, danach Offset.
 
 # Version 0.4.x – Presets
 
@@ -276,7 +279,7 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 - [x] Vorschau, Geschwindigkeit und Durchmesserverknüpfung der Abschnitte in Fusion prüfen (vom Benutzer bestätigt).
 - [ ] Weitere Sonderfälle in Fusion prüfen: Grenzmarkierungen beim Bearbeiten/Selektieren, Vorschau bei ungültigen Eingaben, Abbrechen, Moduswechsel und Rückgängig.
 
-Nächster Implementierungsschritt: weiterer Ausbau der Surface-Konturableitung.
+Surface-Konturableitung ist implementiert; nächster Schritt ist die Oberflächenhelix-Berechnung.
 
 Benutzer bestätigt die Mantelflächenerkennung. Gemeldete Eingabelatenz von
 15–20 Sekunden durch Ersatz der Skizzenvorschau adressiert; Benutzer bestätigt

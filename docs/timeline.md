@@ -4,6 +4,18 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.3.2 – 2026-09-29 – Entwicklung
+
+**GitHub:** Surface-Konturableitung ergänzt. Axiale Länge und Start-/Endradius
+werden aus den beiden Kreisrändern einer analytischen Mantelfläche abgeleitet
+und im Dialog angezeigt. Neues Fusion-unabhängiges Profilmodell mit linearem
+Radiusverlauf und Achsursprung am ersten Rand in Richtung der Flächenachse.
+Koaxialität, Randnormalen, positive Radien und vollständige Mantelfläche werden
+geprüft. Teilflächen, zusätzliche Ausschnitte, Kegelspitzen und geteilte Ränder
+werden vorerst abgewiesen. 74 Tests bestanden, einschließlich schräger und
+umgekehrter Achsen sowie Fusion-Adapter mit Testdoubles. Prüfung der neuen
+Maßanzeige in Fusion offen. Noch keine Surface-Helix-Ausgabe oder Offset.
+
 ## 0.3.1 – 2026-09-29 – Entwicklung
 
 **Performance-Korrektur ohne Versionsänderung:** Benutzer meldet 15–20 Sekunden
