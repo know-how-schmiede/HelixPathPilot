@@ -6,6 +6,14 @@ Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
 ## 0.6.3 – 2026-09-29 – Entwicklung
 
+**Installer-Nachtrag:** Auf Benutzerwunsch Windows-Paketierung vorgezogen:
+Inno-Setup-Skript, reproduzierbarer Build, eine zweisprachige EXE (Deutsch/Englisch)
+und SHA-256-Prüfsumme unter `installer/dist`. Moderne und bisherige Fusion-AddIns-Pfade
+berücksichtigt, bestehendes Ziel bevorzugt. Englische Installation, deutsches Update
+und Deinstallation im isolierten Testordner bestanden; jeweils 63 Datei-Hashes geprüft.
+Add-in-Version bleibt 0.6.3. Details und offene manuelle Prüfungen: [Installer](../installer/README.md).
+Benutzer bestätigt, dass der zuvor gemeldete Abbruch mit der aktualisierten Installation behoben ist.
+
 **GitHub:** Drahtprüfung bei vielen Windungen beschleunigt: Prüfrichtung anhand
 der geringsten Anzahl überlappender Segmentintervalle wählen statt immer X.
 

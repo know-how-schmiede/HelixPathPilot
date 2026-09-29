@@ -1,0 +1,14 @@
+HelixPathPilot for Autodesk Fusion (Windows)
+
+Save your work and close Fusion before installing or updating this add-in.
+Setup installs for the current Windows user; administrator rights are not required.
+
+The destination is the HelixPathPilot subfolder of Fusion's AddIns directory.
+Setup checks both Autodesk Fusion and Autodesk Fusion 360 under your roaming
+AppData folder, preferring an existing HelixPathPilot installation.
+If you configured a custom API folder in Fusion, select its AddIns\HelixPathPilot
+subfolder on the next page. Avoid creating a second installation in another folder.
+
+Updates replace packaged add-in files. Back up any custom code before updating.
+Personal presets in %APPDATA%\HelixPathPilot\presets are preserved.
+The installer supports English and German; the add-in interface is currently German.

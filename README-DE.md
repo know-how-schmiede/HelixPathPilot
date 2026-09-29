@@ -68,6 +68,9 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 Der Entwicklungsstand **0.6.3** liegt unter `Fusion_addin/HelixPathPilot/`.
 
+**Windows-Installer:** [EXE mit deutscher/englischer Sprachauswahl](installer/dist/HelixPathPilot-0.6.3-Windows-Setup.exe).
+[Installation, Build und geprüfte Fusion-Pfade](installer/README.md).
+
 0.6.3 reduziert unnötige Segmentvergleiche bei der Drahtprüfung durch eine
 automatisch gewählte Prüfrichtung. Die Kollisionsgrenzen bleiben unverändert.
 

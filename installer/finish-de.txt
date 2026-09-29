@@ -1,0 +1,11 @@
+Fusion neu starten und Dienstprogramme > Skripte und Add-Ins öffnen.
+Unter Add-Ins HelixPathPilot auswählen und auf Ausführen klicken.
+Optional Beim Start ausführen aktivieren.
+
+Der Befehl befindet sich unter Volumenkörper > Erstellen.
+Nach Updates die Versionsanzeige im Dialog kontrollieren.
+Fehlt der Eintrag, den installierten HelixPathPilot-Ordner über den Dialog
+Skripte und Add-Ins manuell hinzufügen.
+
+Deinstallation: Fusion schließen und Windows-Einstellungen > Apps > HelixPathPilot öffnen.
+Eigene Vorlagen und nicht von diesem Setup installierte Dateien bleiben erhalten.

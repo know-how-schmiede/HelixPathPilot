@@ -1,0 +1,11 @@
+Restart Fusion and open Utilities > Scripts and Add-Ins.
+Select HelixPathPilot under Add-Ins and click Run.
+Optionally enable Run on Startup.
+
+The command is available under Solid > Create.
+Check the version displayed in the dialog after updating.
+If the add-in is not listed, add the installed HelixPathPilot folder manually
+through Fusion's Scripts and Add-Ins dialog.
+
+To uninstall: close Fusion and use Windows Settings > Apps > HelixPathPilot.
+Personal presets and files not installed by this setup are preserved.

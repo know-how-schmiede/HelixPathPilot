@@ -68,6 +68,9 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 Development version **0.6.3** lives in `Fusion_addin/HelixPathPilot/`.
 
+**Windows installer:** [EXE with English/German language selection](installer/dist/HelixPathPilot-0.6.3-Windows-Setup.exe).
+[Installation, build instructions and Fusion paths](installer/README.md).
+
 0.6.3 reduces unnecessary wire-clearance comparisons by choosing the least
 crowded sweep coordinate. Collision thresholds remain unchanged.
 

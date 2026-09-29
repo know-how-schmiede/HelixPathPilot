@@ -246,15 +246,15 @@ Erstellung einer Setup EXE mit Inno Setup.
 
 ## Schritte
 
-- [ ] Installationsstruktur definieren
-- [ ] Dateien für Distribution zusammenstellen
-- [ ] Inno-Setup-Skript anlegen
-- [ ] Versionsnummern in Installer übernehmen
+- [x] Installationsstruktur definieren (vorgezogen für 0.6.3: pro Benutzer, beide Fusion-AddIns-Pfade, Ziel wählbar)
+- [x] Dateien für Distribution zusammenstellen (aktive Quellen, keine Caches/Editor-Konfiguration/lokalen Vorlagen)
+- [x] Inno-Setup-Skript anlegen (Deutsch/Englisch in einer EXE)
+- [x] Versionsnummern in Installer übernehmen (Build liest version.py und prüft Manifest)
 - [ ] Installer-Icon / Metadaten einbinden
-- [ ] Testinstallation durchführen
-- [ ] Deinstallation testen
-- [ ] Installationsanleitung dokumentieren
-- [ ] Release-Paket vorbereiten
+- [~] Testinstallation durchführen (englische Installation und deutsches Update im separaten Testordner bestanden; interaktive/zweiter-PC/Fusion-Start-Prüfung offen)
+- [x] Deinstallation testen (Paketdateien und Registrierung entfernt, unbekannte Testdatei erhalten)
+- [x] Installationsanleitung dokumentieren (installer/README.md, Deutsch/Englisch)
+- [x] Release-Paket vorbereiten (EXE und SHA-256 unter installer/dist; unsigniert, nicht veröffentlicht)
 
 ## Zielversion
 
