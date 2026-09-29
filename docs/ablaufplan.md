@@ -108,7 +108,7 @@ Helix anhand einer Rotationsoberfläche bzw. eines Rotationskörpers erzeugen.
 - [x] Auswahl von Körper / Fläche vorbereiten (0.3.0: einzelne Mantelfläche am Körper)
 - [~] Prüfung auf geeignete Rotationsgeometrie einbauen (vollständige analytische Zylinder-/Kegelmäntel mit zwei Kreisrändern geprüft; weitere Rotationsflächen offen)
 - [x] Radius aus Oberflächenkontur ableiten (axiale Länge, Start-/Endradius, linearer Radiusverlauf; Fusion-Prüfung offen)
-- [ ] Helix auf der Oberfläche berechnen
+- [x] Helix auf der Oberfläche berechnen (0.3.3: vollständige Zylinder-/Kegelmäntel, konstante Steigung, schnelle Vorschau und 3D-Skizzenausgabe; grundsätzliche Funktion vom Benutzer in Fusion bestätigt, Sonderfälle offen)
 - [ ] Surface Offset integrieren
 - [ ] Kombination mit variabler Steigung ermöglichen
 - [ ] Testmodelle definieren
@@ -127,7 +127,8 @@ Erweiterung in 0.3.2: Radius und axialer Bereich werden
 aus zwei koaxialen Kreisrändern abgeleitet. Der Flächeninhalt wird mit dem
 vollständigen Zylinder-/Kegelmantel verglichen; Teilflächen und Ausschnitte
 werden abgelehnt. Kegelspitzen und geteilte Kreisränder sind noch nicht unterstützt.
-Nächster Implementierungsschritt: Oberflächenhelix berechnen, danach Offset.
+Stand 0.3.3: Oberflächenhelix mit konstanter Steigung, Startwinkel, Drehrichtung
+und Randwechsel implementiert. Nächster Implementierungsschritt: Surface Offset.
 
 # Version 0.4.x – Presets
 
@@ -203,7 +204,7 @@ Projekt für Anwender und Mitwirkende verständlicher machen.
 - [ ] Dokumentation erweitern
 - [ ] Beispielanwendungen ergänzen
 - [ ] Beispiel-Presets anlegen
-- [~] Screenshots / Visuals einpflegen (v0.1.2, v0.2.2 und v0.2.3 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
+- [~] Screenshots / Visuals einpflegen (v0.1.2, v0.2.2, v0.2.3 und v0.3.3 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
 - [ ] Installationshinweise vorbereiten
 - [ ] Bedienkonzept prüfen
 - [ ] Benennungen und Texte im UI verbessern
@@ -279,7 +280,7 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 - [x] Vorschau, Geschwindigkeit und Durchmesserverknüpfung der Abschnitte in Fusion prüfen (vom Benutzer bestätigt).
 - [ ] Weitere Sonderfälle in Fusion prüfen: Grenzmarkierungen beim Bearbeiten/Selektieren, Vorschau bei ungültigen Eingaben, Abbrechen, Moduswechsel und Rückgängig.
 
-Surface-Konturableitung ist implementiert; nächster Schritt ist die Oberflächenhelix-Berechnung.
+Surface-Konturableitung und Oberflächenhelix sind implementiert; nächster Schritt ist Surface Offset.
 
 Benutzer bestätigt die Mantelflächenerkennung. Gemeldete Eingabelatenz von
 15–20 Sekunden durch Ersatz der Skizzenvorschau adressiert; Benutzer bestätigt

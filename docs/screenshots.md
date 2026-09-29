@@ -8,9 +8,41 @@ development version. The Fusion interface in these screenshots is German.
 
 ## Versions
 
+- [v0.3.3](#v033) — Surface Helix on cylinders and cones, previews and application examples
 - [v0.2.3](#v023) — tangent transitions, three-section example and zebra analysis
 - [v0.2.2](#v022) — application example and section editor
 - [v0.1.2](#v012) — axis alignment, parameter dialog, menu and toolbar
+
+## v0.3.3
+
+### Surface Helix on a cylinder
+
+Selected cylindrical face with helix preview and dialog: 110 mm axial length,
+50 mm radius, 10 mm pitch and 11 turns. The start angle is −45°.
+
+![HelixPathPilot v0.3.3 Surface Helix dialog and cylinder preview with 11 turns](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-00.png)
+
+### Surface Helix on a truncated cone
+
+The dialog shows a 60 mm axial length, radii changing from 50 to 20 mm and six
+turns at a pitch of 10 mm. The selected face and preview path are visible in the model.
+
+![Surface Helix v0.3.3 dialog with a conical face, six turns and radii from 50 to 20 mm](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-03.png)
+
+### Applications of the generated paths
+
+These examples show a helical groove on a truncated cone, a magenta winding
+with a rectangular cross-section around a cone and a round-section winding
+around a cylinder. HelixPathPilot generates sketch paths; the illustrated
+bodies and grooves are created in subsequent modeling steps in Fusion.
+
+![Truncated cone with a helical groove using a Surface Helix path](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-01.png)
+
+![Magenta rectangular-section winding around a green truncated cone](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-02.png)
+
+![Magenta round-section winding around a green cylinder](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-04.png)
+
+The user has confirmed that basic Surface Helix generation works in Fusion.
 
 ## v0.2.3
 

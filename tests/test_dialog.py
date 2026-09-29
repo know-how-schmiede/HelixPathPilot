@@ -153,3 +153,31 @@ class DialogTests(unittest.TestCase):
         self.callbacks['destroy'](types.SimpleNamespace())
         self.assertEqual(self.graphics.clear.call_count, 2)
         self.assertEqual(self.entry._previews, [])
+
+    def test_surface_preview_and_output_use_face_profile_not_hidden_parameters(self):
+        from HelixPathPilot.core.axis import AxisFrame
+        from HelixPathPilot.core.surface_profile import SurfaceProfile
+        profile = SurfaceProfile(AxisFrame((10, 0, 0), (0, 1, 0)), 5, 2, 4)
+        self.create.itemById('helix_mode').selectedItem.index = 1
+        self.create.itemById('parameter_group').children.itemById('start_angle').isValidExpression = False
+        fields = self.create.itemById('surface_group').children
+        fields.itemById('surface_reverse').value = True
+        event = types.SimpleNamespace()
+        with patch.object(self.entry, 'selected_surface_profile', return_value=profile), \
+             patch.object(self.entry, 'selected_surface_kind', return_value='Kegelmantelfläche'), \
+             patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['validate'](event)
+            self.assertTrue(event.areInputsValid)
+            self.callbacks['preview'](event)
+            model, axis = self.graphics.show.call_args.args
+            self.assertEqual(model.segments[0].diameter_start, 8)
+            self.assertEqual(model.segments[0].diameter_end, 4)
+            self.assertEqual(axis.origin, (10, 5, 0))
+            create.assert_not_called()
+            self.callbacks['execute'](event)
+            self.assertEqual(create.call_args.args[1:], (model, axis))
+            self.assertFalse(create.call_args.kwargs['tangent_joins'])
+            self.assertEqual(create.return_value.name, 'HelixPathPilot – Surface Helix')
+            fields.itemById('surface_pitch').value = 0
+            self.callbacks['validate'](event)
+            self.assertFalse(event.areInputsValid)

@@ -66,14 +66,14 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-Development version **0.3.2** lives in `Fusion_addin/HelixPathPilot/`.
+Development version **0.3.3** lives in `Fusion_addin/HelixPathPilot/`.
 Parametric and variable helices now have an optional live preview. Point display
 is reduced to section boundaries, and start diameters follow the preceding
 section throughout the full chain.
 New Settings and Info tabs provide the G1 option, project logo and links.
-The initial Surface Helix mode checks cylinder and cone faces; it does not yet
-generate a surface helix. Parametric helix output remains available.
-**Solid → Create → HelixPathPilot v0.3.2** creates a 3D sketch around a selected axis.
+Surface Helix creates a 3D sketch on full cylindrical and conical faces with
+constant pitch, a fast preview and a choice of starting rim.
+**Solid → Create → HelixPathPilot v0.3.3** creates a 3D sketch around a selected axis.
 Add or remove up to 32 sections with individual lengths, start/end diameters
 and start/end pitches. Handedness and start angle apply to the whole helix.
 “Achslänge übernehmen” fits the total length to a finite straight line or edge once.
@@ -91,12 +91,12 @@ Features and user interface details may change during development.
 
 ## Screenshots
 
-Improved section transition in **v0.2.3**, shown with zebra analysis on a subsequently modeled sweep in Fusion:
+Surface Helix in **v0.3.3**: cylinder preview with the selected face and parameter dialog.
 
-[![Zebra analysis highlighting a section transition, HelixPathPilot v0.2.3](docs/images/screenshots/c0-2-3/HelixPathPilot_v0-2-3_-03.png)](docs/screenshots.md#v023)
+[![Surface Helix cylinder preview, HelixPathPilot v0.3.3](docs/images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-00.png)](docs/screenshots.md#v033)
 
-See the [versioned screenshot gallery](docs/screenshots.md) for the section editor
-and earlier versions, including the Create menu and toolbar. Screenshots document the version shown; newer versions
+See the [versioned screenshot gallery](docs/screenshots.md) for cone and winding examples
+and earlier versions, including the section editor, Create menu and toolbar. Screenshots document the version shown; newer versions
 may look different.
 
 ## Additional Project Documents

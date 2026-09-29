@@ -7,6 +7,7 @@ import adsk.fusion
 
 from ... import config
 from ...core.variable_helix import sampling_plan
+from ...core.surface_helix import surface_helix
 from ...lib import fusionAddInUtils as futil
 from ...version import APP_NAME, VERSION
 from .sketch_builder import create_sketch
@@ -98,19 +99,26 @@ def command_created(args):
     mode = create_inputs.addDropDownCommandInput(
         'helix_mode', 'Modus', adsk.core.DropDownStyles.TextListDropDownStyle)
     mode.listItems.add('Parametrische Helix', True)
-    mode.listItems.add('Surface Helix – Flächenprüfung', False)
-    surface_group = create_inputs.addGroupCommandInput('surface_group', 'Surface Helix – Grundlage')
+    mode.listItems.add('Surface Helix', False)
+    surface_group = create_inputs.addGroupCommandInput('surface_group', 'Surface Helix')
     surface_group.isExpanded = True
     surface_group.isVisible = False
     surface_inputs = surface_group.children
     surface_inputs.addTextBoxCommandInput('surface_help', '',
-        'Zylinder- und Kegelmantelflächen mit zwei vollständigen Kreisrändern prüfen. '
-        'Hier wird noch keine Helix erzeugt; Ausführen bleibt gesperrt. '
-        'Bitte eine einzelne Mantelfläche am Körper auswählen.', 3, True)
+        'Zylinder- oder Kegelmantel mit zwei vollständigen Kreisrändern auswählen. '
+        'Länge und Radius folgen der Fläche. Die Steigung bezeichnet den axialen '
+        'Abstand pro Windung. Ausgabe als angenäherte 3D-Spline.', 3, True)
     surface_input = surface_inputs.addSelectionInput('surface', 'Mantelfläche', 'Mantelfläche auswählen')
     surface_input.addSelectionFilter('Faces')
     surface_input.setSelectionLimits(0, 1)
     surface_input.isUseCurrentSelections = False
+    units = design.unitsManager.defaultLengthUnits
+    surface_pitch = surface_inputs.addValueInput('surface_pitch', 'Steigung', units,
+        adsk.core.ValueInput.createByReal(0.5))
+    surface_angle = surface_inputs.addValueInput('surface_angle', 'Startwinkel', 'deg',
+        adsk.core.ValueInput.createByReal(0.0))
+    surface_right = surface_inputs.addBoolValueInput('surface_right', 'Rechtsdrehend', True, '', True)
+    surface_reverse = surface_inputs.addBoolValueInput('surface_reverse', 'Am anderen Rand starten', True, '', False)
     surface_status = surface_inputs.addTextBoxCommandInput('surface_status', '', '', 5, True)
     parameter_group = create_inputs.addGroupCommandInput('parameter_group', 'Helix-Parameter')
     parameter_group.isExpanded = True
@@ -147,20 +155,34 @@ def command_created(args):
     graphics = HelixPreview(design)
     _previews.append(graphics)
 
+    def surface_parameters():
+        if not surface_pitch.isValidExpression or not surface_angle.isValidExpression:
+            raise ValueError('Bitte gültige Werte für Steigung und Startwinkel eingeben.')
+        return surface_helix(selected_surface_profile(surface_input), surface_pitch.value,
+            surface_angle.value, surface_right.value, surface_reverse.value)
+
+    def current_parameters():
+        if mode.selectedItem.index == 1:
+            return surface_parameters()
+        return (_parameters(inputs, editor),
+                selected_axis(axis_input, inputs.itemById('reverse_axis').value))
+
     def validate(event):
         if mode.selectedItem.index == 1:
             try:
                 kind = selected_surface_kind(surface_input)
                 profile = selected_surface_profile(surface_input)
+                model, _ = surface_parameters()
                 fmt = lambda value: design.unitsManager.formatValue(value, units)
                 surface_status.text = (f'{kind}: vollständiger 360°-Mantel.\n'
                     f'Axiale Länge: {fmt(profile.length)}\n'
                     f'Startradius: {fmt(profile.radius_start)} · Endradius: {fmt(profile.radius_end)}\n'
-                    'Start am ersten Rand in Richtung der Flächenachse. '
-                    'Helix-Berechnung und Offset folgen im nächsten Ausbau.')
+                    f'Windungen: {sum(t for t, _ in sampling_plan(model)):.3f}\n'
+                    'Radiuswerte in Flächenachsrichtung; Randwechsel kehrt die Laufrichtung um.')
+                event.areInputsValid = True
             except ValueError as error:
                 surface_status.text = str(error)
-            event.areInputsValid = False
+                event.areInputsValid = False
             return
         try:
             model = _parameters(inputs, editor)
@@ -176,28 +198,29 @@ def command_created(args):
             event.areInputsValid = False
 
     def build_current_sketch():
+        model, axis = current_parameters()
+        sketch = create_sketch(design, model, axis,
+            tangent_joins=tangent_joins.value if mode.selectedItem.index == 0 else False)
         if mode.selectedItem.index == 1:
-            raise ValueError('Surface Helix bietet derzeit nur die Flächenprüfung; keine Skizzenausgabe.')
-        axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
-        return create_sketch(design, _parameters(inputs, editor), axis,
-                             tangent_joins=tangent_joins.value)
+            sketch.name = 'HelixPathPilot – Surface Helix'
+        return sketch
 
     def preview(event):
         # Graphics are not a final result. Only execute creates the real sketch.
         event.isValidResult = False
         preview_status.text = ''
-        if editor.busy or not live_preview.value or mode.selectedItem.index == 1:
+        if editor.busy or not live_preview.value:
             graphics.clear()
             return
         try:
-            model = _parameters(inputs, editor)
-            axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
+            model, axis = current_parameters()
             graphics.show(model, axis)
-            if tangent_joins.value:
+            if tangent_joins.value and mode.selectedItem.index == 0:
                 preview_status.text = 'Pfadvorschau; G1-Übergänge werden beim Erstellen angeglichen.'
         except Exception as error:
             graphics.clear()
-            preview_status.text = f'Vorschau nicht verfügbar: {error}'
+            status = surface_status if mode.selectedItem.index == 1 else preview_status
+            status.text = f'Vorschau nicht verfügbar: {error}'
 
     def execute(event):
         try:
@@ -213,8 +236,8 @@ def command_created(args):
             return
         try:
             changed_id = event.input.id
-            if (changed_id.startswith(('section_', 'remove_section_')) or changed_id in
-                    ('helix_mode', 'live_preview', 'axis', 'reverse_axis', 'start_angle',
+            if (changed_id.startswith(('section_', 'remove_section_', 'surface_')) or changed_id in
+                    ('surface', 'helix_mode', 'live_preview', 'axis', 'reverse_axis', 'start_angle',
                      'right_handed', 'fit_axis_length', 'add_section')):
                 # Also remove stale graphics for invalid expressions, for which
                 # Fusion may not send executePreview at all.

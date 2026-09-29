@@ -1,6 +1,35 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.3.2 (development)
+## Aktiver Stand – 0.3.3 (development)
+
+### Surface Helix erzeugen (0.3.3)
+
+Die grundsätzliche Funktion wurde vom Benutzer in Fusion bestätigt. Fünf
+[Screenshots von 0.3.3](screenshots-DE.md#v033) dokumentieren Zylinder-/Kegelvorschau
+und anschließende Modellierungsbeispiele. Die unten genannten Sonderfälle
+sind damit nicht einzeln als geprüft dokumentiert.
+
+Im Modus „Surface Helix“ eine vollständige Zylinder- oder Kegelmantelfläche
+auswählen. Die Helix läuft über die gesamte erkannte axiale Länge mit konstant
+einstellbarer Steigung (Standard 5 mm pro Windung). Startwinkel und Drehrichtung
+beziehen sich auf die jeweilige Laufrichtung. „Am anderen Rand starten“ setzt
+den Ursprung zum gegenüberliegenden Rand und kehrt Achse sowie Radiusverlauf um.
+Die automatische Achse und Radien sind unabhängig von den verdeckten
+parametrischen Eingaben. Die Grafikvorschau bleibt leichtgewichtig.
+
+Ausführen erzeugt `HelixPathPilot – Surface Helix` als einzelne 3D-Spline in
+der Hauptkomponente. Die berechneten Stützpunkte liegen auf der analytischen
+Mantelfläche; die Spline dazwischen ist eine Näherung. Es entsteht keine
+assoziative Bindung an den Körper. G1 hat bei dieser einzelnen Spline keine
+Wirkung. Surface Offset und variable Surface-Steigung sind noch nicht enthalten.
+
+In Fusion prüfen: Zylinder Radius 10 mm / Länge 50 mm / Steigung 5 mm ergibt
+zehn Windungen. Kegelstumpf mit Radien 10 und 20 mm entsprechend prüfen;
+Startrand wechseln, Linksdrall und Startwinkel 90° testen. Beide Formen auch
+schräg und in Unterkomponenten prüfen. Oberfläche gegen die fertige Spline
+kontrollieren. Ungültige Fläche, Steigung null oder mehr als 128 Windungen
+müssen Ausführen sperren. Vorschau aus/ein, Moduswechsel, Abbrechen, Erstellen
+und Rückgängig prüfen; genau eine Skizze darf entstehen.
 
 ### Live-Vorschau und Abschnittsmarkierungen (0.3.1)
 
@@ -18,8 +47,7 @@ abweichen und wird im Dialog entsprechend angekündigt. Unveränderte Grafik
 wird wiederverwendet, sofern Fusion sie nicht bereits zurückgerollt hat.
 Ungültige Eingaben, Abschalten, Moduswechsel und Dialogende entfernen die Grafik.
 `isValidResult` bleibt false: Erst Ausführen erzeugt die echte Skizze mit G1.
-Surface Helix
-bleibt eine reine Flächenprüfung ohne Vorschau oder Ausgabe.
+Surface Helix verwendet seit 0.3.3 ebenfalls diese Vorschau und Skizzenausgabe.
 
 Die Skizze behält alle Spline-Stützpunkte für unveränderte Abtastgenauigkeit.
 `arePointsShown = False` blendet die verbundenen Punkte aus. Separate,
@@ -49,7 +77,7 @@ API-Grundlagen: [Fusion Custom Graphics](https://help.autodesk.com/cloudhelp/ENU
 gespeichert). „Info“ zeigt das mitgelieferte Logo, die zentrale Versionsnummer,
 Projektinformationen und anklickbare Links entsprechend der Layoutvorlage.
 
-Der Modus „Surface Helix – Flächenprüfung“ erlaubt die Auswahl einer einzelnen
+Der Modus „Surface Helix“ erlaubt die Auswahl einer einzelnen
 Körperfläche. Analytische Zylinder- und Kegelmäntel mit zwei vollständigen,
 koaxialen Kreisrändern werden geprüft. Die Randmittelpunkte werden auf die
 Flächenachse projiziert und entlang dieser Achse sortiert: ihre Differenz ergibt
@@ -63,8 +91,8 @@ absolute Flächentoleranz 1e-8 cm²). Zusätzliche Konturen, Teilflächen, Spitz
 geteilte Kreisränder und andere Flächentypen werden abgelehnt. Die Maßanzeige
 verwendet die Dokumenteinheit. Der Start liegt am Rand mit der kleineren
 Koordinate entlang der Flächenachse, nicht zwingend am räumlich unteren Rand.
-Es gibt in diesem Modus noch keine Skizzenausgabe; Ausführen ist gesperrt.
-Helix-Berechnung, variable Steigung auf der Oberfläche und Offset folgen später.
+Bei gültiger Fläche und Steigung sind Vorschau und Skizzenausgabe verfügbar.
+Variable Steigung auf der Oberfläche und Offset folgen später.
 
 Neue manuelle Prüffälle: Zylinder mit Radius 10 mm und Länge 50 mm ergibt
 50 mm / 10 mm / 10 mm; Kegelstumpf mit Radien 10 und 20 mm und Höhe 50 mm
@@ -78,7 +106,7 @@ Manuell in Fusion prüfen:
 - G1 in „Einstellungen“ deaktivieren, zurückwechseln und eine mehrteilige Helix erstellen.
 - Zwischen den Modi wechseln: Parametereingaben bleiben erhalten; nur die jeweiligen Auswahlfelder sind sichtbar.
 - Zylinder- und Kegelmantelfläche erkennen lassen; ebene Stirnfläche, Kugel und Freiformfläche ablehnen lassen. Auch Flächen in Unterkomponenten prüfen.
-- Auswahl entfernen: Auswahlhinweis. In Surface-Prüfung bleibt Ausführen immer gesperrt, auch auf dem Info-Reiter.
+- Auswahl entfernen: Auswahlhinweis und gesperrtes Ausführen, auch auf dem Info-Reiter. Mit gültiger Fläche und Steigung muss Ausführen möglich sein.
 - Zum parametrischen Modus zurückkehren und erstellen, abbrechen sowie rückgängig machen.
 
 UI-Grundlage: [Autodesk Command Inputs](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/CommandInputs_UM.htm).
@@ -150,7 +178,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.3.2** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.3.3** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -164,7 +192,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.3.2** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.3.3** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -222,7 +250,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 74 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 78 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

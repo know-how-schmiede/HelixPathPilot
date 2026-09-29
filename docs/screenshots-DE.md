@@ -8,9 +8,42 @@ müssen daher nicht dem aktuellen Entwicklungsstand entsprechen.
 
 ## Versionen
 
+- [v0.3.3](#v033) – Surface Helix auf Zylinder und Kegel, Vorschau und Anwendungsbeispiele
 - [v0.2.3](#v023) – tangentiale Übergänge, drei Abschnitte und Zebraanalyse
 - [v0.2.2](#v022) – Anwendungsbeispiel und Abschnittsdialog
 - [v0.1.2](#v012) – Achsausrichtung, Parameterdialog, Menü und Symbolleiste
+
+## v0.3.3
+
+### Surface Helix auf einem Zylinder
+
+Ausgewählte Zylindermantelfläche mit Helix-Vorschau und Dialog: 110 mm axiale
+Länge, 50 mm Radius, 10 mm Steigung und 11 Windungen. Der Startwinkel beträgt −45°.
+
+![Surface-Helix-Dialog v0.3.3 und Vorschau auf einem Zylinder mit 11 Windungen](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-00.png)
+
+### Surface Helix auf einem Kegelstumpf
+
+Der Dialog zeigt 60 mm axiale Länge, einen Radiusverlauf von 50 auf 20 mm und
+sechs Windungen bei 10 mm Steigung. Die ausgewählte Mantelfläche und der
+vorgezeichnete Helix-Pfad sind im Modell sichtbar.
+
+![Surface-Helix-Dialog v0.3.3 mit Kegelmantel, sechs Windungen und Radiusverlauf von 50 auf 20 mm](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-03.png)
+
+### Anwendungsbeispiele mit den erzeugten Pfaden
+
+Die Bilder zeigen eine spiralförmige Nut am Kegelstumpf, einen magentafarbenen
+Wickelkörper am Kegel und eine Wicklung mit rundem Querschnitt am Zylinder.
+HelixPathPilot erzeugt die Skizzenpfade; die gezeigten Körper und Nuten entstehen
+in anschließenden Modellierungsschritten in Fusion.
+
+![Kegelstumpf mit spiralförmiger Nut als Anwendungsbeispiel eines Surface-Helix-Pfades](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-01.png)
+
+![Magentafarbener Wickelkörper mit rechteckigem Querschnitt um einen grünen Kegelstumpf](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-02.png)
+
+![Magentafarbene Wicklung mit rundem Querschnitt um einen grünen Zylinder](images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-04.png)
+
+Die grundsätzliche Funktion der Surface-Helix-Erzeugung wurde vom Benutzer bestätigt.
 
 ## v0.2.3
 

@@ -4,6 +4,19 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.3.3 – 2026-09-29 – Entwicklung
+
+**GitHub:** Surface Helix erzeugt jetzt eine angenäherte 3D-Spline auf vollständigen
+Zylinder- und Kegelmänteln. Einstellbar sind konstante axiale Steigung, Startwinkel,
+Drehrichtung und Startrand. Schnelle Grafikvorschau ohne Skizzenberechnung.
+
+- Radiusverlauf, Achse und Länge stammen aus der ausgewählten Fläche. Randwechsel verschiebt den Ursprung zum anderen Rand und kehrt Achse und Radiusverlauf um.
+- Gemeinsame Abtastung und Skizzenausgabe mit parametrischer Helix; Limits 128 Windungen und 4097 Punkte. Eine Spline, keine G1-Abschnittsbedingungen im Surface-Modus.
+- Vorschau und Ausgabe verwenden dieselben Parameter. Fehlende/ungeeignete Fläche sowie ungültige Steigung oder Winkel sperren Ausführen. Verdeckte parametrische Eingaben beeinflussen Surface Helix nicht.
+- 78 Tests bestanden: analytische Mantelgleichung aller berechneten Punkte auf schrägen Achsen, beide Laufrichtungen, Linksdrall, Teilwindungen und Dialogintegration. Benutzer bestätigt die grundsätzliche Funktion in Fusion; weitergehende Sonderfälle bleiben offen.
+- Fünf Screenshots von 0.3.3 in deutscher und englischer Galerie ergänzt: Zylinder-/Kegelvorschau und Anwendungsbeispiele mit Nut und Wickelkörpern. README-Vorschauen aktualisiert; Version unverändert.
+- Surface Offset und variable Surface-Steigung bleiben nächste Ausbauschritte. Keine nachträgliche Verknüpfung der Skizze mit der Fläche.
+
 ## 0.3.2 – 2026-09-29 – Entwicklung
 
 **GitHub:** Surface-Konturableitung ergänzt. Axiale Länge und Start-/Endradius
