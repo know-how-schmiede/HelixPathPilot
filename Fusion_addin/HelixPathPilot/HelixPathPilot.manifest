@@ -5,7 +5,7 @@
     "description": {
         "": "Create multi-section helices with variable diameter and pitch around a selected axis. Development version."
     },
-    "version": "0.3.6",
+    "version": "0.4.0",
     "runOnStartup": false,
     "supportedOS": "windows|mac",
     "editEnabled": true,

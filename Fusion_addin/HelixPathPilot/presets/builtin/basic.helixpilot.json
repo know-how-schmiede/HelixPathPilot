@@ -1,0 +1,22 @@
+{
+    "schema_version":  1,
+    "name":  "Basishelix 20 × 50 mm",
+    "mode":  "parametric",
+    "length_unit":  "cm",
+    "angle_unit":  "rad",
+    "reverse_axis":  false,
+    "tangent_joins":  true,
+    "parameters":  {
+                       "segments":  [
+                                        {
+                                            "length":  5,
+                                            "diameter_start":  2,
+                                            "diameter_end":  2,
+                                            "pitch_start":  0.5,
+                                            "pitch_end":  0.5
+                                        }
+                                    ],
+                       "start_angle":  0,
+                       "right_handed":  true
+                   }
+}

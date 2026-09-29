@@ -4,12 +4,23 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.4.0 – 2026-09-29 – Entwicklung
+
+**GitHub:** Preset-Grundlage mit versioniertem JSON-Datenmodell für parametrische
+und Surface-Helices sowie drei mitgelieferten Vorlagen ergänzt.
+
+- Feste Einheiten cm/rad, Schema 1, Dateiendung `.helixpilot.json`; keine dokumentabhängigen Flächen-/Achsauswahlen gespeichert.
+- Strenge Validierung von Struktur, Zahlen, Einheiten, booleschen Werten, Durchmesserkontinuität und parametrischen Geometrielimits. Surface-Geometrielimits werden erst mit der ausgewählten Fläche geprüft.
+- 89 automatisierte Tests bestanden. Preset-Dialog und Dateiimport/-export bleiben nächste Schritte; die aktuelle Oberfläche bleibt unverändert.
+- Format und Grenzen in [Presets](presets.md) dokumentiert.
+
 ## 0.3.6 – 2026-09-29 – Entwicklung
 
 **GitHub:** Reproduzierbare Surface-Testmodelle mit Bauanleitungen, Sollwerten
 und Prüfprotokoll ergänzt. Elf Modellvarianten und 21 Prüffälle decken Geometrie,
 Offset, variable Steigung, Ablehnung und Dialogverhalten ab.
 
+- Benutzer meldet keine aufgefallenen Fehler im bisherigen Einsatz von 0.3.6; der Sonderfallkatalog ist damit nicht einzeln bestätigt.
 - Testmodellkatalog: [Surface-Testmodelle](surface-testmodelle.md). Der vollständige manuelle Fusion-Testdurchlauf bleibt offen.
 - Version auf Benutzerwunsch auf 0.3.6 gesetzt; Manifest und aktuelle Versionsangaben abgeglichen. Keine Änderung der Helix-Berechnung.
 

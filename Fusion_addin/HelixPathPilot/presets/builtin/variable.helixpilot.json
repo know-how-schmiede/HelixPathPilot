@@ -1,0 +1,29 @@
+{
+    "schema_version":  1,
+    "name":  "Zwei variable Abschnitte",
+    "mode":  "parametric",
+    "length_unit":  "cm",
+    "angle_unit":  "rad",
+    "reverse_axis":  false,
+    "tangent_joins":  true,
+    "parameters":  {
+                       "segments":  [
+                                        {
+                                            "length":  5,
+                                            "diameter_start":  2,
+                                            "diameter_end":  3,
+                                            "pitch_start":  0.5,
+                                            "pitch_end":  1
+                                        },
+                                        {
+                                            "length":  2.5,
+                                            "diameter_start":  3,
+                                            "diameter_end":  2,
+                                            "pitch_start":  1,
+                                            "pitch_end":  0.5
+                                        }
+                                    ],
+                       "start_angle":  0,
+                       "right_handed":  true
+                   }
+}

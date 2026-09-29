@@ -1,6 +1,17 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.3.6 (development)
+## Aktiver Stand – 0.4.0 (development)
+
+### Preset-Grundlage (0.4.0)
+
+Datenmodell, JSON-Validierung und drei Built-in-Vorlagen sind implementiert.
+Details: [Preset-Format](presets.md). Der Fusion-Dialog bleibt in dieser
+Ausbaustufe unverändert; Speichern/Laden und Dateiverwaltung folgen.
+Sieben neue Tests prüfen Roundtrips beider Modi, Schemafehler, Limits,
+ungültige Daten und die mitgelieferten Vorlagen.
+
+Der Benutzer meldet für 0.3.6 keine aufgefallenen Fehler. Dies bestätigt den
+bisherigen Einsatz; der vollständige Sonderfallkatalog ist nicht einzeln protokolliert.
 
 ### Reproduzierbare Surface-Testmodelle
 
@@ -236,7 +247,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.3.6** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.4.0** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -250,7 +261,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.3.6** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.4.0** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -308,7 +319,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 82 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 89 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

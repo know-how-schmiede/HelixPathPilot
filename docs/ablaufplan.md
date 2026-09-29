@@ -112,7 +112,7 @@ Helix anhand einer Rotationsoberfläche bzw. eines Rotationskörpers erzeugen.
 - [x] Surface Offset integrieren (0.3.4: Offset-Funktion, Vorschau und negativer Abstand vom Benutzer in Fusion bestätigt; weitere Sonderfälle offen)
 - [x] Kombination mit variabler Steigung ermöglichen (0.3.5: Start-/Endsteigung linear entlang der Achse; Funktion vom Benutzer in Fusion bestätigt, weitere Sonderfälle offen)
 - [x] Testmodelle definieren (0.3.6: Modellbauanleitungen, Sollwerte und Prüfprotokoll in [Surface-Testmodelle](surface-testmodelle.md); manueller Durchlauf offen)
-- [ ] erste stabile Surface-Helix-Version testen
+- [~] erste stabile Surface-Helix-Version testen (Benutzer meldet für 0.3.6 keine Fehler; vollständiger Sonderfallkatalog noch nicht einzeln protokolliert)
 
 ## Zielversion
 
@@ -130,7 +130,8 @@ werden abgelehnt. Kegelspitzen und geteilte Kreisränder sind noch nicht unterst
 Stand 0.3.3: Oberflächenhelix mit konstanter Steigung, Startwinkel, Drehrichtung
 und Randwechsel implementiert. 0.3.4 ergänzt Surface Offset; 0.3.5 ergänzt
 variable Steigung im Surface-Modus. Testmodelle und Prüfprotokoll sind in 0.3.6 definiert.
-Als Nächstes den vollständigen Surface-Testdurchlauf in Fusion durchführen.
+Benutzer meldet für 0.3.6 keine aufgefallenen Fehler. Der vollständige Surface-Testdurchlauf
+bleibt als manuelle Prüfung offen; die Entwicklung geht mit Presets weiter.
 
 # Version 0.4.x – Presets
 
@@ -140,19 +141,19 @@ Helix-Konfigurationen speichern, laden, importieren und exportieren.
 
 ## Schritte
 
-- [ ] Preset-Datenmodell anlegen
-- [ ] Built-in-Presets definieren
+- [x] Preset-Datenmodell anlegen (0.4.0: beide Modi, Schema 1, feste Einheiten und JSON-Validierung)
+- [x] Built-in-Presets definieren (0.4.0: Basishelix, variable Abschnitte und Surface-Steigung)
 - [ ] Speichern unter frei wählbarem Namen umsetzen
 - [ ] Presets laden
 - [ ] Presets löschen
 - [ ] JSON-Export umsetzen
 - [ ] JSON-Import umsetzen
-- [ ] Dateiendung `*.helixpilot.json` verwenden
-- [ ] Fehlerbehandlung für ungültige Presets ergänzen
+- [x] Dateiendung `*.helixpilot.json` verwenden (Built-in-Dateien in 0.4.0)
+- [~] Fehlerbehandlung für ungültige Presets ergänzen (Datenvalidierung in 0.4.0; Dialogmeldungen folgen mit Dateiverwaltung)
 
 ## Zielversion
 
-**0.4.0**
+**0.4.0** – Datenmodell und Built-in-Vorlagen implementiert; [Formatbeschreibung](presets.md). Als Nächstes Dialog und Benutzerdateiverwaltung.
 
 # Version 0.5.x – Preview / Interaktion
 
@@ -282,7 +283,7 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 - [x] Vorschau, Geschwindigkeit und Durchmesserverknüpfung der Abschnitte in Fusion prüfen (vom Benutzer bestätigt).
 - [ ] Weitere Sonderfälle in Fusion prüfen: Grenzmarkierungen beim Bearbeiten/Selektieren, Vorschau bei ungültigen Eingaben, Abbrechen, Moduswechsel und Rückgängig.
 
-Surface-Konturableitung, Oberflächenhelix und Offset sind implementiert; variable Surface-Steigung ist seit 0.3.5 implementiert. Testmodelle sind definiert; nächster Schritt ist der vollständige Surface-Testdurchlauf in Fusion.
+Surface-Konturableitung, Oberflächenhelix und Offset sind implementiert; variable Surface-Steigung ist seit 0.3.5 implementiert. Testmodelle sind definiert; der vollständige Surface-Testdurchlauf in Fusion bleibt offen. Nach der Preset-Grundlage in 0.4.0 folgen Preset-Dialog und Benutzerdateiverwaltung.
 
 Benutzer bestätigt die Mantelflächenerkennung. Gemeldete Eingabelatenz von
 15–20 Sekunden durch Ersatz der Skizzenvorschau adressiert; Benutzer bestätigt
