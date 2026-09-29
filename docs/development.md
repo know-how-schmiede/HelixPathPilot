@@ -1,6 +1,21 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.5.0 (development)
+## Aktiver Stand – 0.5.1 (development)
+
+### Konkrete Eingabehinweise (0.5.1)
+
+Ungültige Ausdrücke nennen jetzt das Feld, zum Beispiel „Abschnitt 1 –
+Endsteigung“. Surface-Eingaben nennen Start-/Endsteigung, Startwinkel oder
+Surface Offset. Fehler beim Ändern von Surface-Werten erscheinen im sichtbaren
+Surface-Status. Ungültige Eingaben entfernen weiterhin die veraltete Vorschau;
+die geometrischen Grenzwerte bleiben unverändert.
+
+146 automatisierte Tests bestanden. In Fusion noch prüfen: einen ungültigen
+Ausdruck in einem Abschnitt und im Surface Offset eingeben, den konkreten
+Hinweis prüfen und den Wert korrigieren. Danach müssen OK und Vorschau bei
+ansonsten gültigen Eingaben wieder verfügbar sein.
+
+Der Benutzer bestätigt den Stand 0.5.0 als funktionierend.
 
 ### Vorschau-Aktualisierung (0.5.0)
 

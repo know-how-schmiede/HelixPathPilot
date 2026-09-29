@@ -4,6 +4,16 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.5.1 – 2026-09-29 – Entwicklung
+
+**GitHub:** Ungültige Eingabeausdrücke mit konkretem Feldnamen und bei
+parametrischen Helices mit Abschnittsangabe melden. Fehler bei Surface-Eingaben
+erscheinen im sichtbaren Surface-Bereich statt im ausgeblendeten Parameterbereich.
+
+- Gezielte Hinweise für Abschnittslänge, Durchmesser, Steigung, Surface Offset und Startwinkel; Geometriegrenzen unverändert.
+- 146 automatisierte Tests bestanden. Manuelle Prüfung der neuen Hinweise in Fusion offen.
+- Benutzer bestätigt den vorangehenden Stand 0.5.0.
+
 ## 0.5.0 – 2026-09-29 – Entwicklung
 
 **GitHub:** Vorschau-Aktualisierung verbessert: unveränderte Pfadwerte behalten

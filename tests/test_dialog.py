@@ -480,6 +480,30 @@ class DialogTests(unittest.TestCase):
         self.graphics.clear.assert_not_called()
         self.graphics.invalidate.assert_not_called()
 
+    def test_invalid_section_expression_names_section_and_field(self):
+        parameters = self.create.itemById('parameter_group').children
+        section = parameters.itemById('sections').children.itemById('section_0').children
+        section.itemById('section_0_pitch_end').isValidExpression = False
+        event = types.SimpleNamespace()
+        self.callbacks['validate'](event)
+        self.assertFalse(event.areInputsValid)
+        self.assertIn('Abschnitt 1', parameters.itemById('error').text)
+        self.assertIn('Endsteigung', parameters.itemById('error').text)
+
+    def test_surface_input_error_is_visible_and_names_field(self):
+        self.create.itemById('helix_mode').selectedItem.index = 1
+        fields = self.create.itemById('surface_group').children
+        for key, label in (('surface_pitch', 'Startsteigung'),
+                           ('surface_pitch_end', 'Endsteigung'),
+                           ('surface_angle', 'Startwinkel'),
+                           ('surface_offset', 'Surface Offset')):
+            field = fields.itemById(key)
+            field.isValidExpression = False
+            self.callbacks['changed'](types.SimpleNamespace(input=field))
+            self.assertIn(label, fields.itemById('surface_status').text)
+            self.graphics.clear.assert_called()
+            field.isValidExpression = True
+
     def test_invalid_edit_and_destroy_clear_graphics(self):
         angle = self.create.itemById('parameter_group').children.itemById('start_angle')
         angle.isValidExpression = False

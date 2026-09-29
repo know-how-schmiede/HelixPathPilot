@@ -340,9 +340,12 @@ def command_created(args):
             editor.busy = False
 
     def surface_parameters():
-        if any(not field.isValidExpression for field in
-               (surface_pitch, surface_pitch_end, surface_angle, surface_offset)):
-            raise ValueError('Bitte gültige Werte für Steigung, Startwinkel und Surface Offset eingeben.')
+        for field, label in ((surface_pitch, 'Startsteigung'),
+                             (surface_pitch_end, 'Endsteigung'),
+                             (surface_angle, 'Startwinkel'),
+                             (surface_offset, 'Surface Offset')):
+            if not field.isValidExpression:
+                raise ValueError(f'{label}: Bitte einen gültigen Wert mit passenden Einheiten eingeben.')
         return surface_helix(selected_surface_profile(surface_input), surface_pitch.value,
             surface_angle.value, surface_right.value, surface_reverse.value, surface_offset.value,
             pitch_end=surface_pitch_end.value)
@@ -518,7 +521,8 @@ def command_created(args):
                     graphics.invalidate(model, axis)
         except (ValueError, RuntimeError) as error:
             graphics.clear()
-            inputs.itemById('error').text = str(error)
+            status = surface_status if mode.selectedItem.index == 1 else inputs.itemById('error')
+            status.text = str(error)
 
     def destroy(event):
         graphics.clear()

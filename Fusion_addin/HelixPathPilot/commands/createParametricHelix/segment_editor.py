@@ -143,8 +143,10 @@ class SegmentEditor:
             self.busy = was_busy
         segments = []
         for index, (group, fields, _) in enumerate(self.rows):
-            if any(not value.isValidExpression for value in fields.values()):
-                raise ValueError(f'{group.name}: Bitte gültige Werte mit passenden Einheiten eingeben.')
+            for name, label in FIELDS:
+                if not fields[name].isValidExpression:
+                    raise ValueError(f'{group.name} – {label}: Bitte einen gültigen '
+                                     'Wert mit passenden Einheiten eingeben.')
             values = {name: value.value for name, value in fields.items()}
             if segments:
                 values['diameter_start'] = segments[-1].diameter_end

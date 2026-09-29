@@ -170,7 +170,7 @@ Eine gute Benutzererfahrung mit Live-Vorschau im Viewport schaffen.
 - [~] performante Aktualisierung bei Parameteränderungen (0.5.0: unveränderte Grafik auch über Eingabeereignisse wiederverwenden; neue Fusion-Prüfung offen)
 - [x] unnötige Neuberechnungen reduzieren (0.3.1 ohne Versionswechsel: Custom-Graphics-Vorschau statt Skizze/G1 bei jeder Eingabe, unveränderte Grafik wiederverwenden)
 - [~] UI-Feinschliff (0.4.3: kompakte Dialoggröße, eigener Vorlagenreiter und farbige Abschnittsvorschau; Farben und Entfernen über zentrale Auswahl vom Benutzer bestätigt, weitere Bildschirmprüfungen offen)
-- [ ] Eingabevalidierung verbessern
+- [x] Eingabevalidierung verbessern (0.5.1: konkrete Feld-/Abschnittsnamen bei ungültigen Ausdrücken und sichtbare Surface-Fehler; 146 Tests bestanden, neue Hinweise in Fusion noch prüfen)
 
 ## Zielversion
 
