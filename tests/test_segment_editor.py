@@ -58,6 +58,29 @@ class EditorTests(unittest.TestCase):
         self.editor_type = module.SegmentEditor
         self.editor = module.SegmentEditor(Inputs(), 'mm')
 
+    def test_load_replaces_rows_and_keeps_unique_ids(self):
+        from HelixPathPilot.core.helix_segments import HelixSegment, SegmentedHelix
+        old = self.editor.rows[0][0]
+        model = SegmentedHelix((HelixSegment.constant(2, 3, 1),
+                                HelixSegment.constant(4, 3, 2)))
+        self.editor.load(model)
+        self.assertTrue(old.deleted)
+        self.assertEqual(self.editor.read(), model)
+        self.assertFalse(self.editor.busy)
+        self.assertNotEqual(old.id, self.editor.rows[0][0].id)
+        self.editor.changed('add_section')
+        self.assertEqual(len(self.editor.rows), 3)
+
+    def test_failed_load_preserves_original_rows(self):
+        from HelixPathPilot.core.helix_segments import HelixSegment, SegmentedHelix
+        original = self.editor.read()
+        with patch.object(self.editor.container.children, 'addGroupCommandInput',
+                          side_effect=RuntimeError('Input failed')):
+            with self.assertRaises(RuntimeError):
+                self.editor.load(SegmentedHelix((HelixSegment.constant(2, 3, 1),)))
+        self.assertEqual(self.editor.read(), original)
+        self.assertFalse(self.editor.busy)
+
     def test_initial_values_and_append_inherit_endpoint(self):
         fields = self.editor.rows[0][1]
         fields['diameter_end'].value = 4

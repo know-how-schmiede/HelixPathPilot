@@ -16,6 +16,7 @@ from .segment_editor import SegmentEditor
 from .dialog_tabs import add_settings_and_info
 from .preview_graphics import HelixPreview
 from ..createSurfaceHelix.surface_selection import selected_surface_kind, selected_surface_profile
+from ..presetManager.catalog import builtin_presets
 
 CMD_ID = f'{config.COMPANY_NAME}_{config.ADDIN_NAME}_createParametricHelix'
 CMD_NAME = f'{APP_NAME} v{VERSION}'
@@ -96,6 +97,23 @@ def command_created(args):
     root_inputs = command.commandInputs
     create_tab = root_inputs.addTabCommandInput('create_tab', 'Helix erstellen')
     create_inputs = create_tab.children
+    preset_group = create_inputs.addGroupCommandInput('presets', 'Vorlagen')
+    preset_group.isExpanded = True
+    preset_inputs = preset_group.children
+    preset_choice = preset_inputs.addDropDownCommandInput(
+        'preset_choice', 'Vorlage', adsk.core.DropDownStyles.TextListDropDownStyle)
+    presets, preset_errors = builtin_presets()
+    for index, preset in enumerate(presets):
+        label = 'Surface' if preset.mode == 'surface' else 'Parametrisch'
+        preset_choice.listItems.add(f'{preset.name} ({label})', index == 0)
+    preset_load = preset_inputs.addBoolValueInput('preset_load', 'Vorlage laden', False, '', False)
+    preset_load.isEnabled = bool(presets)
+    preset_note = preset_inputs.addTextBoxCommandInput('preset_note', '',
+        'Vorlage auswählen und laden. Aktuelle Parameter werden ersetzt; '
+        'Achse und Mantelfläche bleiben separat gewählt.', 3, True)
+    if preset_errors or not presets:
+        preset_note.text = 'Vorlagen nicht vollständig verfügbar: ' + (
+            '\n'.join(preset_errors) if preset_errors else 'Keine Vorlagendateien gefunden.')
     mode = create_inputs.addDropDownCommandInput(
         'helix_mode', 'Modus', adsk.core.DropDownStyles.TextListDropDownStyle)
     mode.listItems.add('Parametrische Helix', True)
@@ -165,6 +183,38 @@ def command_created(args):
     _sessions.append(handlers)
     graphics = HelixPreview(design)
     _previews.append(graphics)
+
+    def load_preset():
+        choice = preset_choice.selectedItem
+        if choice is None or not 0 <= choice.index < len(presets):
+            raise ValueError('Bitte eine Vorlage auswählen.')
+        preset = presets[choice.index]
+        graphics.clear()
+        editor.busy = True
+        try:
+            if preset.mode == 'parametric':
+                editor.load(preset.parameters)
+                inputs.itemById('start_angle').value = preset.parameters.start_angle
+                inputs.itemById('right_handed').value = preset.parameters.right_handed
+                inputs.itemById('reverse_axis').value = preset.reverse_axis
+            else:
+                for field, value in (
+                    (surface_pitch, preset.parameters.pitch_start),
+                    (surface_pitch_end, preset.parameters.pitch_end),
+                    (surface_offset, preset.parameters.offset),
+                    (surface_angle, preset.parameters.start_angle),
+                    (surface_right, preset.parameters.right_handed),
+                    (surface_reverse, preset.parameters.reverse)):
+                    field.value = value
+            tangent_joins.value = preset.tangent_joins
+            is_surface = preset.mode == 'surface'
+            mode.listItems.item(1 if is_surface else 0).isSelected = True
+            parameter_group.isVisible = not is_surface
+            surface_group.isVisible = is_surface
+            preset_note.text = f'Geladen: {preset.name}.' + (
+                ' Bitte eine geeignete Mantelfläche auswählen bzw. prüfen.' if is_surface else '')
+        finally:
+            editor.busy = False
 
     def surface_parameters():
         if any(not field.isValidExpression for field in
@@ -251,6 +301,12 @@ def command_created(args):
             return
         try:
             changed_id = event.input.id
+            if changed_id == 'preset_load':
+                try:
+                    load_preset()
+                except Exception as error:
+                    preset_note.text = f'Vorlage konnte nicht geladen werden: {error}'
+                return
             if (changed_id.startswith(('section_', 'remove_section_', 'surface_')) or changed_id in
                     ('surface', 'helix_mode', 'live_preview', 'axis', 'reverse_axis', 'start_angle',
                      'right_handed', 'fit_axis_length', 'add_section')):

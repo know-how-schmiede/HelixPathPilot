@@ -66,16 +66,16 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.4.0** liegt unter `Fusion_addin/HelixPathPilot/`.
+Der Entwicklungsstand **0.4.1** liegt unter `Fusion_addin/HelixPathPilot/`.
 Die [Preset-Grundlage](docs/presets.md) enthält ein validiertes JSON-Datenmodell
-und drei Vorlagen; die Bedienung zum Speichern und Laden folgt im nächsten Ausbau.
+und drei Vorlagen, die unter „Helix erstellen → Vorlagen“ ausgewählt und geladen werden. Eigene Presets folgen im nächsten Ausbau.
 Parametrische und variable Helices besitzen eine abschaltbare Live-Vorschau.
 Die Punktanzeige beschränkt sich auf Abschnittsgrenzen; Startdurchmesser folgen
 über die gesamte Abschnittskette dem jeweiligen Vorgänger.
 Neu sind die Dialogreiter „Einstellungen“ und „Info“ mit Logo und Projektlinks
 sowie Surface Helix für vollständige Zylinder- und Kegelmäntel mit konstanter oder linear variabler
 Steigung, schneller Vorschau und 3D-Skizzenausgabe.
-**Volumenkörper → Erstellen → HelixPathPilot v0.4.0** erzeugt eine 3D-Skizze um eine gewählte Achse.
+**Volumenkörper → Erstellen → HelixPathPilot v0.4.1** erzeugt eine 3D-Skizze um eine gewählte Achse.
 Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endsteigung
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
 „Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.
@@ -93,9 +93,9 @@ Die genaue Funktionalität und Benutzeroberfläche kann sich während der Entwic
 
 ## Screenshots
 
-Variable Surface-Steigung mit **v0.3.5**: Zylindervorschau mit 5 → 30 mm Steigung und 5 mm Offset.
+Vorlagen in **v0.4.1**: geladene variable Helix mit bearbeiteten Abschnitten und Vorschau.
 
-[![Variable Surface-Steigung auf einem Zylinder, HelixPathPilot v0.3.5](docs/images/screenshots/v0.3.5/HelixPathPilot_v0-3-5_-00.png)](docs/screenshots-DE.md#v035)
+[![Geladene variable Vorlage mit Helix-Vorschau, HelixPathPilot v0.4.1](docs/images/screenshots/v0-4-1/HelixPathPilot_v0-4-1_-00.png)](docs/screenshots-DE.md#v041)
 
 Die [Screenshot-Galerie nach Versionen](docs/screenshots-DE.md) zeigt zusätzlich
 Kegel- und Wickelbeispiele sowie frühere Versionen mit Abschnittsdialog, Erstellen-Menü und Symbolleiste. Die Bilder

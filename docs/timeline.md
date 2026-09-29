@@ -4,6 +4,18 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.4.1 – 2026-09-29 – Entwicklung
+
+**GitHub:** Mitgelieferte Vorlagen sind im Helix-Dialog sichtbar und ladbar.
+Die Gruppe „Vorlagen“ bietet eine Auswahl und „Vorlage laden“ für alle drei Built-ins.
+
+- Laden übernimmt Modus, Abschnitte, Steigungen, Winkel, Drehrichtung und G1-Einstellung. Achs-/Flächenauswahl und Live-Vorschau-Einstellung bleiben erhalten.
+- Surface-Vorlagen benötigen weiterhin eine geeignete Fläche; ohne sie bleibt die Ausgabe gesperrt.
+- Fehlerhafte Vorlagendateien werden einzeln gemeldet und übersprungen. Neue Abschnittseingaben werden vor dem Entfernen der bisherigen aufgebaut.
+- 94 automatisierte Tests bestanden, inklusive Laden bis zur Skizzenausgabe, Moduswechsel, Dateifehlern und fehlgeschlagenem Abschnittsaufbau. Benutzer bestätigt sichtbare Vorlagen und funktionierendes Laden nach Betätigung von „Vorlage laden“ in Fusion; weitere Sonderfälle bleiben offen.
+- Eigene Presets, Speichern/Löschen und Dateiimport/-export bleiben weitere Schritte.
+- Zwei Screenshots von 0.4.1 in deutscher und englischer Galerie ergänzt: Vorlagenliste sowie geladene variable Vorlage mit bearbeiteten Abschnitten und Vorschau. README-Vorschauen aktualisiert; Version unverändert.
+
 ## 0.4.0 – 2026-09-29 – Entwicklung
 
 **GitHub:** Preset-Grundlage mit versioniertem JSON-Datenmodell für parametrische

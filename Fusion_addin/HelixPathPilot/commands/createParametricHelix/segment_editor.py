@@ -34,13 +34,39 @@ class SegmentEditor:
         group = self.container.children.addGroupCommandInput(f'section_{row_id}', f'Abschnitt {row_id + 1}')
         group.isExpanded = True
         fields = {}
-        for name, label in FIELDS:
-            fields[name] = group.children.addValueInput(
-                f'section_{row_id}_{name}', label, self.units,
-                adsk.core.ValueInput.createByReal(getattr(segment, name)))
-        remove = group.children.addBoolValueInput(f'remove_section_{row_id}', 'Abschnitt entfernen', False, '', False)
+        try:
+            for name, label in FIELDS:
+                fields[name] = group.children.addValueInput(
+                    f'section_{row_id}_{name}', label, self.units,
+                    adsk.core.ValueInput.createByReal(getattr(segment, name)))
+            remove = group.children.addBoolValueInput(f'remove_section_{row_id}', 'Abschnitt entfernen', False, '', False)
+        except Exception:
+            group.deleteMe()
+            raise
         self.rows.append((group, fields, remove))
         self.refresh()
+
+    def load(self, model):
+        """Build replacement rows first so failed input creation preserves old rows."""
+        sampling_plan(model)
+        old_rows = self.rows
+        was_busy = self.busy
+        self.busy = True
+        self.rows = []
+        try:
+            for segment in model.segments:
+                self.add(segment)
+        except Exception:
+            for group, _, _ in self.rows:
+                group.deleteMe()
+            self.rows = old_rows
+            self.refresh()
+            raise
+        else:
+            for group, _, _ in old_rows:
+                group.deleteMe()
+        finally:
+            self.busy = was_busy
 
     def refresh(self):
         for index, (group, fields, remove) in enumerate(self.rows):

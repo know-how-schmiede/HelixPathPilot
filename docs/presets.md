@@ -1,8 +1,15 @@
-# Preset-Format – Stand 0.4.0
+# Preset-Format und Bedienung – Stand 0.4.1
 
 Die erste Preset-Ausbaustufe enthält ein Fusion-unabhängiges Datenmodell,
-JSON-Serialisierung und drei mitgelieferte Vorlagen. Es gibt noch keine
-Preset-Bedienelemente im Fusion-Dialog und keine Benutzerdateiverwaltung.
+JSON-Serialisierung und drei mitgelieferte Vorlagen. Seit 0.4.1 sind die Vorlagen
+im Fusion-Dialog unter **Helix erstellen → Vorlagen** sichtbar. Auswählen und
+**Vorlage laden** drücken, um Modus und Parameter zu übernehmen. Dabei werden
+aktuelle Parameter ersetzt; Achse und Mantelfläche bleiben separat gewählt.
+Die Auswahl allein verändert noch keine Eingaben. Benutzerdateiverwaltung
+und Speichern eigener Presets sind noch nicht implementiert.
+
+[Screenshots der Vorlagenauswahl und einer geladenen Helix](screenshots-DE.md#v041)
+zeigen die Bedienung in Version 0.4.1.
 
 ## Format
 
@@ -52,6 +59,9 @@ verwenden G1-Übergänge und keine Achsumkehr.
 Die Datenmodelle sind unveränderlich; exportierte Dictionaries sind unabhängige
 Kopien. Validierungsfehler werden als `ValueError` gemeldet.
 
-Nächster Schritt: Dialogintegration für benannte Benutzerpresets mit Laden,
-Speichern, Löschen und JSON-Dateiimport/-export. Die jetzigen Methoden lesen
-und schreiben JSON-Text, aber noch keine Dateien oder Fusion-Eingaben.
+`commands.presetManager.catalog` liest die mitgelieferten Dateien und meldet
+ungültige Dateien einzeln. Der Dialog übernimmt validierte Vorlagen in die
+Fusion-Eingaben. Die Kernmethoden selbst verarbeiten weiterhin nur JSON-Text.
+
+Nächster Schritt: benannte Benutzerpresets mit Laden, Speichern, Löschen und
+JSON-Dateiimport/-export.

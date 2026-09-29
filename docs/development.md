@@ -1,6 +1,32 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.4.0 (development)
+## Aktiver Stand – 0.4.1 (development)
+
+### Vorlagen laden (0.4.1)
+
+Der Benutzer bestätigt die sichtbare Vorlagenauswahl und das Laden in Fusion.
+Zwei [Screenshots von 0.4.1](screenshots-DE.md#v041) zeigen die Vorlagenliste
+und eine geladene variable Vorlage mit bearbeiteten Abschnitten und Vorschau.
+Die Rückfrage zu unveränderten Werten wurde durch Betätigen von „Vorlage laden“
+geklärt; die Auswahl allein übernimmt bewusst keine Parameter. Die einzelnen
+Sonderfälle der folgenden Checkliste sind damit nicht vollständig bestätigt.
+
+Im Reiter „Helix erstellen“ steht oben die ausgeklappte Gruppe „Vorlagen“.
+Eine der drei Vorlagen auswählen und „Vorlage laden“ drücken. Auswahl allein
+ändert keine Parameter. Laden ersetzt Parameter und Modus; bestehende Achs-
+und Flächenauswahlen sowie die Live-Vorschau-Einstellung bleiben erhalten.
+Die Surface-Vorlage benötigt weiterhin eine gültige Mantelfläche. Ungültige
+Vorlagendateien werden gemeldet und übersprungen; der übrige Dialog bleibt nutzbar.
+
+Manuell in Fusion prüfen (offen):
+
+- Basisvorlage laden: ein Abschnitt, 50 mm Länge, 20 mm Durchmesser, 5 mm Steigung.
+- Variable Vorlage laden: zwei Abschnitte, 75 mm Gesamtlänge; Vorschau und Ausgabe prüfen.
+- Surface-Vorlage laden: automatischer Moduswechsel, Steigung 5 → 10 mm; ohne Fläche bleibt OK gesperrt.
+- Zwischen Vorlagen mehrfach wechseln; danach Abschnitte hinzufügen/entfernen.
+- Gewählte Achse/Fläche und ausgeschaltete Vorschau beim Laden beibehalten.
+
+API-Grundlage: [Autodesk ListItem.isSelected](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/core_ListItem.htm).
 
 ### Preset-Grundlage (0.4.0)
 
@@ -247,7 +273,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.4.0** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.4.1** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -261,7 +287,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.4.0** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.4.1** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -319,7 +345,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 89 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 94 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

@@ -33,6 +33,25 @@ class Inputs:
                 item.value = args[-1]
             elif method == 'addDropDownCommandInput':
                 item.selectedItem = types.SimpleNamespace(index=0)
+                entries = []
+                class ListItem:
+                    def __init__(self, index):
+                        self.index = index
+                    @property
+                    def isSelected(self):
+                        return item.selectedItem is self
+                    @isSelected.setter
+                    def isSelected(self, value):
+                        if value:
+                            item.selectedItem = self
+                def add_entry(label, selected, *unused):
+                    entry = ListItem(len(entries))
+                    entries.append(entry)
+                    if selected:
+                        entry.isSelected = True
+                    return entry
+                item.listItems.add.side_effect = add_entry
+                item.listItems.item.side_effect = lambda index: entries[index]
             elif method == 'addImageCommandInput':
                 if not Path(args[0]).is_file():
                     raise ValueError('Missing packaged logo')
@@ -77,6 +96,35 @@ class DialogTests(unittest.TestCase):
             inputChanged='changed', execute='execute', executePreview='preview', destroy='destroy')
         self.entry.command_created(types.SimpleNamespace(command=command))
         self.create = self.root.itemById('create_tab').children
+
+    def test_load_builtin_presets_into_actual_output(self):
+        fields = self.create.itemById('presets').children
+        choice = fields.itemById('preset_choice')
+        self.assertEqual(choice.listItems.add.call_count, 3)
+        # Packaged order: basic, surface, variable.
+        choice.listItems.item(2).isSelected = True
+        self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_load')))
+        with patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['execute'](types.SimpleNamespace())
+            model = create.call_args.args[1]
+            self.assertEqual(len(model.segments), 2)
+            self.assertEqual(model.total_length, 7.5)
+        choice.listItems.item(1).isSelected = True
+        self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_load')))
+        self.assertEqual(self.create.itemById('helix_mode').selectedItem.index, 1)
+        self.assertTrue(self.create.itemById('surface_group').isVisible)
+        surface = self.create.itemById('surface_group').children
+        self.assertEqual(surface.itemById('surface_pitch_end').value, 1)
+        event = types.SimpleNamespace()
+        self.callbacks['validate'](event)
+        self.assertFalse(event.areInputsValid)  # Loading never invents a face selection.
+        choice.listItems.item(0).isSelected = True
+        self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_load')))
+        self.callbacks['validate'](event)
+        self.assertTrue(event.areInputsValid)
+        with patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['execute'](types.SimpleNamespace())
+            self.assertEqual(len(create.call_args.args[1].segments), 1)
 
     def test_settings_value_reaches_sketch_and_nested_parameters_validate(self):
         event = types.SimpleNamespace()

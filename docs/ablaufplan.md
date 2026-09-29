@@ -144,7 +144,7 @@ Helix-Konfigurationen speichern, laden, importieren und exportieren.
 - [x] Preset-Datenmodell anlegen (0.4.0: beide Modi, Schema 1, feste Einheiten und JSON-Validierung)
 - [x] Built-in-Presets definieren (0.4.0: Basishelix, variable Abschnitte und Surface-Steigung)
 - [ ] Speichern unter frei wählbarem Namen umsetzen
-- [ ] Presets laden
+- [~] Presets laden (0.4.1: Built-in-Auswahl und Laden im Dialog vom Benutzer in Fusion bestätigt; Benutzerpresets folgen)
 - [ ] Presets löschen
 - [ ] JSON-Export umsetzen
 - [ ] JSON-Import umsetzen
@@ -153,7 +153,7 @@ Helix-Konfigurationen speichern, laden, importieren und exportieren.
 
 ## Zielversion
 
-**0.4.0** – Datenmodell und Built-in-Vorlagen implementiert; [Formatbeschreibung](presets.md). Als Nächstes Dialog und Benutzerdateiverwaltung.
+**0.4.0** – Datenmodell und Built-in-Vorlagen implementiert; [Formatbeschreibung](presets.md). 0.4.1 ergänzt Built-in-Auswahl und Laden im Dialog. Als Nächstes Benutzerdateiverwaltung.
 
 # Version 0.5.x – Preview / Interaktion
 
@@ -207,7 +207,7 @@ Projekt für Anwender und Mitwirkende verständlicher machen.
 - [ ] Dokumentation erweitern
 - [ ] Beispielanwendungen ergänzen
 - [ ] Beispiel-Presets anlegen
-- [~] Screenshots / Visuals einpflegen (v0.1.2, v0.2.2, v0.2.3, v0.3.3, v0.3.4 und v0.3.5 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
+- [~] Screenshots / Visuals einpflegen (v0.1.2, v0.2.2, v0.2.3, v0.3.3, v0.3.4, v0.3.5 und v0.4.1 in deutscher und englischer Versionsgalerie dokumentiert; weitere Versionen folgen)
 - [ ] Installationshinweise vorbereiten
 - [ ] Bedienkonzept prüfen
 - [ ] Benennungen und Texte im UI verbessern
