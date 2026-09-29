@@ -6,6 +6,7 @@ import adsk.core
 import adsk.fusion
 
 from ...core.wire_clearance import check_clearance, validate_diameter
+from ...core.cleanup import cleanup_created
 
 
 def _check_path(splines, diameter):
@@ -78,12 +79,12 @@ def create_wire(design, sketch, diameter):
         plane = root.constructionPlanes.add(plane_input)
         if plane is None:
             raise RuntimeError('Fusion konnte die Profilebene nicht erstellen.')
-        created.append(plane)
+        created.append(('Drahtebene', plane))
         plane.name = 'HelixPathPilot – Drahtebene'
         profile_sketch = root.sketches.add(plane)
         if profile_sketch is None:
             raise RuntimeError('Fusion konnte die Profilskizze nicht erstellen.')
-        created.append(profile_sketch)
+        created.append(('Drahtprofil', profile_sketch))
         profile_sketch.name = 'HelixPathPilot – Drahtprofil'
         center = profile_sketch.modelToSketchSpace(splines[0].startSketchPoint.worldGeometry)
         profile_sketch.sketchCurves.sketchCircles.addByCenterRadius(center, diameter / 2)
@@ -96,7 +97,7 @@ def create_wire(design, sketch, diameter):
         feature = sweeps.add(sweep_input)
         if feature is None:
             raise RuntimeError('Fusion konnte den Draht-Sweep nicht erstellen.')
-        created.append(feature)
+        created.append(('Draht-Sweep', feature))
         if (feature.healthState != adsk.fusion.FeatureHealthStates.HealthyFeatureHealthState
                 or feature.bodies.count != 1 or not feature.bodies.item(0).isSolid):
             raise RuntimeError('Fusion meldet einen ungültigen Drahtkörper. '
@@ -107,12 +108,5 @@ def create_wire(design, sketch, diameter):
             entity.isLightBulbOn = False
         return feature
     except Exception as error:
-        cleanup_errors = []
-        for entity in reversed(created):
-            try:
-                if entity.deleteMe() is False:
-                    cleanup_errors.append('Objekt konnte nicht gelöscht werden')
-            except Exception as cleanup_error:
-                cleanup_errors.append(str(cleanup_error))
-        detail = (' Bereinigung unvollständig: ' + '; '.join(cleanup_errors)) if cleanup_errors else ''
-        raise RuntimeError('Draht-Sweep fehlgeschlagen: ' + str(error) + detail) from error
+        cleanup_created(created, error)
+        raise RuntimeError('Draht-Sweep fehlgeschlagen: ' + str(error)) from error

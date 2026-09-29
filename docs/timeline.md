@@ -4,6 +4,16 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.6.0 – 2026-09-29 – Entwicklung
+
+**GitHub:** Fehlerbereinigung bei Skizzen- und Drahtausgabe vereinheitlicht.
+Die ursprüngliche Fehlerursache bleibt bei zusätzlichen Löschfehlern erhalten;
+nicht entfernte Objekte werden mit Bezeichnung gemeldet.
+
+- Hilfsobjekte werden rückwärts zur Erzeugungsreihenfolge bereinigt; ein Löschfehler unterbricht weitere Versuche nicht. Auch Fehler beim Benennen der Surface-Skizze lösen die Bereinigung aus.
+- 150 automatisierte Tests bestanden, einschließlich Löschfehlern, Rückgabewert `False`, Reihenfolge und Erhalt der ursprünglichen Sweep-Ursache. Fusion-Laufzeittest dieses Stands offen.
+- Benutzer bestätigt den vorangehenden Stand 0.5.1.
+
 ## 0.5.1 – 2026-09-29 – Entwicklung
 
 **GitHub:** Ungültige Eingabeausdrücke mit konkretem Feldnamen und bei

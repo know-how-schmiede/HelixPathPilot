@@ -1,6 +1,22 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.5.1 (development)
+## Aktiver Stand – 0.6.0 (development)
+
+### Fehlerbereinigung bei der Ausgabe (0.6.0)
+
+Skizzen- und Drahtausgabe verwenden eine gemeinsame Bereinigungsfunktion ohne
+Fusion-Import. Sie versucht alle übergebenen Objekte in umgekehrter Reihenfolge
+zu entfernen, auch wenn einzelne Löschversuche fehlschlagen. Fehler und der
+Rückgabewert `False` werden mit Objektbezeichnung zusätzlich zur ursprünglichen
+Fehlerursache gemeldet. Erfolgreiche Bereinigung erhält den ursprünglichen
+Fehlertyp. Es werden nur Objekte des aktuellen Erzeugungsversuchs übergeben.
+
+150 automatisierte Tests bestanden. Manueller Fusion-Test offen: normale
+Skizzen-/Drahtausgabe sowie abgewiesenen Drahtdurchmesser prüfen; nach Abweisung
+dürfen keine neuen Hilfsobjekte verbleiben. Native Löschfehler wurden über
+Test-Doubles simuliert und müssen nicht künstlich im Arbeitsmodell erzeugt werden.
+
+Der Benutzer bestätigt den vorangehenden Stand 0.5.1.
 
 ### Konkrete Eingabehinweise (0.5.1)
 

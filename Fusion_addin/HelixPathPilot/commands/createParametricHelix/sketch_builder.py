@@ -6,6 +6,7 @@ from ...core.helix_math import helix_points
 from ...core.axis import AxisFrame
 from ...core.helix_segments import SegmentedHelix
 from ...core.variable_helix import segmented_points
+from ...core.cleanup import cleanup_created
 
 
 def create_sketch(design, parameters, axis=None, tangent_joins=False):
@@ -52,7 +53,7 @@ def create_sketch(design, parameters, axis=None, tangent_joins=False):
             if marker is None:
                 raise RuntimeError('Abschnittsmarkierung konnte nicht erzeugt werden.')
         return sketch
-    except Exception:
+    except Exception as error:
         # Do not leave an empty sketch when spline creation fails.
-        sketch.deleteMe()
+        cleanup_created([('Helixskizze', sketch)], error)
         raise

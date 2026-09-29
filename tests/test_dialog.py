@@ -143,6 +143,17 @@ class DialogTests(unittest.TestCase):
             self.assertIn('zu groß', event.executeFailedMessage)
             sketch.return_value.deleteMe.assert_called_once()
 
+    def test_failed_path_cleanup_preserves_sweep_error(self):
+        self.create.itemById('wire_enabled').value = True
+        with patch.object(self.entry, 'create_sketch') as sketch, patch.object(
+                self.entry, 'create_wire', side_effect=ValueError('Sweep-Ursache')):
+            sketch.return_value.deleteMe.side_effect = RuntimeError('Skizze gesperrt')
+            event = types.SimpleNamespace()
+            self.callbacks['execute'](event)
+            self.assertTrue(event.executeFailed)
+            self.assertIn('Sweep-Ursache', event.executeFailedMessage)
+            self.assertIn('Skizze gesperrt', event.executeFailedMessage)
+
     def test_invalid_wire_diameter_blocks_execution_before_sketch(self):
         self.create.itemById('wire_enabled').value = True
         self.create.itemById('wire_diameter').value = -1

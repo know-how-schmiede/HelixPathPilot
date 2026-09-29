@@ -17,6 +17,7 @@ from ...version import APP_NAME, VERSION
 from .sketch_builder import create_sketch
 from .wire_builder import create_wire
 from ...core.wire_clearance import validate_diameter
+from ...core.cleanup import cleanup_created
 from .axis_selection import selected_axis, selected_axis_length
 from .segment_editor import SegmentEditor
 from .dialog_tabs import add_settings_and_info
@@ -406,14 +407,14 @@ def command_created(args):
         diameter = current_wire_diameter()
         sketch = create_sketch(design, model, axis,
             tangent_joins=tangent_joins.value if mode.selectedItem.index == 0 else False)
-        if mode.selectedItem.index == 1:
-            sketch.name = 'HelixPathPilot – Surface Helix'
-        if diameter is not None:
-            try:
+        try:
+            if mode.selectedItem.index == 1:
+                sketch.name = 'HelixPathPilot – Surface Helix'
+            if diameter is not None:
                 create_wire(design, sketch, diameter)
-            except Exception:
-                sketch.deleteMe()
-                raise
+        except Exception as error:
+            cleanup_created([('Helixskizze', sketch)], error)
+            raise
         return sketch
 
     def preview(event):
