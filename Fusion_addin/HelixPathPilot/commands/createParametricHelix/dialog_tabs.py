@@ -9,6 +9,9 @@ REPOSITORY = 'https://github.com/know-how-schmiede/HelixPathPilot'
 
 def add_settings_and_info(root):
     settings = root.addTabCommandInput('settings_tab', 'Einstellungen').children
+    preview = settings.addBoolValueInput('live_preview', 'Live-Vorschau', True, '', True)
+    preview.tooltip = ('Schnelle Pfadvorschau ohne Skizzenberechnung. '
+                       'G1-Übergänge werden erst beim Erstellen angeglichen.')
     tangent = settings.addBoolValueInput(
         'tangent_joins', 'Tangentiale Übergänge (G1)', True, '', True)
     tangent.tooltip = ('Gleicht die Tangenten benachbarter Splines für einen knickfreien Pfad an. '
@@ -17,7 +20,7 @@ def add_settings_and_info(root):
     settings.addTextBoxCommandInput('settings_help', '',
         'G1 gleicht die Richtung an Abschnittsgrenzen an und erleichtert anschließende Sweeps. '
         'Ohne diese Option bleiben die berechneten Abschnittsübergänge unverändert.<br><br>'
-        'Diese Einstellung gilt für den aktuellen Dialogaufruf.', 5, True)
+        'Die Einstellungen gelten für den aktuellen Dialogaufruf.', 5, True)
 
     info = root.addTabCommandInput('info_tab', 'Info').children
     info.addTextBoxCommandInput('info_title', '', f'{APP_NAME} {VERSION}', 1, True)
@@ -39,4 +42,4 @@ def add_settings_and_info(root):
     ]
     for key, text, rows in paragraphs:
         info.addTextBoxCommandInput(f'info_{key}', '', text, rows, True).isFullWidth = True
-    return tangent
+    return tangent, preview

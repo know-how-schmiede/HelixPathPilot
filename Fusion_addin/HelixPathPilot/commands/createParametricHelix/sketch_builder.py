@@ -42,6 +42,15 @@ def create_sketch(design, parameters, axis=None, tangent_joins=False):
                         'konnte nicht erzeugt werden. Bitte Steigungen und Durchmesserverläufe '
                         'angleichen oder „Tangentiale Übergänge (G1)“ deaktivieren.'
                     ) from error
+        # Keep all fit points for accuracy, but display only section boundaries.
+        # Unconnected sketch points remain visible when arePointsShown is false.
+        # Read actual endpoints after G1 solving, in sketch coordinates.
+        sketch.arePointsShown = False
+        boundaries = [splines[0].startSketchPoint] + [s.endSketchPoint for s in splines]
+        for endpoint in boundaries:
+            marker = sketch.sketchPoints.add(endpoint.geometry)
+            if marker is None:
+                raise RuntimeError('Abschnittsmarkierung konnte nicht erzeugt werden.')
         return sketch
     except Exception:
         # Do not leave an empty sketch when spline creation fails.

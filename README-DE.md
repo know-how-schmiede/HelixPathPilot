@@ -66,11 +66,14 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.3.0** liegt unter `Fusion_addin/HelixPathPilot/`.
+Der Entwicklungsstand **0.3.1** liegt unter `Fusion_addin/HelixPathPilot/`.
+Parametrische und variable Helices besitzen eine abschaltbare Live-Vorschau.
+Die Punktanzeige beschränkt sich auf Abschnittsgrenzen; Startdurchmesser folgen
+über die gesamte Abschnittskette dem jeweiligen Vorgänger.
 Neu sind die Dialogreiter „Einstellungen“ und „Info“ mit Logo und Projektlinks
 sowie die Surface-Helix-Flächenprüfung für Zylinder und Kegel. Dieser Modus
 erzeugt noch keine Oberflächenhelix; die parametrische Ausgabe bleibt verfügbar.
-**Volumenkörper → Erstellen → HelixPathPilot v0.3.0** erzeugt eine 3D-Skizze um eine gewählte Achse.
+**Volumenkörper → Erstellen → HelixPathPilot v0.3.1** erzeugt eine 3D-Skizze um eine gewählte Achse.
 Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endsteigung
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
 „Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.

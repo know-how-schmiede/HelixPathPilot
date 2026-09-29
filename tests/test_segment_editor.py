@@ -133,6 +133,33 @@ class EditorTests(unittest.TestCase):
                 self.editor.fit_total_length(length)
             self.assertEqual(self.editor.read().total_length, 5)
 
+    def test_all_32_starts_follow_immediate_predecessor(self):
+        for _ in range(31):
+            self.editor.changed('add_section')
+        for index, (_, fields, _) in enumerate(self.editor.rows):
+            fields['diameter_end'].value = index + 3
+        # No inputChanged event: read must repair every displayed linked value.
+        model = self.editor.read()
+        for index in range(1, 32):
+            fields = self.editor.rows[index][1]
+            self.assertFalse(fields['diameter_start'].isEnabled)
+            self.assertEqual(fields['diameter_start'].value, index + 2)
+            self.assertEqual(model.segments[index].diameter_start, index + 2)
+
+    def test_chain_relinks_after_middle_and_first_removal(self):
+        for _ in range(4):
+            self.editor.changed('add_section')
+        for index, (_, fields, _) in enumerate(self.editor.rows):
+            fields['diameter_end'].value = index + 3
+        self.editor.changed(self.editor.rows[2][2].id)
+        self.editor.changed(self.editor.rows[0][2].id)
+        model = self.editor.read()
+        self.assertTrue(self.editor.rows[0][1]['diameter_start'].isEnabled)
+        for index in range(1, len(model.segments)):
+            self.assertEqual(model.segments[index].diameter_start, model.segments[index - 1].diameter_end)
+            self.assertEqual(self.editor.rows[index][1]['diameter_start'].value,
+                             model.segments[index - 1].diameter_end)
+
 
 if __name__ == '__main__':
     unittest.main()

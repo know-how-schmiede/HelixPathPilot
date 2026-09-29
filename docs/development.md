@@ -1,11 +1,51 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.3.0 (development)
+## Aktiver Stand – 0.3.1 (development)
+
+### Live-Vorschau und Abschnittsmarkierungen (0.3.1)
+
+Benutzer bestätigt nach der Performance-Korrektur die funktionierende Vorschau,
+passende Geschwindigkeit und korrekte Durchmesserverknüpfung in den Abschnitten.
+Die Mantelflächenerkennung wurde ebenfalls bestätigt. Die unten aufgeführten
+Sonderfälle sind damit nicht einzeln als geprüft dokumentiert.
+
+Die Live-Vorschau ist standardmäßig aktiv und im Reiter „Einstellungen“
+abschaltbar. Nach der Performance-Korrektur ohne Versionswechsel zeichnet
+`executePreview` ausschließlich temporäre Custom Graphics: eine Liniengrafik
+und Grenzpunkte. Dabei werden weder Skizzen erstellt noch G1-Bedingungen gelöst.
+Die Vorschau zeigt den berechneten Pfad; die finale G1-Anpassung kann davon
+abweichen und wird im Dialog entsprechend angekündigt. Unveränderte Grafik
+wird wiederverwendet, sofern Fusion sie nicht bereits zurückgerollt hat.
+Ungültige Eingaben, Abschalten, Moduswechsel und Dialogende entfernen die Grafik.
+`isValidResult` bleibt false: Erst Ausführen erzeugt die echte Skizze mit G1.
+Surface Helix
+bleibt eine reine Flächenprüfung ohne Vorschau oder Ausgabe.
+
+Die Skizze behält alle Spline-Stützpunkte für unveränderte Abtastgenauigkeit.
+`arePointsShown = False` blendet die verbundenen Punkte aus. Separate,
+unverbundene Skizzenpunkte markieren die tatsächlichen Abschnittsgrenzen
+nach der G1-Lösung: n+1 Marker für n Abschnitte. Diese Marker sind eine
+Momentaufnahme und folgen einer späteren manuellen Splineänderung nicht.
+Beim Selektieren/Bearbeiten kann Fusion zusätzliche Splinehilfen anzeigen.
+
+Die Startdurchmesser aller Folgeabschnitte werden auch vor dem Lesen der
+Parameter synchronisiert. Ein Tooltip nennt den direkten Vorgänger.
+
+Manuell prüfen: vier Abschnitte mit unterschiedlichen Enddurchmessern ändern,
+mittleren/ersten Abschnitt entfernen und Folgewerte kontrollieren. Währenddessen
+müssen Vorschau, Achsrichtung, Startwinkel und G1 aktualisiert werden. Vorschau
+abschalten, ungültige Werte eingeben und zwischen Surface/Parametrisch wechseln;
+keine veraltete Helix darf sichtbar bleiben. Abbrechen hinterlässt keine Skizze,
+Bestätigen genau eine, Rückgängig entfernt sie samt Markern. Anfang, alle
+Abschnittsgrenzen und Ende auf sichtbare Marker prüfen, auch auf schräger Achse.
+
+API-Grundlagen: [Fusion Custom Graphics](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/CustomGraphics_UM.htm),
+[Skizzenpunktanzeige](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/fusion_Sketch_arePointsShown.htm).
 
 ### Dialogreiter und Surface-Grundlage
 
 „Helix erstellen“ enthält die Moduswahl und die bisherigen Helix-Parameter.
-„Einstellungen“ enthält die G1-Option (standardmäßig aktiv, nicht dauerhaft
+„Einstellungen“ enthält Live-Vorschau und G1-Option (standardmäßig aktiv, nicht dauerhaft
 gespeichert). „Info“ zeigt das mitgelieferte Logo, die zentrale Versionsnummer,
 Projektinformationen und anklickbare Links entsprechend der Layoutvorlage.
 
@@ -48,8 +88,8 @@ Benachbarte Splines teilen ihren Endpunkt. Die Abtastung erfolgt mit mindestens
 32 Intervallen pro Windung und zwei Intervallen pro Abschnitt. Grenzen:
 32 Abschnitte, 128 Windungen insgesamt und 4097 eindeutige Stützpunkte.
 Auch angebrochene Windungen sind möglich.
-Die Kurve nähert die mathematische Helix an. Es gibt noch keine Live-Vorschau
-oder nachträgliche Änderung über gespeicherte Helix-Parameter.
+Die Kurve nähert die mathematische Helix an. Eine Live-Vorschau ist verfügbar;
+nachträgliche Änderungen über gespeicherte Helix-Parameter sind noch nicht möglich.
 Rechtsdrehend bedeutet positive Rotation um die gewählte Achsrichtung bei
 zunehmender axialer Höhe. Die Länge bezeichnet diese Höhe.
 
@@ -94,7 +134,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.3.0** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.3.1** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -108,7 +148,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.3.0** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.3.1** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -166,7 +206,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 56 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 68 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

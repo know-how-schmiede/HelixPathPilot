@@ -13,6 +13,7 @@ from .sketch_builder import create_sketch
 from .axis_selection import selected_axis, selected_axis_length
 from .segment_editor import SegmentEditor
 from .dialog_tabs import add_settings_and_info
+from .preview_graphics import HelixPreview
 from ..createSurfaceHelix.surface_selection import selected_surface_kind
 
 CMD_ID = f'{config.COMPANY_NAME}_{config.ADDIN_NAME}_createParametricHelix'
@@ -23,6 +24,7 @@ LEGACY_PANEL_ID = 'SolidScriptsAddinsPanel'
 ICON_FOLDER = str(Path(__file__).resolve().parents[2] / 'resources' / 'icons' / 'helix')
 _definition_handlers = []
 _sessions = []
+_previews = []
 
 
 def _panel(ui):
@@ -52,6 +54,9 @@ def start():
 
 
 def stop():
+    for preview in _previews:
+        preview.clear()
+    _previews.clear()
     ui = adsk.core.Application.get().userInterface
     workspace = ui.workspaces.itemById(WORKSPACE_ID)
     if workspace:
@@ -129,15 +134,18 @@ def command_created(args):
     inputs.addValueInput('start_angle', 'Startwinkel', 'deg',
                          adsk.core.ValueInput.createByString('0 deg'))
     inputs.addBoolValueInput('right_handed', 'Rechtsdrehend', True, '', True)
-    tangent_joins = add_settings_and_info(root_inputs)
+    tangent_joins, live_preview = add_settings_and_info(root_inputs)
     editor = SegmentEditor(inputs, units)
     inputs.addTextBoxCommandInput('section_info', '',
         'Durchmesser und Steigung ändern sich linear entlang der Abschnittslänge. '
         'Ab Abschnitt 2 wird der Startdurchmesser vom vorherigen Ende übernommen.', 2, True)
     summary = inputs.addTextBoxCommandInput('summary', '', '', 2, True)
     inputs.addTextBoxCommandInput('error', '', '', 2, True)
+    preview_status = inputs.addTextBoxCommandInput('preview_status', '', '', 2, True)
     handlers = []
     _sessions.append(handlers)
+    graphics = HelixPreview(design)
+    _previews.append(graphics)
 
     def validate(event):
         if mode.selectedItem.index == 1:
@@ -161,13 +169,34 @@ def command_created(args):
             inputs.itemById('error').text = str(error)
             event.areInputsValid = False
 
+    def build_current_sketch():
+        if mode.selectedItem.index == 1:
+            raise ValueError('Surface Helix bietet derzeit nur die Flächenprüfung; keine Skizzenausgabe.')
+        axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
+        return create_sketch(design, _parameters(inputs, editor), axis,
+                             tangent_joins=tangent_joins.value)
+
+    def preview(event):
+        # Graphics are not a final result. Only execute creates the real sketch.
+        event.isValidResult = False
+        preview_status.text = ''
+        if editor.busy or not live_preview.value or mode.selectedItem.index == 1:
+            graphics.clear()
+            return
+        try:
+            model = _parameters(inputs, editor)
+            axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
+            graphics.show(model, axis)
+            if tangent_joins.value:
+                preview_status.text = 'Pfadvorschau; G1-Übergänge werden beim Erstellen angeglichen.'
+        except Exception as error:
+            graphics.clear()
+            preview_status.text = f'Vorschau nicht verfügbar: {error}'
+
     def execute(event):
         try:
-            if mode.selectedItem.index == 1:
-                raise ValueError('Surface Helix bietet derzeit nur die Flächenprüfung; keine Skizzenausgabe.')
-            axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
-            create_sketch(design, _parameters(inputs, editor), axis,
-                          tangent_joins=tangent_joins.value)
+            graphics.clear()
+            build_current_sketch()
         except Exception as error:
             event.executeFailed = True
             event.executeFailedMessage = str(error)
@@ -178,6 +207,12 @@ def command_created(args):
             return
         try:
             changed_id = event.input.id
+            if (changed_id.startswith(('section_', 'remove_section_')) or changed_id in
+                    ('helix_mode', 'live_preview', 'axis', 'reverse_axis', 'start_angle',
+                     'right_handed', 'fit_axis_length', 'add_section')):
+                # Also remove stale graphics for invalid expressions, for which
+                # Fusion may not send executePreview at all.
+                graphics.clear()
             if changed_id == 'helix_mode':
                 surface_mode = mode.selectedItem.index == 1
                 parameter_group.isVisible = not surface_mode
@@ -197,6 +232,9 @@ def command_created(args):
             inputs.itemById('error').text = str(error)
 
     def destroy(event):
+        graphics.clear()
+        if graphics in _previews:
+            _previews.remove(graphics)
         for index, session in enumerate(_sessions):
             if session is handlers:
                 _sessions.pop(index)
@@ -206,4 +244,5 @@ def command_created(args):
     futil.add_handler(command.validateInputs, validate, local_handlers=handlers)
     futil.add_handler(command.inputChanged, input_changed, local_handlers=handlers)
     futil.add_handler(command.execute, execute, local_handlers=handlers)
+    futil.add_handler(command.executePreview, preview, local_handlers=handlers)
     futil.add_handler(command.destroy, destroy, local_handlers=handlers)

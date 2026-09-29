@@ -176,6 +176,28 @@ class SketchAdapterTests(unittest.TestCase):
             self.adapter.create_sketch(self.design, model)
         self.sketch.deleteMe.assert_called_once()
 
+    def test_only_section_boundary_markers_without_reducing_sampling(self):
+        splines = [Mock(), Mock(), Mock()]
+        self.sketch.sketchCurves.sketchFittedSplines.add.side_effect = splines
+        # Simulate solver-adjusted endpoint coordinates.
+        splines[0].startSketchPoint.geometry = (1, 0, 0)
+        for index, spline in enumerate(splines):
+            spline.endSketchPoint.geometry = (1, 0, 2 * (index + 1))
+        model = SegmentedHelix((HelixSegment.constant(2, 2, 1),) * 3)
+        self.adapter.create_sketch(self.design, model, tangent_joins=True)
+        self.assertFalse(self.sketch.arePointsShown)
+        markers = self.sketch.sketchPoints.add.call_args_list
+        self.assertEqual([call.args[0] for call in markers],
+                         [(1, 0, 0), (1, 0, 2), (1, 0, 4), (1, 0, 6)])
+        for call in self.sketch.sketchCurves.sketchFittedSplines.add.call_args_list:
+            self.assertEqual(len(call.args[0]), 65)
+
+    def test_marker_failure_cleans_up_sketch(self):
+        self.sketch.sketchPoints.add.return_value = None
+        with self.assertRaisesRegex(RuntimeError, 'Abschnittsmarkierung'):
+            self.adapter.create_sketch(self.design, HelixParameters(2, 5, 0.5))
+        self.sketch.deleteMe.assert_called_once()
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -46,6 +46,9 @@ class SegmentEditor:
         for index, (group, fields, remove) in enumerate(self.rows):
             remove.isEnabled = len(self.rows) > 1
             fields['diameter_start'].isEnabled = index == 0
+            fields['diameter_start'].tooltip = (
+                f"Wird automatisch vom Enddurchmesser von {self.rows[index - 1][0].name} übernommen."
+                if index else 'Frei wählbarer Startdurchmesser des ersten Abschnitts.')
             if index:
                 previous = self.rows[index - 1][1]['diameter_end']
                 if previous.isValidExpression and fields['diameter_start'].value != previous.value:
@@ -53,6 +56,14 @@ class SegmentEditor:
         self.add_button.isEnabled = len(self.rows) < MAX_SEGMENTS
 
     def read(self, start_angle=0, right_handed=True):
+        # Also synchronize before validation/preview: programmatic input updates
+        # do not always cause another inputChanged event in Fusion.
+        was_busy = self.busy
+        self.busy = True
+        try:
+            self.refresh()
+        finally:
+            self.busy = was_busy
         segments = []
         for index, (group, fields, _) in enumerate(self.rows):
             if any(not value.isValidExpression for value in fields.values()):

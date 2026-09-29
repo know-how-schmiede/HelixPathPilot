@@ -4,6 +4,32 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.3.1 – 2026-09-29 – Entwicklung
+
+**Performance-Korrektur ohne Versionsänderung:** Benutzer meldet 15–20 Sekunden
+Reaktionszeit und bestätigt die Mantelflächenerkennung. Die bisherige Vorschau
+erzeugte bei jeder Änderung eine vollständige Skizze einschließlich G1-Solver.
+Sie wurde durch temporäre Custom Graphics ersetzt: eine Liniengrafik und
+Grenzpunkte, keine Skizzen-/Solveraufrufe während der Eingabe. Unveränderte
+Grafik wird wiederverwendet; ungültige Eingaben, Moduswechsel, Abschalten,
+Ausführen und Dialogende räumen sie auf. Die finale Skizze mit G1 entsteht
+erst beim Bestätigen. Die Vorschau zeigt den mathematischen Pfad vor der
+G1-Anpassung; ein Dialoghinweis erklärt die mögliche Abweichung.
+68 automatisierte Tests bestanden. Benutzer bestätigt anschließend, dass
+Vorschau und Geschwindigkeit passen und die Durchmesserverknüpfung in den
+Abschnitten korrekt funktioniert. Keine numerische Laufzeitmessung angegeben.
+Die folgenden ursprünglichen Vorschauangaben werden durch diese Korrektur ersetzt.
+
+**GitHub:** Live-Vorschau für parametrische und variable Helices ergänzt,
+Punktanzeige auf Abschnittsgrenzen reduziert und Durchmesserverknüpfung über
+die vollständige Abschnittskette abgesichert.
+
+- Live-Vorschau standardmäßig aktiv, unter „Einstellungen“ abschaltbar. Gleiche Ausgabe wie beim Bestätigen, einschließlich gewählter Achse und G1. Erfolgreiche Vorschau wird über Fusions Vorschautransaktion beim Bestätigen übernommen; Abbrechen verwirft sie.
+- Ungültige Eingaben und Surface-Flächenprüfung erzeugen keine Vorschau. Solverfehler erscheinen als Hinweis im Dialog, ohne Meldungsfenster bei jeder Änderung.
+- Alle Spline-Stützpunkte bleiben erhalten, werden aber über die Skizzenpunktanzeige ausgeblendet. Separate, unverbundene Markierungspunkte zeigen Anfang, gemeinsame Grenzen und Ende (n+1 Marker für n Abschnitte). Koordinaten werden nach der G1-Lösung übernommen.
+- Startdurchmesser jedes Folgeabschnitts wird zusätzlich beim Lesen synchronisiert; Tooltips nennen den direkten Vorgänger. Tests decken alle 32 Abschnitte und Entfernen mittlerer/erster Abschnitte ab.
+- 63 automatisierte Tests bestanden. Fusion-Laufzeitprüfung von Darstellung, Vorschau-Rollback und Ergebnisübernahme steht aus; die ursprüngliche Ursache der gemeldeten Anzeigeabweichung ist außerhalb von Fusion nicht reproduziert.
+
 ## 0.3.0 – 2026-09-29 – Entwicklung
 
 **GitHub:** Surface-Helix-Grundlage mit Auswahl und Erkennung analytischer

@@ -69,9 +69,12 @@ class DialogTests(unittest.TestCase):
         modules.start()
         self.addCleanup(modules.stop)
         self.entry = importlib.import_module('HelixPathPilot.commands.createParametricHelix.entry')
+        preview_patch = patch.object(self.entry, 'HelixPreview')
+        self.graphics = preview_patch.start().return_value
+        self.addCleanup(preview_patch.stop)
         self.root = Inputs()
         command = types.SimpleNamespace(commandInputs=self.root, validateInputs='validate',
-            inputChanged='changed', execute='execute', destroy='destroy')
+            inputChanged='changed', execute='execute', executePreview='preview', destroy='destroy')
         self.entry.command_created(types.SimpleNamespace(command=command))
         self.create = self.root.itemById('create_tab').children
 
@@ -104,3 +107,49 @@ class DialogTests(unittest.TestCase):
         self.callbacks['validate'](event)
         self.assertTrue(event.areInputsValid)
         self.assertTrue(self.create.itemById('parameter_group').isVisible)
+
+    def test_preview_never_builds_sketch_and_can_be_disabled(self):
+        event = types.SimpleNamespace()
+        with patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['preview'](event)
+            self.assertFalse(event.isValidResult)
+            self.graphics.show.assert_called_once()
+            self.root.itemById('settings_tab').children.itemById('live_preview').value = False
+            self.callbacks['preview'](event)
+            self.assertFalse(event.isValidResult)
+            create.assert_not_called()
+            self.callbacks['execute'](types.SimpleNamespace())
+            create.assert_called_once()
+
+    def test_invalid_or_surface_input_never_creates_preview(self):
+        event = types.SimpleNamespace()
+        angle = self.create.itemById('parameter_group').children.itemById('start_angle')
+        with patch.object(self.entry, 'create_sketch') as create:
+            angle.isValidExpression = False
+            self.callbacks['preview'](event)
+            self.assertFalse(event.isValidResult)
+            angle.isValidExpression = True
+            self.create.itemById('helix_mode').selectedItem.index = 1
+            self.callbacks['preview'](event)
+            self.assertFalse(event.isValidResult)
+            create.assert_not_called()
+
+    def test_preview_failure_is_reported_and_next_preview_recovers(self):
+        event = types.SimpleNamespace()
+        status = self.create.itemById('parameter_group').children.itemById('preview_status')
+        with patch.object(self.graphics, 'show', side_effect=[RuntimeError('Graphics'), Mock()]):
+            self.callbacks['preview'](event)
+            self.assertFalse(event.isValidResult)
+            self.assertIn('Graphics', status.text)
+            self.callbacks['preview'](event)
+            self.assertFalse(event.isValidResult)
+            self.assertIn('G1', status.text)
+
+    def test_invalid_edit_and_destroy_clear_graphics(self):
+        angle = self.create.itemById('parameter_group').children.itemById('start_angle')
+        angle.isValidExpression = False
+        self.callbacks['changed'](types.SimpleNamespace(input=angle))
+        self.graphics.clear.assert_called_once()
+        self.callbacks['destroy'](types.SimpleNamespace())
+        self.assertEqual(self.graphics.clear.call_count, 2)
+        self.assertEqual(self.entry._previews, [])

@@ -156,12 +156,12 @@ Eine gute Benutzererfahrung mit Live-Vorschau im Viewport schaffen.
 
 ## Schritte
 
-- [ ] Live-Vorschau-Grundlage implementieren
-- [ ] Vorschau für Parametric Helix
-- [ ] Vorschau für Variable Helix
+- [x] Live-Vorschau-Grundlage implementieren (vorgezogen in 0.3.1; Vorschau und Geschwindigkeit vom Benutzer in Fusion bestätigt)
+- [x] Vorschau für Parametric Helix (0.3.1)
+- [x] Vorschau für Variable Helix (0.3.1)
 - [ ] Vorschau für Surface Helix
 - [ ] performante Aktualisierung bei Parameteränderungen
-- [ ] unnötige Neuberechnungen reduzieren
+- [x] unnötige Neuberechnungen reduzieren (0.3.1 ohne Versionswechsel: Custom-Graphics-Vorschau statt Skizze/G1 bei jeder Eingabe, unveränderte Grafik wiederverwenden)
 - [ ] UI-Feinschliff
 - [ ] Eingabevalidierung verbessern
 
@@ -267,6 +267,22 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 - [ ] Release-Paket bereitstellen
 
 # Backlog / neue Ideen
+
+## Umgesetzt in 0.3.1 – Benutzerwünsche vom 2026-09-29
+
+- [x] Durchmesserverknüpfung für die gesamte Abschnittskette zusätzlich beim Lesen synchronisieren; Tooltips zeigen den direkten Vorgänger. 32 Abschnitte sowie Entfernen mittlerer/erster Abschnitte automatisiert geprüft.
+- [x] Punktdarstellung vereinfachen: interne Spline-Stützpunkte ausblenden und Abschnittsanfänge/-enden mit separaten Punkten markieren, ohne die Kurvenauflösung zu reduzieren.
+- [x] Live-Vorschau für parametrische/variable Helices vorziehen: schnelle Custom Graphics mit gewählter Achse, unter Einstellungen schaltbar. Finale Skizze und G1 erst beim Bestätigen; Performance-Korrektur ohne Versionsänderung.
+- [x] Vorschau, Geschwindigkeit und Durchmesserverknüpfung der Abschnitte in Fusion prüfen (vom Benutzer bestätigt).
+- [ ] Weitere Sonderfälle in Fusion prüfen: Grenzmarkierungen beim Bearbeiten/Selektieren, Vorschau bei ungültigen Eingaben, Abbrechen, Moduswechsel und Rückgängig.
+
+Nächster Implementierungsschritt: weiterer Ausbau der Surface-Konturableitung.
+
+Benutzer bestätigt die Mantelflächenerkennung. Gemeldete Eingabelatenz von
+15–20 Sekunden durch Ersatz der Skizzenvorschau adressiert; Benutzer bestätigt
+anschließend passende Geschwindigkeit und Vorschau sowie korrekte Abschnittsdurchmesser.
+
+## Weitere Ideen
 
 - [x] Helixlänge aus endlicher Skizzenlinie oder gerader Körperkante einmalig übernehmen (0.2.2): positive, endliche Länge prüfen, unendliche Konstruktionsachsen ausschließen, Abschnittslängen proportional skalieren. Fusion-Prüfung noch offen.
 - [ ] direkter Sweep-Output
