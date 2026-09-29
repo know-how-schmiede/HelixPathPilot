@@ -111,7 +111,7 @@ Helix anhand einer Rotationsoberfläche bzw. eines Rotationskörpers erzeugen.
 - [x] Helix auf der Oberfläche berechnen (0.3.3: vollständige Zylinder-/Kegelmäntel, konstante Steigung, schnelle Vorschau und 3D-Skizzenausgabe; grundsätzliche Funktion vom Benutzer in Fusion bestätigt, Sonderfälle offen)
 - [x] Surface Offset integrieren (0.3.4: Offset-Funktion, Vorschau und negativer Abstand vom Benutzer in Fusion bestätigt; weitere Sonderfälle offen)
 - [x] Kombination mit variabler Steigung ermöglichen (0.3.5: Start-/Endsteigung linear entlang der Achse; Funktion vom Benutzer in Fusion bestätigt, weitere Sonderfälle offen)
-- [ ] Testmodelle definieren
+- [x] Testmodelle definieren (0.3.6: Modellbauanleitungen, Sollwerte und Prüfprotokoll in [Surface-Testmodelle](surface-testmodelle.md); manueller Durchlauf offen)
 - [ ] erste stabile Surface-Helix-Version testen
 
 ## Zielversion
@@ -129,7 +129,8 @@ vollständigen Zylinder-/Kegelmantel verglichen; Teilflächen und Ausschnitte
 werden abgelehnt. Kegelspitzen und geteilte Kreisränder sind noch nicht unterstützt.
 Stand 0.3.3: Oberflächenhelix mit konstanter Steigung, Startwinkel, Drehrichtung
 und Randwechsel implementiert. 0.3.4 ergänzt Surface Offset; 0.3.5 ergänzt
-variable Steigung im Surface-Modus. Als Nächstes Testmodelle definieren und in Fusion prüfen.
+variable Steigung im Surface-Modus. Testmodelle und Prüfprotokoll sind in 0.3.6 definiert.
+Als Nächstes den vollständigen Surface-Testdurchlauf in Fusion durchführen.
 
 # Version 0.4.x – Presets
 
@@ -281,7 +282,7 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 - [x] Vorschau, Geschwindigkeit und Durchmesserverknüpfung der Abschnitte in Fusion prüfen (vom Benutzer bestätigt).
 - [ ] Weitere Sonderfälle in Fusion prüfen: Grenzmarkierungen beim Bearbeiten/Selektieren, Vorschau bei ungültigen Eingaben, Abbrechen, Moduswechsel und Rückgängig.
 
-Surface-Konturableitung, Oberflächenhelix und Offset sind implementiert; variable Surface-Steigung ist seit 0.3.5 implementiert. Nächster Schritt: Testmodelle definieren.
+Surface-Konturableitung, Oberflächenhelix und Offset sind implementiert; variable Surface-Steigung ist seit 0.3.5 implementiert. Testmodelle sind definiert; nächster Schritt ist der vollständige Surface-Testdurchlauf in Fusion.
 
 Benutzer bestätigt die Mantelflächenerkennung. Gemeldete Eingabelatenz von
 15–20 Sekunden durch Ersatz der Skizzenvorschau adressiert; Benutzer bestätigt

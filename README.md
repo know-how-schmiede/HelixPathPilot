@@ -66,14 +66,14 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-Development version **0.3.5** lives in `Fusion_addin/HelixPathPilot/`.
+Development version **0.3.6** lives in `Fusion_addin/HelixPathPilot/`.
 Parametric and variable helices now have an optional live preview. Point display
 is reduced to section boundaries, and start diameters follow the preceding
 section throughout the full chain.
 New Settings and Info tabs provide the G1 option, project logo and links.
 Surface Helix creates a 3D sketch on full cylindrical and conical faces with
 constant or linearly varying axial pitch, a fast preview and a choice of starting rim.
-**Solid → Create → HelixPathPilot v0.3.5** creates a 3D sketch around a selected axis.
+**Solid → Create → HelixPathPilot v0.3.6** creates a 3D sketch around a selected axis.
 Add or remove up to 32 sections with individual lengths, start/end diameters
 and start/end pitches. Handedness and start angle apply to the whole helix.
 “Achslänge übernehmen” fits the total length to a finite straight line or edge once.
