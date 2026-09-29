@@ -8,6 +8,8 @@ import adsk.fusion
 from ... import config
 from ...core.variable_helix import sampling_plan
 from ...core.surface_helix import surface_helix
+from ...core.presets import HelixPreset, SurfaceSettings
+from ...core.preset_store import PresetStore
 from ...lib import fusionAddInUtils as futil
 from ...version import APP_NAME, VERSION
 from .sketch_builder import create_sketch
@@ -103,11 +105,22 @@ def command_created(args):
     preset_choice = preset_inputs.addDropDownCommandInput(
         'preset_choice', 'Vorlage', adsk.core.DropDownStyles.TextListDropDownStyle)
     presets, preset_errors = builtin_presets()
+    store = PresetStore()
+    user_entries, user_errors = store.list()
+    preset_errors.extend(user_errors)
+    preset_keys = [None] * len(presets) + [key for key, _ in user_entries]
+    builtin_count = len(presets)
+    presets.extend(preset for _, preset in user_entries)
     for index, preset in enumerate(presets):
         label = 'Surface' if preset.mode == 'surface' else 'Parametrisch'
-        preset_choice.listItems.add(f'{preset.name} ({label})', index == 0)
+        origin = 'Eigene' if preset_keys[index] else 'Mitgeliefert'
+        preset_choice.listItems.add(f'{preset.name} ({label}, {origin})', index == 0)
     preset_load = preset_inputs.addBoolValueInput('preset_load', 'Vorlage laden', False, '', False)
     preset_load.isEnabled = bool(presets)
+    preset_name = preset_inputs.addStringValueInput('preset_name', 'Name für eigene Vorlage', '')
+    preset_inputs.addBoolValueInput('preset_save', 'Als eigene Vorlage speichern', False, '', False)
+    preset_delete = preset_inputs.addBoolValueInput('preset_delete', 'Eigene Vorlage löschen', False, '', False)
+    preset_delete.isEnabled = bool(preset_keys and preset_keys[0])
     preset_note = preset_inputs.addTextBoxCommandInput('preset_note', '',
         'Vorlage auswählen und laden. Aktuelle Parameter werden ersetzt; '
         'Achse und Mantelfläche bleiben separat gewählt.', 3, True)
@@ -184,11 +197,63 @@ def command_created(args):
     graphics = HelixPreview(design)
     _previews.append(graphics)
 
-    def load_preset():
+    def selected_preset_index():
         choice = preset_choice.selectedItem
         if choice is None or not 0 <= choice.index < len(presets):
             raise ValueError('Bitte eine Vorlage auswählen.')
-        preset = presets[choice.index]
+        return choice.index
+
+    def refresh_user_presets(selected_key=None):
+        nonlocal presets, preset_keys
+        entries, errors = store.list()
+        presets = presets[:builtin_count] + [preset for _, preset in entries]
+        preset_keys = [None] * builtin_count + [key for key, _ in entries]
+        selected = preset_keys.index(selected_key) if selected_key in preset_keys else 0
+        editor.busy = True
+        try:
+            preset_choice.listItems.clear()
+            for index, preset in enumerate(presets):
+                mode_label = 'Surface' if preset.mode == 'surface' else 'Parametrisch'
+                origin = 'Eigene' if preset_keys[index] else 'Mitgeliefert'
+                preset_choice.listItems.add(f'{preset.name} ({mode_label}, {origin})', index == selected)
+            preset_load.isEnabled = bool(presets)
+            preset_delete.isEnabled = bool(preset_keys and preset_keys[selected])
+        finally:
+            editor.busy = False
+        return '\n'.join(errors)
+
+    def save_preset():
+        if mode.selectedItem.index == 1:
+            if any(not field.isValidExpression for field in
+                   (surface_pitch, surface_pitch_end, surface_offset, surface_angle)):
+                raise ValueError('Bitte gültige Surface-Werte eingeben.')
+            parameters = SurfaceSettings(surface_pitch.value, surface_pitch_end.value,
+                surface_offset.value, surface_angle.value, surface_right.value, surface_reverse.value)
+            reverse = False
+        else:
+            parameters = _parameters(inputs, editor)
+            reverse = inputs.itemById('reverse_axis').value
+        preset = HelixPreset(preset_name.value, parameters, reverse, tangent_joins.value)
+        key = store.save(preset)
+        errors = refresh_user_presets(key)
+        preset_note.text = f'Gespeichert: {preset.name.strip()}.' + ('\n' + errors if errors else '')
+
+    def delete_preset():
+        index = selected_preset_index()
+        key = preset_keys[index]
+        if key is None:
+            raise ValueError('Mitgelieferte Vorlagen können nicht gelöscht werden.')
+        name = presets[index].name
+        if app.userInterface.messageBox(f'Eigene Vorlage „{name}“ löschen?', CMD_NAME,
+                adsk.core.MessageBoxButtonTypes.YesNoButtonType) != adsk.core.DialogResults.DialogYes:
+            return
+        store.delete(key)
+        errors = refresh_user_presets()
+        preset_note.text = f'Gelöscht: {name}.' + ('\n' + errors if errors else '')
+
+    def load_preset():
+        index = selected_preset_index()
+        preset = store.load(preset_keys[index]) if preset_keys[index] else presets[index]
         graphics.clear()
         editor.busy = True
         try:
@@ -213,6 +278,7 @@ def command_created(args):
             surface_group.isVisible = is_surface
             preset_note.text = f'Geladen: {preset.name}.' + (
                 ' Bitte eine geeignete Mantelfläche auswählen bzw. prüfen.' if is_surface else '')
+            preset_name.value = preset.name
         finally:
             editor.busy = False
 
@@ -301,11 +367,15 @@ def command_created(args):
             return
         try:
             changed_id = event.input.id
-            if changed_id == 'preset_load':
+            if changed_id == 'preset_choice':
+                preset_delete.isEnabled = bool(preset_keys[selected_preset_index()])
+                return
+            if changed_id in ('preset_load', 'preset_save', 'preset_delete'):
                 try:
-                    load_preset()
+                    {'preset_load': load_preset, 'preset_save': save_preset,
+                     'preset_delete': delete_preset}[changed_id]()
                 except Exception as error:
-                    preset_note.text = f'Vorlage konnte nicht geladen werden: {error}'
+                    preset_note.text = f'Vorlagenaktion fehlgeschlagen: {error}'
                 return
             if (changed_id.startswith(('section_', 'remove_section_', 'surface_')) or changed_id in
                     ('surface', 'helix_mode', 'live_preview', 'axis', 'reverse_axis', 'start_angle',

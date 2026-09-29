@@ -1,6 +1,23 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.4.1 (development)
+## Aktiver Stand – 0.4.2 (development)
+
+### Eigene Vorlagen (0.4.2)
+
+Unter „Vorlagen“ einen Namen eingeben und „Als eigene Vorlage speichern“ drücken.
+Gespeichert werden die aktuellen Werte des aktiven Modus. Die neue Vorlage wird
+in der Liste ausgewählt und mit „Eigene“ gekennzeichnet. Speichern verändert keine
+Geometrie. Details und Speicherorte: [Preset-Bedienung](presets.md).
+
+Manuelle Fusion-Prüfung (offen):
+
+- Variable Helix mit zwei Abschnitten speichern, Dialog schließen, wieder öffnen und laden; Werte, Achsumkehr, Winkel, Drehrichtung und G1 vergleichen.
+- Surface-Werte ohne ausgewählte Fläche speichern und später mit Fläche laden.
+- Gleichen Namen erneut speichern: Hinweis statt Überschreiben; leeren Namen und ungültige Eingaben ebenfalls prüfen.
+- Eigene Vorlage löschen: Nein erhält die Datei, Ja entfernt sie aus der Liste. Aktuelle Helix-Werte bleiben erhalten.
+- Mitgelieferte Vorlage wählen: Löschen deaktiviert. Abbrechen des Helix-Dialogs macht gespeicherte/gelöschte Dateien nicht rückgängig.
+
+Die Löschbestätigung verwendet Fusions [MessageBox-API](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/MessageBoxButtonTypes.htm).
 
 ### Vorlagen laden (0.4.1)
 
@@ -273,7 +290,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.4.1** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.4.2** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -287,7 +304,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.4.1** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.4.2** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -345,7 +362,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 94 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 101 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

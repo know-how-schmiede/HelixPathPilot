@@ -4,6 +4,17 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.4.2 – 2026-09-29 – Entwicklung
+
+**GitHub:** Eigene Helix-Vorlagen unter frei wählbarem Namen speichern,
+wieder laden und nach Bestätigung löschen. Mitgelieferte Vorlagen bleiben geschützt.
+
+- Speicherung im Benutzerprofil außerhalb der Add-in-Installation, feste cm/rad-Einheiten, JSON-Schema unverändert. Namen sind von Dateipfaden getrennt; bestehende Namen werden ohne Überschreiben abgewiesen.
+- Aktiver Modus, Abschnitte, Winkel, Drehrichtung, Achsumkehr, G1 und Surface-Einstellungen werden übernommen. Achs-/Flächenauswahl und Live-Vorschau gehören weiterhin nicht zum Preset.
+- Surface-Einstellungen lassen sich ohne Fläche speichern; geometrieabhängige Limits werden beim Erzeugen geprüft.
+- Dateifehler werden im Dialog gemeldet; unvollständige Dateien bei Schreibfehlern entfernt. Speichern/Löschen wirkt sofort, unabhängig von OK/Abbrechen des Helix-Dialogs.
+- 101 automatisierte Tests bestanden, einschließlich Persistenz, Unicode-Namen, Duplikaten, beschädigten Dateien, Schreibfehlern, Laden und Löschabbruch. Fusion-Laufzeitprüfung offen. Nächster Schritt: JSON-Dateiimport/-export.
+
 ## 0.4.1 – 2026-09-29 – Entwicklung
 
 - Repository-Zeilenenden durch `.gitattributes` und `.editorconfig` vereinheitlicht: LF für Text, CRLF für Windows-Batchdateien, keine Konvertierung von Binärdateien. Bestehende Textdateien normalisiert; Version unverändert.

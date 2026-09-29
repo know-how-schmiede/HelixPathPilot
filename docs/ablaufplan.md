@@ -143,17 +143,17 @@ Helix-Konfigurationen speichern, laden, importieren und exportieren.
 
 - [x] Preset-Datenmodell anlegen (0.4.0: beide Modi, Schema 1, feste Einheiten und JSON-Validierung)
 - [x] Built-in-Presets definieren (0.4.0: Basishelix, variable Abschnitte und Surface-Steigung)
-- [ ] Speichern unter frei wählbarem Namen umsetzen
-- [~] Presets laden (0.4.1: Built-in-Auswahl und Laden im Dialog vom Benutzer in Fusion bestätigt; Benutzerpresets folgen)
-- [ ] Presets löschen
+- [x] Speichern unter frei wählbarem Namen umsetzen (0.4.2: Benutzerprofil, ohne Überschreiben bestehender Namen)
+- [x] Presets laden (0.4.1: Built-ins bestätigt; 0.4.2: eigene Vorlagen implementiert, Fusion-Prüfung offen)
+- [x] Presets löschen (0.4.2: eigene Vorlagen mit Bestätigung; Built-ins geschützt)
 - [ ] JSON-Export umsetzen
 - [ ] JSON-Import umsetzen
 - [x] Dateiendung `*.helixpilot.json` verwenden (Built-in-Dateien in 0.4.0)
-- [~] Fehlerbehandlung für ungültige Presets ergänzen (Datenvalidierung in 0.4.0; Dialogmeldungen folgen mit Dateiverwaltung)
+- [~] Fehlerbehandlung für ungültige Presets ergänzen (Datenvalidierung in 0.4.0; 0.4.2 ergänzt Dateifehler im Dialog; Importprüfung folgt)
 
 ## Zielversion
 
-**0.4.0** – Datenmodell und Built-in-Vorlagen implementiert; [Formatbeschreibung](presets.md). 0.4.1 ergänzt Built-in-Auswahl und Laden im Dialog. Als Nächstes Benutzerdateiverwaltung.
+**0.4.0** – Datenmodell und Built-in-Vorlagen implementiert; [Formatbeschreibung](presets.md). 0.4.1 ergänzt Built-in-Auswahl und Laden im Dialog. 0.4.2 ergänzt Speichern/Laden/Löschen eigener Vorlagen. Als Nächstes JSON-Dateiimport/-export.
 
 # Version 0.5.x – Preview / Interaktion
 
@@ -283,7 +283,7 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 - [x] Vorschau, Geschwindigkeit und Durchmesserverknüpfung der Abschnitte in Fusion prüfen (vom Benutzer bestätigt).
 - [ ] Weitere Sonderfälle in Fusion prüfen: Grenzmarkierungen beim Bearbeiten/Selektieren, Vorschau bei ungültigen Eingaben, Abbrechen, Moduswechsel und Rückgängig.
 
-Surface-Konturableitung, Oberflächenhelix und Offset sind implementiert; variable Surface-Steigung ist seit 0.3.5 implementiert. Testmodelle sind definiert; der vollständige Surface-Testdurchlauf in Fusion bleibt offen. Nach der Preset-Grundlage in 0.4.0 folgen Preset-Dialog und Benutzerdateiverwaltung.
+Surface-Konturableitung, Oberflächenhelix und Offset sind implementiert; variable Surface-Steigung ist seit 0.3.5 implementiert. Testmodelle sind definiert; der vollständige Surface-Testdurchlauf in Fusion bleibt offen. Preset-Dialog und Benutzerdateiverwaltung sind bis 0.4.2 implementiert; als Nächstes JSON-Dateiimport/-export.
 
 Benutzer bestätigt die Mantelflächenerkennung. Gemeldete Eingabelatenz von
 15–20 Sekunden durch Ersatz der Skizzenvorschau adressiert; Benutzer bestätigt

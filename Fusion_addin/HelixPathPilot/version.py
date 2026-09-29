@@ -14,7 +14,7 @@ APP_AUTHOR = "Know-How-Schmiede"
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 4
-VERSION_PATCH = 1
+VERSION_PATCH = 2
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 __version__ = VERSION
@@ -22,7 +22,7 @@ __version__ = VERSION
 RELEASE_STAGE = "development"
 RELEASE_DATE = "2026-09-29"
 
-PROJECT_STATUS = "built-in preset selection and loading / development"
+PROJECT_STATUS = "user preset save load and delete / development"
 
 
 def get_version():

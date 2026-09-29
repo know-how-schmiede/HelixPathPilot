@@ -1,12 +1,40 @@
-# Preset-Format und Bedienung – Stand 0.4.1
+# Preset-Format und Bedienung – Stand 0.4.2
 
 Die erste Preset-Ausbaustufe enthält ein Fusion-unabhängiges Datenmodell,
 JSON-Serialisierung und drei mitgelieferte Vorlagen. Seit 0.4.1 sind die Vorlagen
 im Fusion-Dialog unter **Helix erstellen → Vorlagen** sichtbar. Auswählen und
 **Vorlage laden** drücken, um Modus und Parameter zu übernehmen. Dabei werden
 aktuelle Parameter ersetzt; Achse und Mantelfläche bleiben separat gewählt.
-Die Auswahl allein verändert noch keine Eingaben. Benutzerdateiverwaltung
-und Speichern eigener Presets sind noch nicht implementiert.
+Die Auswahl allein verändert noch keine Eingaben. Seit 0.4.2 können eigene
+Vorlagen gespeichert, geladen und gelöscht werden.
+
+## Eigene Vorlagen verwalten
+
+1. Gewünschten Modus und Helix-Werte einstellen.
+2. Unter „Vorlagen“ einen Namen eingeben und **Als eigene Vorlage speichern** drücken.
+3. Die gespeicherte Vorlage erscheint mit „Eigene“ in der Liste. Zum Wiederherstellen
+   auswählen und **Vorlage laden** drücken, auch nach erneutem Öffnen des Dialogs.
+4. **Eigene Vorlage löschen** entfernt die ausgewählte Benutzerdatei nach Bestätigung.
+   Die aktuellen Helix-Werte bleiben dabei erhalten; mitgelieferte Vorlagen sind geschützt.
+
+Doppelte Namen werden ohne Unterscheidung der Groß-/Kleinschreibung abgewiesen.
+Zum Speichern einer Variante einen neuen Namen verwenden. Führender und
+abschließender Leerraum wird entfernt. Ungültige Eingaben werden nicht gespeichert.
+Surface-Einstellungen können ohne Fläche gespeichert werden; die Eignung der
+Fläche und geometrieabhängige Grenzen werden beim Erzeugen geprüft.
+
+Speichern und Löschen wirken sofort auf Dateien. Abbrechen des Helix-Dialogs
+oder Fusions Rückgängig für Modellierungsschritte setzt diese Dateiaktionen nicht zurück.
+
+Speicherorte außerhalb des Add-in-Verzeichnisses:
+
+- Windows: `%APPDATA%\HelixPathPilot\presets`
+- macOS: `~/Library/Application Support/HelixPathPilot/presets`
+
+Die Namen erscheinen im JSON-Inhalt; Dateinamen werden aus normalisierten Namen
+abgeleitet und enthalten keine eingegebenen Pfadzeichen. Der gesamte Ordner kann
+zur Sicherung kopiert werden. Die Dateien unter `presets/user/` im Add-in-Ordner
+werden nicht verwendet. Ein Dateiauswahldialog für Import/Export folgt später.
 
 [Screenshots der Vorlagenauswahl und einer geladenen Helix](screenshots-DE.md#v041)
 zeigen die Bedienung in Version 0.4.1.
@@ -63,5 +91,8 @@ Kopien. Validierungsfehler werden als `ValueError` gemeldet.
 ungültige Dateien einzeln. Der Dialog übernimmt validierte Vorlagen in die
 Fusion-Eingaben. Die Kernmethoden selbst verarbeiten weiterhin nur JSON-Text.
 
-Nächster Schritt: benannte Benutzerpresets mit Laden, Speichern, Löschen und
-JSON-Dateiimport/-export.
+`core.preset_store.PresetStore` verwaltet Benutzerdateien unabhängig von Fusion.
+Lesen prüft Größe und Schema erneut; beschädigte Dateien werden beim Auflisten
+einzeln gemeldet und übersprungen. Speichern überschreibt keine vorhandene Datei.
+
+Nächster Schritt: JSON-Dateiimport/-export.

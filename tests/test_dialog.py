@@ -4,6 +4,7 @@ import importlib
 from pathlib import Path
 import sys
 import types
+import tempfile
 import unittest
 from unittest.mock import Mock, patch
 
@@ -27,7 +28,7 @@ class Inputs:
             item = Mock(id=key, isValidExpression=True, selectionCount=0)
             item.children = Inputs()
             item.isVisible = True
-            if method == 'addValueInput':
+            if method in ('addValueInput', 'addStringValueInput'):
                 item.value = args[-1]
             elif method == 'addBoolValueInput':
                 item.value = args[-1]
@@ -52,6 +53,10 @@ class Inputs:
                     return entry
                 item.listItems.add.side_effect = add_entry
                 item.listItems.item.side_effect = lambda index: entries[index]
+                def clear_entries():
+                    entries.clear()
+                    item.selectedItem = None
+                item.listItems.clear.side_effect = clear_entries
             elif method == 'addImageCommandInput':
                 if not Path(args[0]).is_file():
                     raise ValueError('Missing packaged logo')
@@ -73,6 +78,9 @@ class DialogTests(unittest.TestCase):
         adsk.core.ValueInput = types.SimpleNamespace(
             createByString=lambda text: 0.0, createByReal=lambda value: value)
         adsk.core.DropDownStyles = types.SimpleNamespace(TextListDropDownStyle=0)
+        adsk.core.MessageBoxButtonTypes = types.SimpleNamespace(YesNoButtonType=3)
+        adsk.core.DialogResults = types.SimpleNamespace(DialogYes=1)
+        self.ui = adsk.core.Application.get.return_value.userInterface
         adsk.fusion.Design = types.SimpleNamespace(cast=lambda value: value)
         package = types.ModuleType('HelixPathPilot.commands')
         package.__path__ = [str(ADDIN / 'commands')]
@@ -88,6 +96,13 @@ class DialogTests(unittest.TestCase):
         modules.start()
         self.addCleanup(modules.stop)
         self.entry = importlib.import_module('HelixPathPilot.commands.createParametricHelix.entry')
+        from HelixPathPilot.core.preset_store import PresetStore
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.store = PresetStore(self.temp.name)
+        store_patch = patch.object(self.entry, 'PresetStore', return_value=self.store)
+        store_patch.start()
+        self.addCleanup(store_patch.stop)
         preview_patch = patch.object(self.entry, 'HelixPreview')
         self.graphics = preview_patch.start().return_value
         self.addCleanup(preview_patch.stop)
@@ -96,6 +111,45 @@ class DialogTests(unittest.TestCase):
             inputChanged='changed', execute='execute', executePreview='preview', destroy='destroy')
         self.entry.command_created(types.SimpleNamespace(command=command))
         self.create = self.root.itemById('create_tab').children
+
+    def test_user_preset_save_load_delete_and_cancel(self):
+        fields = self.create.itemById('presets').children
+        fields.itemById('preset_name').value = 'Meine Feder'
+        parameters = self.create.itemById('parameter_group').children
+        parameters.itemById('start_angle').value = 1.2
+        def click(key):
+            self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById(key)))
+        click('preset_save')
+        self.assertEqual(len(self.store.list()[0]), 1)
+        self.assertTrue(fields.itemById('preset_delete').isEnabled)
+        parameters.itemById('start_angle').value = 0
+        click('preset_load')
+        self.assertEqual(parameters.itemById('start_angle').value, 1.2)
+        click('preset_save')
+        self.assertIn('existiert bereits', fields.itemById('preset_note').text)
+        self.ui.messageBox.return_value = 0
+        click('preset_delete')
+        self.assertEqual(len(self.store.list()[0]), 1)
+        self.ui.messageBox.return_value = 1
+        click('preset_delete')
+        self.assertEqual(self.store.list()[0], [])
+        self.assertFalse(fields.itemById('preset_delete').isEnabled)
+        click('preset_delete')
+        self.assertIn('Mitgelieferte', fields.itemById('preset_note').text)
+
+    def test_surface_save_without_face_and_invalid_input(self):
+        fields = self.create.itemById('presets').children
+        self.create.itemById('helix_mode').listItems.item(1).isSelected = True
+        fields.itemById('preset_name').value = 'Surface gespeichert'
+        surface = self.create.itemById('surface_group').children
+        surface.itemById('surface_offset').value = -0.2
+        event = types.SimpleNamespace(input=fields.itemById('preset_save'))
+        surface.itemById('surface_pitch').isValidExpression = False
+        self.callbacks['changed'](event)
+        self.assertEqual(self.store.list()[0], [])
+        surface.itemById('surface_pitch').isValidExpression = True
+        self.callbacks['changed'](event)
+        self.assertEqual(self.store.list()[0][0][1].parameters.offset, -0.2)
 
     def test_load_builtin_presets_into_actual_output(self):
         fields = self.create.itemById('presets').children
