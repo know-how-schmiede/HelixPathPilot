@@ -1,0 +1,106 @@
+"""Check tab wiring and mode safety with isolated Fusion doubles."""
+
+import importlib
+from pathlib import Path
+import sys
+import types
+import unittest
+from unittest.mock import Mock, patch
+
+ADDIN = Path(__file__).resolve().parents[1] / 'Fusion_addin/HelixPathPilot'
+sys.path.insert(0, str(ADDIN.parent))
+
+
+class Inputs:
+    def __init__(self):
+        self.items = {}
+
+    def itemById(self, key):
+        # Intentionally local: catch accidental lookups across tab boundaries.
+        return self.items.get(key)
+
+    def __getattr__(self, method):
+        if not method.startswith('add'):
+            raise AttributeError(method)
+
+        def add(key, name, *args):
+            item = Mock(id=key, isValidExpression=True, selectionCount=0)
+            item.children = Inputs()
+            item.isVisible = True
+            if method == 'addValueInput':
+                item.value = args[-1]
+            elif method == 'addBoolValueInput':
+                item.value = args[-1]
+            elif method == 'addDropDownCommandInput':
+                item.selectedItem = types.SimpleNamespace(index=0)
+            elif method == 'addImageCommandInput':
+                if not Path(args[0]).is_file():
+                    raise ValueError('Missing packaged logo')
+            self.items[key] = item
+            return item
+        return add
+
+
+class DialogTests(unittest.TestCase):
+    def setUp(self):
+        adsk = types.ModuleType('adsk')
+        adsk.core = types.ModuleType('adsk.core')
+        adsk.fusion = types.ModuleType('adsk.fusion')
+        design = Mock()
+        design.unitsManager.defaultLengthUnits = 'mm'
+        design.unitsManager.formatValue.return_value = '50 mm'
+        adsk.core.Application = Mock()
+        adsk.core.Application.get.return_value.activeProduct = design
+        adsk.core.ValueInput = types.SimpleNamespace(
+            createByString=lambda text: 0.0, createByReal=lambda value: value)
+        adsk.core.DropDownStyles = types.SimpleNamespace(TextListDropDownStyle=0)
+        adsk.fusion.Design = types.SimpleNamespace(cast=lambda value: value)
+        package = types.ModuleType('HelixPathPilot.commands')
+        package.__path__ = [str(ADDIN / 'commands')]
+        self.callbacks = {}
+        utility = types.ModuleType('HelixPathPilot.lib.fusionAddInUtils')
+        utility.add_handler = lambda event, callback, **kw: self.callbacks.update({event: callback})
+        utility.handle_error = Mock()
+        # Restore the entire module table so these doubles cannot leak to other tests.
+        modules = patch.dict(sys.modules, {
+            'adsk': adsk, 'adsk.core': adsk.core, 'adsk.fusion': adsk.fusion,
+            'HelixPathPilot.commands': package,
+            'HelixPathPilot.lib.fusionAddInUtils': utility})
+        modules.start()
+        self.addCleanup(modules.stop)
+        self.entry = importlib.import_module('HelixPathPilot.commands.createParametricHelix.entry')
+        self.root = Inputs()
+        command = types.SimpleNamespace(commandInputs=self.root, validateInputs='validate',
+            inputChanged='changed', execute='execute', destroy='destroy')
+        self.entry.command_created(types.SimpleNamespace(command=command))
+        self.create = self.root.itemById('create_tab').children
+
+    def test_settings_value_reaches_sketch_and_nested_parameters_validate(self):
+        event = types.SimpleNamespace()
+        self.callbacks['validate'](event)
+        self.assertTrue(event.areInputsValid)
+        settings = self.root.itemById('settings_tab').children
+        settings.itemById('tangent_joins').value = False
+        with patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['execute'](types.SimpleNamespace())
+            self.assertFalse(create.call_args.kwargs['tangent_joins'])
+        self.assertIsNotNone(self.root.itemById('info_tab').children.itemById('info_logo'))
+
+    def test_surface_mode_blocks_creation_and_return_restores_validation(self):
+        mode = self.create.itemById('helix_mode')
+        mode.selectedItem.index = 1
+        self.callbacks['changed'](types.SimpleNamespace(input=mode))
+        self.assertFalse(self.create.itemById('parameter_group').isVisible)
+        self.assertTrue(self.create.itemById('surface_group').isVisible)
+        event = types.SimpleNamespace()
+        self.callbacks['validate'](event)
+        self.assertFalse(event.areInputsValid)
+        with patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['execute'](event)
+            create.assert_not_called()
+            self.assertTrue(event.executeFailed)
+        mode.selectedItem.index = 0
+        self.callbacks['changed'](types.SimpleNamespace(input=mode))
+        self.callbacks['validate'](event)
+        self.assertTrue(event.areInputsValid)
+        self.assertTrue(self.create.itemById('parameter_group').isVisible)

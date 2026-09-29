@@ -4,6 +4,19 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.3.0 – 2026-09-29 – Entwicklung
+
+**GitHub:** Surface-Helix-Grundlage mit Auswahl und Erkennung analytischer
+Zylinder- und Kegelmantelflächen ergänzt. Der Dialog enthält jetzt die Reiter
+„Helix erstellen“, „Einstellungen“ und „Info“ mit Projektlogo und Projektlinks.
+
+- Der Modus „Surface Helix – Flächenprüfung“ prüft einzelne Körperflächen; er erzeugt noch keine Helix und sperrt Ausführen. Konturableitung, Offset und Oberflächenkurve bleiben offen.
+- Andere Flächentypen, ungültige und leere Auswahlen erhalten verständliche Hinweise. Die Erkennung des Flächentyps bestätigt noch keine Eignung der beschnittenen Fläche für eine vollständige Helix.
+- G1-Option im Einstellungsreiter, weiterhin standardmäßig aktiv und nur für den aktuellen Dialogaufruf.
+- Info-Reiter nach der bereitgestellten Layoutvorlage: vorhandenes Logo, Version, Beschreibung, Website, Repository, Releases, Issues, YouTube und MIT-Lizenz.
+- Logo als 240-Pixel-Ressource direkt im installierbaren Add-in enthalten (Quelle: `docs/images/Logo_1.png`).
+- 56 automatisierte Tests bestanden, einschließlich Flächenauswahl, Moduswechsel, Ausführungssperre und G1-Übergabe aus dem Einstellungsreiter. Darstellung, Links und Moduswechsel müssen noch in Fusion geprüft werden.
+
 ## 0.2.3 – 2026-09-28 – Entwicklung
 
 **GitHub:** Option „Tangentiale Übergänge (G1)“ ergänzt. Benachbarte Helix-Splines

@@ -94,8 +94,8 @@ Steigungsverlauf sind möglich; gemeinsame Grenzen werden verbunden.
 Der vorherige Stand 0.2.0 wurde vom Benutzer als lauffähig bestätigt.
 Der Dialogaufbaufehler von 0.2.1 ist behoben; Achslängenübernahme wurde vorgezogen.
 Für sichtbare Sweep-Übergänge wurden Tangentialbedingungen (G1) als aktivierbare Option ergänzt.
-Nächster Schritt: G1-Übergänge und Sweep-Ergebnis in Fusion prüfen;
-anschließend Surface-Helix-Grundlage gemäß 0.3.x.
+Surface-Helix-Grundlage ist in 0.3.0 begonnen; weitere G1-Sonderfälle bleiben
+für die manuelle Fusion-Prüfung offen.
 
 # Version 0.3.x – Surface Helix
 
@@ -105,8 +105,8 @@ Helix anhand einer Rotationsoberfläche bzw. eines Rotationskörpers erzeugen.
 
 ## Schritte
 
-- [ ] Auswahl von Körper / Fläche vorbereiten
-- [ ] Prüfung auf geeignete Rotationsgeometrie einbauen
+- [x] Auswahl von Körper / Fläche vorbereiten (0.3.0: einzelne Mantelfläche am Körper)
+- [~] Prüfung auf geeignete Rotationsgeometrie einbauen (0.3.0: analytische Zylinder-/Kegelflächen erkennen; Beschnitt und weitere Rotationsflächen offen)
 - [ ] Radius aus Oberflächenkontur ableiten
 - [ ] Helix auf der Oberfläche berechnen
 - [ ] Surface Offset integrieren
@@ -117,6 +117,14 @@ Helix anhand einer Rotationsoberfläche bzw. eines Rotationskörpers erzeugen.
 ## Zielversion
 
 **0.3.0**
+
+Stand 2026-09-29: **0.3.0 (development)** bietet zunächst die Flächenauswahl
+und Flächentypprüfung. Surface Helix erzeugt noch keine Geometrie; Ausführen
+bleibt in diesem Modus gesperrt. Parametrische Helices bleiben verfügbar.
+Zusätzlich umgesetzt: Dialogreiter „Helix erstellen“, „Einstellungen“ und
+„Info“ mit Logo, Versionsanzeige und Projektlinks nach Benutzervorlage.
+Nächster Implementierungsschritt: Radius und axialen Bereich aus der
+Oberflächenkontur ableiten; anschließend Oberflächenhelix und Offset.
 
 # Version 0.4.x – Presets
 

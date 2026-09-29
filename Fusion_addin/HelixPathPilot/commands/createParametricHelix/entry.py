@@ -12,6 +12,8 @@ from ...version import APP_NAME, VERSION
 from .sketch_builder import create_sketch
 from .axis_selection import selected_axis, selected_axis_length
 from .segment_editor import SegmentEditor
+from .dialog_tabs import add_settings_and_info
+from ..createSurfaceHelix.surface_selection import selected_surface_kind
 
 CMD_ID = f'{config.COMPANY_NAME}_{config.ADDIN_NAME}_createParametricHelix'
 CMD_NAME = f'{APP_NAME} v{VERSION}'
@@ -85,7 +87,29 @@ def command_created(args):
         return
     command = args.command
     command.isExecutedWhenPreEmpted = False
-    inputs = command.commandInputs
+    root_inputs = command.commandInputs
+    create_tab = root_inputs.addTabCommandInput('create_tab', 'Helix erstellen')
+    create_inputs = create_tab.children
+    mode = create_inputs.addDropDownCommandInput(
+        'helix_mode', 'Modus', adsk.core.DropDownStyles.TextListDropDownStyle)
+    mode.listItems.add('Parametrische Helix', True)
+    mode.listItems.add('Surface Helix – Flächenprüfung', False)
+    surface_group = create_inputs.addGroupCommandInput('surface_group', 'Surface Helix – Grundlage')
+    surface_group.isExpanded = True
+    surface_group.isVisible = False
+    surface_inputs = surface_group.children
+    surface_inputs.addTextBoxCommandInput('surface_help', '',
+        'Entwicklungsschritt: Zylinder- und Kegelmantelflächen erkennen. '
+        'Hier wird noch keine Helix erzeugt; Ausführen bleibt gesperrt. '
+        'Bitte eine einzelne Mantelfläche am Körper auswählen.', 3, True)
+    surface_input = surface_inputs.addSelectionInput('surface', 'Mantelfläche', 'Mantelfläche auswählen')
+    surface_input.addSelectionFilter('Faces')
+    surface_input.setSelectionLimits(0, 1)
+    surface_input.isUseCurrentSelections = False
+    surface_status = surface_inputs.addTextBoxCommandInput('surface_status', '', '', 3, True)
+    parameter_group = create_inputs.addGroupCommandInput('parameter_group', 'Helix-Parameter')
+    parameter_group.isExpanded = True
+    inputs = parameter_group.children
     inputs.addTextBoxCommandInput(
         'axis_info', '', 'Ohne Auswahl: globale Z-Achse. Bei Linien beginnt die Helix am '
         'Linienanfang, bei Konstruktionsachsen am Achsursprung. '
@@ -105,10 +129,7 @@ def command_created(args):
     inputs.addValueInput('start_angle', 'Startwinkel', 'deg',
                          adsk.core.ValueInput.createByString('0 deg'))
     inputs.addBoolValueInput('right_handed', 'Rechtsdrehend', True, '', True)
-    tangent_joins = inputs.addBoolValueInput('tangent_joins', 'Tangentiale Übergänge (G1)', True, '', True)
-    tangent_joins.tooltip = ('Gleicht die Tangenten benachbarter Splines für einen knickfreien Pfad an. '
-                            'Fusion kann die Kurvenform am Übergang anpassen. '
-                            'Gleiche Krümmung (G2) wird nicht erzwungen.')
+    tangent_joins = add_settings_and_info(root_inputs)
     editor = SegmentEditor(inputs, units)
     inputs.addTextBoxCommandInput('section_info', '',
         'Durchmesser und Steigung ändern sich linear entlang der Abschnittslänge. '
@@ -119,6 +140,14 @@ def command_created(args):
     _sessions.append(handlers)
 
     def validate(event):
+        if mode.selectedItem.index == 1:
+            try:
+                surface_status.text = (selected_surface_kind(surface_input) + ' erkannt. '
+                    'Die Konturableitung und Helix-Berechnung folgen im nächsten Ausbau.')
+            except ValueError as error:
+                surface_status.text = str(error)
+            event.areInputsValid = False
+            return
         try:
             model = _parameters(inputs, editor)
             selected_axis(axis_input, inputs.itemById('reverse_axis').value)
@@ -134,6 +163,8 @@ def command_created(args):
 
     def execute(event):
         try:
+            if mode.selectedItem.index == 1:
+                raise ValueError('Surface Helix bietet derzeit nur die Flächenprüfung; keine Skizzenausgabe.')
             axis = selected_axis(axis_input, inputs.itemById('reverse_axis').value)
             create_sketch(design, _parameters(inputs, editor), axis,
                           tangent_joins=tangent_joins.value)
@@ -147,6 +178,11 @@ def command_created(args):
             return
         try:
             changed_id = event.input.id
+            if changed_id == 'helix_mode':
+                surface_mode = mode.selectedItem.index == 1
+                parameter_group.isVisible = not surface_mode
+                surface_group.isVisible = surface_mode
+                return
             if changed_id == 'fit_axis_length':
                 editor.fit_total_length(selected_axis_length(axis_input))
             else:

@@ -1,6 +1,32 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.2.3 (development)
+## Aktiver Stand – 0.3.0 (development)
+
+### Dialogreiter und Surface-Grundlage
+
+„Helix erstellen“ enthält die Moduswahl und die bisherigen Helix-Parameter.
+„Einstellungen“ enthält die G1-Option (standardmäßig aktiv, nicht dauerhaft
+gespeichert). „Info“ zeigt das mitgelieferte Logo, die zentrale Versionsnummer,
+Projektinformationen und anklickbare Links entsprechend der Layoutvorlage.
+
+Der neue Modus „Surface Helix – Flächenprüfung“ erlaubt die Auswahl einer
+einzelnen Körperfläche. Analytische Zylinder- und Kegelmantelflächen werden
+erkannt; andere Typen werden mit einem Hinweis abgelehnt. Eine erkannte Fläche
+ist noch nicht auf vollständige Umfangsabdeckung oder Beschnitt geprüft.
+Es gibt in diesem Modus noch keine Skizzenausgabe; Ausführen ist gesperrt.
+Konturableitung, variable Steigung auf der Oberfläche und Offset folgen später.
+
+Manuell in Fusion prüfen:
+
+- Alle drei Reiter öffnen, Logo und Texte auf Abschneiden prüfen, Links öffnen.
+- G1 in „Einstellungen“ deaktivieren, zurückwechseln und eine mehrteilige Helix erstellen.
+- Zwischen den Modi wechseln: Parametereingaben bleiben erhalten; nur die jeweiligen Auswahlfelder sind sichtbar.
+- Zylinder- und Kegelmantelfläche erkennen lassen; ebene Stirnfläche, Kugel und Freiformfläche ablehnen lassen. Auch Flächen in Unterkomponenten prüfen.
+- Auswahl entfernen: Auswahlhinweis. In Surface-Prüfung bleibt Ausführen immer gesperrt, auch auf dem Info-Reiter.
+- Zum parametrischen Modus zurückkehren und erstellen, abbrechen sowie rückgängig machen.
+
+UI-Grundlage: [Autodesk Command Inputs](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/CommandInputs_UM.htm).
+Flächentypen: [Autodesk SurfaceTypes](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/SurfaceTypes.htm).
 
 Die Implementierung ersetzt die Vorlage unter `Fusion_addin/HelixPathPilot/`.
 Nur diesen Ordner in Fusion laden. `HelixPathPilot/` im Repo-Hauptverzeichnis
@@ -68,7 +94,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.2.3** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.3.0** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -82,7 +108,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.2.3** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.3.0** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -140,9 +166,11 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 50 Tests bestanden am 2026-09-28. Sie benötigen keine Fusion-Installation und
+Alle 56 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
-Icons und Fusion-Adapter mit Testdoubles.
+Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
+Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem
+Einstellungsreiter und die Ausführungssperre mit Rückkehr zum parametrischen Modus.
 Der Benutzer hat die grundsätzliche Funktion von 0.1.1 sowie Menüposition, Icons
 und beliebige Achsausrichtung von 0.1.2 sowie den Stand 0.2.0 bestätigt.
 In 0.2.1 wurde ein Abbruch beim Aufbau des Abschnittsdialogs gemeldet und in
