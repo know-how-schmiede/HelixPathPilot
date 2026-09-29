@@ -485,13 +485,11 @@ def command_created(args):
                 except Exception as error:
                     preset_note.text = f'Vorlagenaktion fehlgeschlagen: {error}'
                 return
-            if (changed_id.startswith(('section_', 'remove_section_', 'surface_')) or changed_id in
+            affects_preview = (changed_id.startswith(('section_', 'surface_')) or changed_id in
                     ('surface', 'helix_mode', 'live_preview', 'axis', 'reverse_axis', 'start_angle',
-                     'right_handed', 'fit_axis_length', 'add_section')):
-                # Also remove stale graphics for invalid expressions, for which
-                # Fusion may not send executePreview at all.
-                graphics.clear()
+                     'right_handed', 'fit_axis_length', 'add_section'))
             if changed_id == 'helix_mode':
+                graphics.clear()
                 surface_mode = mode.selectedItem.index == 1
                 parameter_group.isVisible = not surface_mode
                 surface_group.isVisible = surface_mode
@@ -509,7 +507,17 @@ def command_created(args):
                     fit_length.isEnabled = True
                 except ValueError:
                     fit_length.isEnabled = False
+            if affects_preview:
+                if not live_preview.value:
+                    graphics.clear()
+                else:
+                    # Read after linked diameters / section topology are updated.
+                    # Invalid expressions must clear stale graphics even when
+                    # Fusion does not subsequently send executePreview.
+                    model, axis = current_parameters()
+                    graphics.invalidate(model, axis)
         except (ValueError, RuntimeError) as error:
+            graphics.clear()
             inputs.itemById('error').text = str(error)
 
     def destroy(event):

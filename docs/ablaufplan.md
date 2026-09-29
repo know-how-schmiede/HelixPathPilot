@@ -166,15 +166,17 @@ Eine gute Benutzererfahrung mit Live-Vorschau im Viewport schaffen.
 - [x] Live-Vorschau-Grundlage implementieren (vorgezogen in 0.3.1; Vorschau und Geschwindigkeit vom Benutzer in Fusion bestätigt)
 - [x] Vorschau für Parametric Helix (0.3.1)
 - [x] Vorschau für Variable Helix (0.3.1)
-- [ ] Vorschau für Surface Helix
-- [ ] performante Aktualisierung bei Parameteränderungen
+- [x] Vorschau für Surface Helix (seit 0.3.3 implementiert und grundsätzlich vom Benutzer bestätigt)
+- [~] performante Aktualisierung bei Parameteränderungen (0.5.0: unveränderte Grafik auch über Eingabeereignisse wiederverwenden; neue Fusion-Prüfung offen)
 - [x] unnötige Neuberechnungen reduzieren (0.3.1 ohne Versionswechsel: Custom-Graphics-Vorschau statt Skizze/G1 bei jeder Eingabe, unveränderte Grafik wiederverwenden)
 - [~] UI-Feinschliff (0.4.3: kompakte Dialoggröße, eigener Vorlagenreiter und farbige Abschnittsvorschau; Farben und Entfernen über zentrale Auswahl vom Benutzer bestätigt, weitere Bildschirmprüfungen offen)
 - [ ] Eingabevalidierung verbessern
 
 ## Zielversion
 
-**0.5.0**
+**0.5.0** – Vorschau-Wiederverwendung bei unveränderten Eingaben verbessert;
+144 automatisierte Tests bestanden. Neue Interaktionsprüfungen in
+[Entwicklung](development.md), manueller Fusion-Test offen.
 
 # Version 0.6.x – Output / Refactoring / Stabilisierung
 

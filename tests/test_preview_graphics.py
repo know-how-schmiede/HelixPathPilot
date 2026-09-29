@@ -66,6 +66,20 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(self.group.addLines.call_count, 6)
         self.group.deleteMe.assert_called_once()
 
+    def test_input_invalidation_preserves_equal_values_but_removes_changed_path(self):
+        self.preview.show(self.model, AxisFrame())
+        equal_model = SegmentedHelix(tuple(self.model.segments))
+        self.preview.invalidate(equal_model, AxisFrame())
+        self.preview.show(equal_model, AxisFrame())
+        self.group.deleteMe.assert_not_called()
+        self.assertEqual(self.group.addLines.call_count, 3)
+        changed = SegmentedHelix((HelixSegment.constant(3, 2, 1),))
+        self.preview.invalidate(changed, AxisFrame())
+        self.group.deleteMe.assert_called_once()
+        self.assertIsNone(self.preview.key)
+        self.preview.show(changed, AxisFrame())
+        self.assertEqual(self.group.addLines.call_count, 4)
+
     def test_cleanup_is_idempotent_and_accepts_fusion_rollback(self):
         self.preview.show(self.model, AxisFrame())
         self.preview.clear()

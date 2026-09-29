@@ -66,7 +66,10 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.4.5** liegt unter `Fusion_addin/HelixPathPilot/`.
+Der Entwicklungsstand **0.5.0** liegt unter `Fusion_addin/HelixPathPilot/`.
+
+0.5.0 verbessert die Vorschau-Aktualisierung: unveränderte Pfadwerte behalten
+die Grafik, geänderte oder ungültige Eingaben entfernen veraltete Vorschauen.
 
 **Drahtkörper (0.4.5):** Unter „Helix erstellen“ die Option „Drahtkörper erstellen“
 aktivieren und den Drahtdurchmesser eingeben (Vorgabe 1 mm). Bei OK wird der
@@ -83,7 +86,7 @@ Die Punktanzeige beschränkt sich auf Abschnittsgrenzen; Startdurchmesser folgen
 Neu sind die Dialogreiter „Einstellungen“ und „Info“ mit Logo und Projektlinks
 sowie Surface Helix für vollständige Zylinder- und Kegelmäntel mit konstanter oder linear variabler
 Steigung, schneller Vorschau und 3D-Skizzenausgabe.
-**Volumenkörper → Erstellen → HelixPathPilot v0.4.5** erzeugt eine 3D-Skizze um eine gewählte Achse.
+**Volumenkörper → Erstellen → HelixPathPilot v0.5.0** erzeugt eine 3D-Skizze um eine gewählte Achse.
 Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endsteigung
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
 „Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.

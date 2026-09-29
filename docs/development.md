@@ -1,6 +1,27 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.4.5 (development)
+## Aktiver Stand – 0.5.0 (development)
+
+### Vorschau-Aktualisierung (0.5.0)
+
+Der Dialog prüft nach geometrischen Eingaben die aktualisierten Pfadwerte.
+Sind Modell und Achse unverändert, bleibt die bestehende Grafik erhalten;
+das folgende Vorschauereignis kann sie wiederverwenden. Bei Änderungen wird
+die alte Grafik entfernt und beim nächsten Vorschauereignis neu aufgebaut.
+Ungültige Ausdrücke entfernen die Grafik sofort, auch wenn Fusion kein weiteres
+Vorschauereignis sendet. Die Prüfung erfolgt nach dem Abgleich verknüpfter
+Abschnittsdurchmesser. Es entsteht dabei keine Skizze und kein Sweep.
+
+144 automatisierte Tests bestanden. Manuell in Fusion noch prüfen:
+
+- Gleichen Wert erneut eingeben: Vorschau bleibt erhalten; anderen Wert eingeben: aktueller Pfad erscheint.
+- Ungültigen Ausdruck eingeben und korrigieren: alte Grafik verschwindet, gültige Vorschau kehrt zurück.
+- Live-Vorschau aus- und einschalten; Achse und Helix-Modus wechseln.
+- Durchmesser an Abschnittsgrenzen ändern, Abschnitte hinzufügen/entfernen und Surface-Steigung ändern.
+- Drahtstärke, G1 oder Vorlagenname ändern: vorhandener Pfad bleibt erhalten.
+
+Der Cache wird automatisiert auf Wiederverwendung geprüft; ein Laufzeitvergleich
+in Fusion wurde nicht durchgeführt.
 
 ### Optionaler Drahtkörper (0.4.5)
 

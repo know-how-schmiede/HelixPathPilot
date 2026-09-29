@@ -4,6 +4,16 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.5.0 – 2026-09-29 – Entwicklung
+
+**GitHub:** Vorschau-Aktualisierung verbessert: unveränderte Pfadwerte behalten
+die bestehende Grafik auch über Eingabeereignisse hinweg. Geänderte und ungültige
+Pfade entfernen veraltete Grafiken weiterhin unmittelbar.
+
+- Prüfung nach der Synchronisierung verknüpfter Durchmesser und Abschnittsänderungen; keine Skizzen- oder Sweep-Berechnung bei Eingabeänderungen.
+- Ausschalten der Live-Vorschau entfernt die Grafik sofort. Drahtstärke, G1 und Vorlagenname verändern den Vorschaupfad nicht.
+- 144 automatisierte Tests bestanden. Manueller Fusion-Test für diese Aktualisierungsänderung offen; keine gemessene Laufzeitverbesserung behauptet.
+
 ## 0.4.5 – 2026-09-29 – Entwicklung
 
 **GitHub:** Optionalen Drahtdurchmesser und direkten Sweep als neuen Körper

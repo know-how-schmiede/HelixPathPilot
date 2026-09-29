@@ -456,6 +456,30 @@ class DialogTests(unittest.TestCase):
             self.assertFalse(event.isValidResult)
             self.assertIn('G1', status.text)
 
+    def test_valid_edit_checks_cache_without_forcing_graphics_rebuild(self):
+        angle = self.create.itemById('parameter_group').children.itemById('start_angle')
+        self.callbacks['changed'](types.SimpleNamespace(input=angle))
+        self.graphics.clear.assert_not_called()
+        self.graphics.invalidate.assert_called_once()
+        self.callbacks['preview'](types.SimpleNamespace())
+        self.assertEqual(self.graphics.invalidate.call_args.args, self.graphics.show.call_args.args)
+
+    def test_disabling_preview_clears_immediately_and_enabling_checks_current_path(self):
+        live = self.root.itemById('settings_tab').children.itemById('live_preview')
+        live.value = False
+        self.callbacks['changed'](types.SimpleNamespace(input=live))
+        self.graphics.clear.assert_called_once()
+        self.graphics.invalidate.assert_not_called()
+        live.value = True
+        self.callbacks['changed'](types.SimpleNamespace(input=live))
+        self.graphics.invalidate.assert_called_once()
+
+    def test_non_geometry_settings_do_not_invalidate_preview(self):
+        for key in ('wire_diameter', 'tangent_joins', 'preset_name'):
+            self.callbacks['changed'](types.SimpleNamespace(input=types.SimpleNamespace(id=key)))
+        self.graphics.clear.assert_not_called()
+        self.graphics.invalidate.assert_not_called()
+
     def test_invalid_edit_and_destroy_clear_graphics(self):
         angle = self.create.itemById('parameter_group').children.itemById('start_angle')
         angle.isValidExpression = False

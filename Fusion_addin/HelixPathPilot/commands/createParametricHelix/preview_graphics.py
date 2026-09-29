@@ -19,6 +19,11 @@ class HelixPreview:
         self.group = None
         self.key = None
 
+    def invalidate(self, model, axis):
+        """Keep an unchanged preview through inputChanged / executePreview."""
+        if self.key != (model, axis):
+            self.clear()
+
     def show(self, model, axis):
         key = (model, axis)
         if self.group is not None and self.group.isValid and self.key == key:
