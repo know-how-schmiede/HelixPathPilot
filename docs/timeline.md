@@ -4,6 +4,16 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.6.1 – 2026-09-29 – Entwicklung
+
+**GitHub:** Protokolleinträge um UTC-Zeitstempel und Add-in-Version ergänzt.
+Fehler beim Schreiben ins Protokoll unterbrechen die Fehlerbehandlung nicht mehr.
+
+- Ein zusammenhängender Fehlerdatensatz mit Aktionsname und Traceback statt separater Trennzeile. Fehlgeschlagene Vorlagenaktionen werden ebenfalls protokolliert.
+- Bestehendes Fusion-Fehlerprotokoll bleibt das Ziel; keine zusätzliche Logdatei. Normale Hinweise weiterhin nur im IDE-Ausgabekanal, bei Debug/erzwungener Ausgabe zusätzlich in der Fusion-Konsole.
+- 154 automatisierte Tests bestanden, einschließlich ausgefallener Protokoll-/UI-Ausgaben. Native Fusion-Protokollprüfung offen.
+- Benutzer bestätigt den vorherigen Stand 0.6.0.
+
 ## 0.6.0 – 2026-09-29 – Entwicklung
 
 **GitHub:** Fehlerbereinigung bei Skizzen- und Drahtausgabe vereinheitlicht.

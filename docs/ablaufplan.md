@@ -191,7 +191,7 @@ Technische Qualität erhöhen und spätere Erweiterungen vorbereiten.
 - [ ] interne Datenmodelle vereinheitlichen
 - [~] Fehlerbehandlung verbessern (0.6.0: ursprüngliche Ursache bei Löschfehlern erhalten, alle Hilfsobjekte weiter bereinigen und Restobjekte benennen; automatisiert geprüft, Fusion-Test offen)
 - [x] Optionaler Sweep-Output vorgezogen auf Benutzerwunsch in 0.4.5: Drahtdurchmesser, numerische Vorprüfung und neuer Körper; Funktion in Fusion vom Benutzer bestätigt, Screenshots dokumentiert
-- [ ] Logging verbessern
+- [x] Logging verbessern (0.6.1: UTC-Zeitstempel, Version, zusammenhängende Fehlerdatensätze, Vorlagenfehler und gegen Ausgabefehler geschützter Handler; 154 Tests bestanden, native Fusion-Prüfung offen)
 - [ ] Stabilitätstests durchführen
 
 ## Zielversion

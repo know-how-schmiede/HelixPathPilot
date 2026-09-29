@@ -66,7 +66,10 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.6.0** liegt unter `Fusion_addin/HelixPathPilot/`.
+Der Entwicklungsstand **0.6.1** liegt unter `Fusion_addin/HelixPathPilot/`.
+
+0.6.1 ergänzt Zeitstempel und Version in Protokolleinträgen und schützt die
+Fehlerbehandlung vor Ausfällen der Protokollausgabe.
 
 0.6.0 verbessert die Fehlerbereinigung bei Skizzen- und Drahtausgabe:
 Löschfehler verdecken die ursprüngliche Ursache nicht mehr.
@@ -92,7 +95,7 @@ Die Punktanzeige beschränkt sich auf Abschnittsgrenzen; Startdurchmesser folgen
 Neu sind die Dialogreiter „Einstellungen“ und „Info“ mit Logo und Projektlinks
 sowie Surface Helix für vollständige Zylinder- und Kegelmäntel mit konstanter oder linear variabler
 Steigung, schneller Vorschau und 3D-Skizzenausgabe.
-**Volumenkörper → Erstellen → HelixPathPilot v0.6.0** erzeugt eine 3D-Skizze um eine gewählte Achse.
+**Volumenkörper → Erstellen → HelixPathPilot v0.6.1** erzeugt eine 3D-Skizze um eine gewählte Achse.
 Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endsteigung
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
 „Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.

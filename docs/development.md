@@ -1,6 +1,27 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.6.0 (development)
+## Aktiver Stand – 0.6.1 (development)
+
+### Protokollierung (0.6.1)
+
+Jeder Eintrag enthält UTC-Zeitstempel, Add-in-Name und Versionsnummer.
+`handle_error` schreibt Aktionsname und Python-Traceback gemeinsam in das
+bestehende Fusion-Fehlerprotokoll. Fehlgeschlagene Vorlagenaktionen werden mit
+ihrer Aktionskennung ergänzt. Es wird keine separate Logdatei angelegt.
+Normale Hinweise gehen weiterhin an die IDE-Ausgabe; `config.DEBUG` bzw.
+`force_console` aktivieren zusätzlich die vorhandene Fusion-Konsolenausgabe.
+
+Ausfälle von Standardausgabe, Fusion-Protokoll oder Fehlerdialog dürfen keine
+neue Ausnahme aus dem Fehlerhandler auslösen. Wenn alle Ausgabekanäle ausfallen,
+kann kein Protokolleintrag garantiert werden. Tracebacks können lokale Dateipfade
+und Vorlagennamen enthalten; vor dem Teilen eines Protokolls dessen Inhalt prüfen.
+
+154 automatisierte Tests bestanden. In Fusion noch prüfen: eine ungültige
+JSON-Vorlage importieren und im Fehlerprotokoll nach „HelixPathPilot 0.6.1“ suchen.
+Aktionskennung, Zeitstempel und Ursache sollten zusammen erscheinen, während der
+Dialog weiterhin den verständlichen Fehlerhinweis zeigt.
+
+Der Benutzer bestätigt den vorherigen Stand 0.6.0.
 
 ### Fehlerbereinigung bei der Ausgabe (0.6.0)
 
