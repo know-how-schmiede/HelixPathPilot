@@ -4,6 +4,18 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.4.3 – 2026-09-29 – Entwicklung
+
+**GitHub:** Kompakte Dialoggröße mit scrollbarem Inhalt, eigenem Vorlagenreiter
+und farbiger Abschnittsvorschau ergänzt. Abschnitte werden über eine zentrale
+Auswahl und einen festen Entfernen-Button verwaltet.
+
+- Dialoggröße 520 × 560 Pixel, Mindestgröße 380 × 300; erneute Größenkorrektur nach Laden, Moduswechsel und Hinzufügen. Vorlagen laden wechselt zurück zu „Helix erstellen“.
+- Eine farbige Liniengrafik je Abschnitt mit gemeinsamen Grenzpunkten, 32 unterschiedlichen Farben und Wiederverwendung unveränderter Vorschau. Benutzer bestätigt die Farbdarstellung. Unbrauchbare HTML-Farbtextzeile aus dem Dialog entfernt.
+- Entfernen nimmt den gewählten Abschnitt zuerst aus der aktiven Liste und blendet seine Eingaben aus, ohne UI-Objekte im Klick-Ereignis zu löschen. Vorschau und Anzahl werden aktualisiert. Die Auswahl wird als Kennung festgehalten und das Ziel im Dialog angezeigt.
+- Benutzer stellt klar, dass das Auswahlfeld zunächst übersehen wurde, und bestätigt anschließend das funktionierende Entfernen. Die letzte Meldung „nur letzter Abschnitt“ ist damit als Bedienmissverständnis geklärt, nicht als bestätigter Indexfehler. Die frühere native Absturzursache ist nicht nachgewiesen.
+- 113 automatisierte Tests bestanden, einschließlich Auswahl und Entfernen verschiedener Positionen, Vorschau/Ausgabe, Grafikfehlern, Dialoggrößen und Abschnittsfarben. Weitergehende Bildschirm-/Skalierungsprüfungen bleiben offen. Version unverändert.
+
 ## 0.4.2 – 2026-09-29 – Entwicklung
 
 **GitHub:** Eigene Helix-Vorlagen unter frei wählbarem Namen speichern,
@@ -13,7 +25,7 @@ wieder laden und nach Bestätigung löschen. Mitgelieferte Vorlagen bleiben gesc
 - Aktiver Modus, Abschnitte, Winkel, Drehrichtung, Achsumkehr, G1 und Surface-Einstellungen werden übernommen. Achs-/Flächenauswahl und Live-Vorschau gehören weiterhin nicht zum Preset.
 - Surface-Einstellungen lassen sich ohne Fläche speichern; geometrieabhängige Limits werden beim Erzeugen geprüft.
 - Dateifehler werden im Dialog gemeldet; unvollständige Dateien bei Schreibfehlern entfernt. Speichern/Löschen wirkt sofort, unabhängig von OK/Abbrechen des Helix-Dialogs.
-- 101 automatisierte Tests bestanden, einschließlich Persistenz, Unicode-Namen, Duplikaten, beschädigten Dateien, Schreibfehlern, Laden und Löschabbruch. Fusion-Laufzeitprüfung offen. Nächster Schritt: JSON-Dateiimport/-export.
+- 101 automatisierte Tests bestanden, einschließlich Persistenz, Unicode-Namen, Duplikaten, beschädigten Dateien, Schreibfehlern, Laden und Löschabbruch. Benutzer bestätigt die Funktion der eigenen Vorlagen; gemeldete Dialoghöhe wird in 0.4.3 adressiert. Nächster Funktionsschritt: JSON-Dateiimport/-export.
 
 ## 0.4.1 – 2026-09-29 – Entwicklung
 

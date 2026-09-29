@@ -1,8 +1,74 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.4.2 (development)
+## Aktiver Stand – 0.4.3 (development)
+
+### Abschnitte gezielt entfernen (Korrektur in 0.4.3)
+
+**Aktuelle Bestätigung:** Der Benutzer bestätigt das Entfernen in Fusion.
+Das Auswahlfeld war zunächst übersehen worden; die letzte Meldung, dass nur der
+letzte Abschnitt entfernt werde, ist damit als Bedienmissverständnis geklärt.
+Die unten beschriebenen Nachkorrekturen dokumentieren den Entwicklungsverlauf.
+
+Die einzelnen Entfernen-Buttons innerhalb der Abschnittsgruppen wurden durch
+zwei feste Eingaben unter der Abschnittsliste ersetzt:
+
+1. In „Abschnitt entfernen“ den gewünschten Abschnitt auswählen.
+2. „Ausgewählten Abschnitt entfernen“ drücken.
+
+Die Auswahl allein verändert keine Geometrie. Die Liste verwendet die sichtbaren
+Abschnittsnamen, auch wenn deren Nummern nach Entfernen oder Vorlagenladen Lücken
+haben. Der letzte verbleibende Abschnitt ist geschützt. Nach dem Entfernen werden
+Vorschau und Abschnittszahl aktualisiert; die dynamischen Gruppen enthalten keine
+Entfernen-Buttons mehr. Entfernte Felder bleiben bis zum Dialogende ausgeblendet.
+
+Benutzer meldete: Nur der erste Abschnitt ließ sich entfernen, andere bei mindestens
+zwei verbleibenden Abschnitten ohne Fehlermeldung nicht. Die native Ursache ist
+weiterhin nicht nachgewiesen. Der neue feste Button vermeidet die dynamischen
+Ereignisauslöser innerhalb der Abschnittsgruppen.
+
+Manuell erneut prüfen: drei Abschnitte anlegen, in der Auswahl Abschnitt 2 wählen
+und entfernen, anschließend Abschnitt 3 entfernen. Danach müssen nur Abschnitt 1
+und seine Vorschau verbleiben. Ebenso nach Laden einer mehrteiligen Vorlage prüfen.
+113 automatisierte Tests bestanden; Entfernen grundsätzlich vom Benutzer in Fusion bestätigt. Die einzelnen Prüffolgen sind nicht separat protokolliert.
+
+### Kompakter Dialog und Abschnittsfarben (0.4.3)
+
+Der Dialog wird mit 520 × 560 Pixeln geöffnet, auch wenn Fusion zuvor eine
+übergroße Höhe gespeichert hatte. Die Mindestgröße beträgt 380 × 300 Pixel;
+weitere Eingaben sind über den scrollbaren Inhaltsbereich erreichbar. Nach
+Vorlagenladen, Moduswechsel und Hinzufügen von Abschnitten wird die
+kompakte Größe erneut gesetzt. Der Reiter „Vorlagen“ entlastet den Erstellungsdialog;
+nach dem Laden wird „Helix erstellen“ aktiviert.
+
+Jeder Abschnitt erhält eine eigene Vorschaufarbe, in Listenreihenfolge. Die
+Farbtextzeile im Dialog wurde entfernt, da Fusion das HTML als Klartext anzeigte.
+Nach Entfernen eines Abschnitts folgen die Farben der neuen Reihenfolge.
+32 unterschiedliche Farben stehen bereit; bei vielen Abschnitten können sich
+Farbtöne ähneln. Surface Helix verwendet als einzelner Abschnitt die erste Farbe.
+Farben gelten nur für die temporäre Grafik, nicht für die fertige Skizze oder Presets.
+
+Manuelle Fusion-Prüfung (offen):
+
+- Dialog auf dem bisher betroffenen Bildschirm öffnen: OK/Abbrechen sichtbar, Inhalt scrollbar.
+- Zwei und anschließend viele Abschnitte laden/erstellen, Reiter und Modi wechseln; OK erreichbar halten, auch bei erhöhter Windows-Anzeigeskalierung.
+- Ersten, mittleren und letzten Abschnitt entfernen; Vorschau und Ausgabe mit der verbleibenden Abschnittsliste vergleichen. Entfernen/Hinzufügen mehrfach wiederholen.
+- Vorschau aus/ein, Abbrechen und finale Ausgabe prüfen; keine zurückbleibenden farbigen Grafiken.
+
+API-Grundlagen: [Dialoggröße](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/Command_setDialogSize.htm)
+und [Custom-Graphics-Farben](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/CustomGraphics_UM.htm).
+
+Korrektur innerhalb 0.4.3: Benutzer bestätigt die farbige Vorschau, meldet aber
+Absturz bzw. keine Reaktion beim Entfernen. Entfernte Abschnittsgruppen werden
+jetzt ausgeblendet und aus dem Modell genommen, statt den auslösenden Button
+während `inputChanged` zu zerstören. Fusion räumt diese Eingaben beim Schließen
+des Dialogs auf. Beim Entfernen wird keine Größenänderung mehr ausgelöst;
+Validierung während laufender Editoränderungen wird abgefangen. Die native
+Absturzursache ist außerhalb von Fusion nicht bestätigt; erneute Fusion-Prüfung offen.
 
 ### Eigene Vorlagen (0.4.2)
+
+Der Benutzer bestätigt die Funktion der eigenen Vorlagen. Die gemeldete übergroße
+Dialoghöhe wird in 0.4.3 adressiert; einzelne Sonderfälle bleiben offen.
 
 Unter „Vorlagen“ einen Namen eingeben und „Als eigene Vorlage speichern“ drücken.
 Gespeichert werden die aktuellen Werte des aktiven Modus. Die neue Vorlage wird
@@ -28,7 +94,7 @@ Die Rückfrage zu unveränderten Werten wurde durch Betätigen von „Vorlage la
 geklärt; die Auswahl allein übernimmt bewusst keine Parameter. Die einzelnen
 Sonderfälle der folgenden Checkliste sind damit nicht vollständig bestätigt.
 
-Im Reiter „Helix erstellen“ steht oben die ausgeklappte Gruppe „Vorlagen“.
+Die Vorlagen stehen seit 0.4.3 im eigenen Reiter „Vorlagen“ (in 0.4.1 noch als Gruppe unter „Helix erstellen“).
 Eine der drei Vorlagen auswählen und „Vorlage laden“ drücken. Auswahl allein
 ändert keine Parameter. Laden ersetzt Parameter und Modus; bestehende Achs-
 und Flächenauswahlen sowie die Live-Vorschau-Einstellung bleiben erhalten.
@@ -152,7 +218,7 @@ Sonderfälle sind damit nicht einzeln als geprüft dokumentiert.
 
 Die Live-Vorschau ist standardmäßig aktiv und im Reiter „Einstellungen“
 abschaltbar. Nach der Performance-Korrektur ohne Versionswechsel zeichnet
-`executePreview` ausschließlich temporäre Custom Graphics: eine Liniengrafik
+`executePreview` ausschließlich temporäre Custom Graphics: seit 0.4.3 eine farbige Liniengrafik je Abschnitt
 und Grenzpunkte. Dabei werden weder Skizzen erstellt noch G1-Bedingungen gelöst.
 Die Vorschau zeigt den berechneten Pfad; die finale G1-Anpassung kann davon
 abweichen und wird im Dialog entsprechend angekündigt. Unveränderte Grafik
@@ -290,7 +356,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.4.2** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.4.3** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -304,7 +370,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.4.2** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.4.3** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -362,7 +428,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 101 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 113 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem
@@ -426,3 +492,23 @@ Die Datei `.gitattributes` legt LF für Textdateien fest, unabhängig von der
 lokalen Einstellung `core.autocrlf`. Binärdateien werden nicht konvertiert;
 Windows-Batchdateien verwenden CRLF. `.editorconfig` übernimmt dieselben
 Zeilenenden für unterstützende Editoren. Beim Commit beide Regeldateien mit aufnehmen.
+
+### Nachkorrektur Abschnitt entfernen (weiterhin 0.4.3)
+
+Der Benutzer meldet, dass auch nach dem ersten Korrekturversuch Abschnitt und
+Vorschau sichtbar bleiben. Entfernen verwendet jetzt eine beim Aufbau gespeicherte
+Button-Zuordnung und ändert die aktive Abschnittsliste vor allen Grafikaufrufen.
+Alle Eingabefelder des entfernten Abschnitts werden zusätzlich einzeln ausgeblendet.
+Vorschau und Abschnittszahl werden unmittelbar aktualisiert. Fehler werden beim
+Entfernen mit Meldungsfenster und Traceback protokolliert. Regressionstests prüfen,
+dass ein Fehler beim Grafikabbau die Modelländerung nicht verhindert. Die konkrete
+Ursache im Fusion-Lauf ist noch nicht bestätigt; erneuter Test mit drei Abschnitten offen.
+
+### Auswahlziel beim Entfernen festhalten (0.4.3)
+
+Nach der Rückmeldung, dass nur der letzte Abschnitt entfernt werde, wird das Ziel
+jetzt beim Auswahlereignis anhand des Abschnittsnamens als stabile Kennung gespeichert.
+Der Entfernen-Button liest keinen späteren Listenindex mehr. Beim Neuaufbau wird die
+Auswahl erst nach Einfügen aller Einträge explizit gesetzt. Eine Textzeile zeigt das
+wirksame Ziel vor dem Klick. Die genaue native Ursache bleibt unbestätigt. Regressionen
+mit veraltetem Index und später veränderter nativer Auswahl bestehen; Fusion-Nachtest offen.

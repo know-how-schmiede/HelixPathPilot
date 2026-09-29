@@ -99,7 +99,8 @@ def command_created(args):
     root_inputs = command.commandInputs
     create_tab = root_inputs.addTabCommandInput('create_tab', 'Helix erstellen')
     create_inputs = create_tab.children
-    preset_group = create_inputs.addGroupCommandInput('presets', 'Vorlagen')
+    preset_tab = root_inputs.addTabCommandInput('presets_tab', 'Vorlagen')
+    preset_group = preset_tab.children.addGroupCommandInput('presets', 'Vorlagen verwalten')
     preset_group.isExpanded = True
     preset_inputs = preset_group.children
     preset_choice = preset_inputs.addDropDownCommandInput(
@@ -279,6 +280,8 @@ def command_created(args):
             preset_note.text = f'Geladen: {preset.name}.' + (
                 ' Bitte eine geeignete Mantelfläche auswählen bzw. prüfen.' if is_surface else '')
             preset_name.value = preset.name
+            create_tab.activate()
+            command.setDialogSize(520, 560)
         finally:
             editor.busy = False
 
@@ -297,6 +300,9 @@ def command_created(args):
                 selected_axis(axis_input, inputs.itemById('reverse_axis').value))
 
     def validate(event):
+        if editor.busy:
+            event.areInputsValid = False
+            return
         if mode.selectedItem.index == 1:
             try:
                 kind = selected_surface_kind(surface_input)
@@ -367,6 +373,32 @@ def command_created(args):
             return
         try:
             changed_id = event.input.id
+            if changed_id == 'remove_section_choice':
+                editor.select_remove_target()
+                return
+            if changed_id == 'remove_section_target':
+                return
+            if changed_id == 'remove_section':
+                changed_id = editor.selected_remove_id()
+            if changed_id.startswith('remove_section_'):
+                before = len(editor.rows)
+                try:
+                    editor.changed(changed_id)
+                    if len(editor.rows) != before:
+                        graphics.clear()
+                        if live_preview.value:
+                            model, axis = current_parameters()
+                            graphics.show(model, axis)
+                        # Update the count immediately, independently of Fusion's
+                        # scheduling of validateInputs / executePreview.
+                        model = _parameters(inputs, editor)
+                        length = design.unitsManager.formatValue(model.total_length, units)
+                        summary.text = f'{len(model.segments)} Abschnitt(e) · Gesamtlänge: {length}'
+                        inputs.itemById('error').text = ''
+                except Exception as error:
+                    inputs.itemById('error').text = str(error)
+                    futil.handle_error('Abschnitt entfernen', show_message_box=True)
+                return
             if changed_id == 'preset_choice':
                 preset_delete.isEnabled = bool(preset_keys[selected_preset_index()])
                 return
@@ -387,18 +419,21 @@ def command_created(args):
                 surface_mode = mode.selectedItem.index == 1
                 parameter_group.isVisible = not surface_mode
                 surface_group.isVisible = surface_mode
+                command.setDialogSize(520, 560)
                 return
             if changed_id == 'fit_axis_length':
                 editor.fit_total_length(selected_axis_length(axis_input))
             else:
                 editor.changed(changed_id)
+            if changed_id == 'add_section':
+                command.setDialogSize(520, 560)
             if changed_id == 'axis':
                 try:
                     selected_axis_length(axis_input)
                     fit_length.isEnabled = True
                 except ValueError:
                     fit_length.isEnabled = False
-        except ValueError as error:
+        except (ValueError, RuntimeError) as error:
             inputs.itemById('error').text = str(error)
 
     def destroy(event):
@@ -416,3 +451,8 @@ def command_created(args):
     futil.add_handler(command.execute, execute, local_handlers=handlers)
     futil.add_handler(command.executePreview, preview, local_handlers=handlers)
     futil.add_handler(command.destroy, destroy, local_handlers=handlers)
+    # Override a previously remembered oversized dialog. Nonzero height enables
+    # scrolling instead of growing with the section list; keep resizing possible.
+    command.setDialogMinimumSize(380, 300)
+    command.setDialogInitialSize(520, 560)
+    command.setDialogSize(520, 560)

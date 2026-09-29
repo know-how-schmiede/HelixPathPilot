@@ -26,6 +26,7 @@ class Inputs:
 
         def add(key, name, *args):
             item = Mock(id=key, isValidExpression=True, selectionCount=0)
+            item.name = name
             item.children = Inputs()
             item.isVisible = True
             if method in ('addValueInput', 'addStringValueInput'):
@@ -47,6 +48,7 @@ class Inputs:
                             item.selectedItem = self
                 def add_entry(label, selected, *unused):
                     entry = ListItem(len(entries))
+                    entry.name = label
                     entries.append(entry)
                     if selected:
                         entry.isSelected = True
@@ -108,12 +110,109 @@ class DialogTests(unittest.TestCase):
         self.addCleanup(preview_patch.stop)
         self.root = Inputs()
         command = types.SimpleNamespace(commandInputs=self.root, validateInputs='validate',
-            inputChanged='changed', execute='execute', executePreview='preview', destroy='destroy')
+            inputChanged='changed', execute='execute', executePreview='preview', destroy='destroy',
+            setDialogInitialSize=Mock(), setDialogMinimumSize=Mock(), setDialogSize=Mock())
+        self.command = command
         self.entry.command_created(types.SimpleNamespace(command=command))
         self.create = self.root.itemById('create_tab').children
+        self.preset_fields = self.root.itemById('presets_tab').children.itemById('presets').children
+
+    def test_dialog_size_is_bounded_on_open_and_section_add(self):
+        self.command.setDialogSize.assert_called_with(520, 560)
+        self.command.setDialogMinimumSize.assert_called_once_with(380, 300)
+        self.assertIsNone(self.create.itemById('presets'))
+        self.command.setDialogSize.reset_mock()
+        self.callbacks['changed'](types.SimpleNamespace(input=types.SimpleNamespace(id='add_section')))
+        self.command.setDialogSize.assert_called_once_with(520, 560)
+
+    def test_remove_section_does_not_delete_event_source_or_resize(self):
+        parameters = self.create.itemById('parameter_group').children
+        self.callbacks['changed'](types.SimpleNamespace(input=types.SimpleNamespace(id='add_section')))
+        group = parameters.itemById('sections').children.itemById('section_0')
+        remove = parameters.itemById('remove_section')
+        self.command.setDialogSize.reset_mock()
+        self.callbacks['changed'](types.SimpleNamespace(input=remove))
+        group.deleteMe.assert_not_called()
+        self.assertFalse(group.isVisible)
+        self.assertFalse(remove.isEnabled)
+        self.assertFalse(group.children.itemById('section_0_length').isVisible)
+        self.command.setDialogSize.assert_not_called()
+        self.assertEqual(len(self.graphics.show.call_args.args[0].segments), 1)
+        with patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['execute'](types.SimpleNamespace())
+            self.assertEqual(len(create.call_args.args[1].segments), 1)
+
+    def test_graphics_cleanup_failure_cannot_prevent_section_removal(self):
+        self.callbacks['changed'](types.SimpleNamespace(input=types.SimpleNamespace(id='add_section')))
+        parameters = self.create.itemById('parameter_group').children
+        group = parameters.itemById('sections').children.itemById('section_0')
+        with patch.object(self.graphics, 'clear', side_effect=RuntimeError('Graphics rollback')):
+            self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('remove_section')))
+        self.assertFalse(group.isVisible)
+        self.assertIn('Graphics rollback', parameters.itemById('error').text)
+        self.entry.futil.handle_error.assert_called_with('Abschnitt entfernen', show_message_box=True)
+        with patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['execute'](types.SimpleNamespace())
+            self.assertEqual(len(create.call_args.args[1].segments), 1)
+
+    def test_central_remove_selects_middle_then_last_section(self):
+        parameters = self.create.itemById('parameter_group').children
+        for _ in range(2):
+            self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('add_section')))
+        groups = parameters.itemById('sections').children
+        for i, length in enumerate((2, 3, 4)):
+            group = groups.itemById(f'section_{i}')
+            group.children.itemById(f'section_{i}_length').value = length
+            self.assertIsNone(group.children.itemById(f'remove_section_{i}'))
+        choice = parameters.itemById('remove_section_choice')
+        choice.listItems.item(1).isSelected = True
+        self.callbacks['changed'](types.SimpleNamespace(input=choice))
+        self.assertTrue(groups.itemById('section_1').isVisible)
+        self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('remove_section')))
+        self.assertFalse(groups.itemById('section_1').isVisible)
+        self.assertEqual([s.length for s in self.graphics.show.call_args.args[0].segments], [2, 4])
+        # The selection now addresses the old third row despite its non-contiguous ID.
+        choice.listItems.item(1).isSelected = True
+        self.callbacks['changed'](types.SimpleNamespace(input=choice))
+        self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('remove_section')))
+        self.assertFalse(groups.itemById('section_2').isVisible)
+        self.assertFalse(parameters.itemById('remove_section').isEnabled)
+        with patch.object(self.entry, 'create_sketch') as create:
+            self.callbacks['execute'](types.SimpleNamespace())
+            self.assertEqual([s.length for s in create.call_args.args[1].segments], [2])
+
+    def test_remove_target_survives_native_selection_change_during_validation(self):
+        parameters = self.create.itemById('parameter_group').children
+        for _ in range(2):
+            self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('add_section')))
+        choice = parameters.itemById('remove_section_choice')
+        choice.listItems.item(1).isSelected = True
+        self.callbacks['changed'](types.SimpleNamespace(input=choice))
+        self.assertIn('Abschnitt 2', parameters.itemById('remove_section_target').text)
+        # Simulate native selection changing before the action event. The user's
+        # selection event, not a later native list index, determines the target.
+        choice.listItems.item(2).isSelected = True
+        self.callbacks['validate'](types.SimpleNamespace())
+        self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('remove_section')))
+        groups = parameters.itemById('sections').children
+        self.assertFalse(groups.itemById('section_1').isVisible)
+        self.assertTrue(groups.itemById('section_2').isVisible)
+        self.assertIn('Abschnitt 1', parameters.itemById('remove_section_target').text)
+
+    def test_remove_target_uses_label_even_if_native_index_is_stale(self):
+        parameters = self.create.itemById('parameter_group').children
+        for _ in range(2):
+            self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('add_section')))
+        choice = parameters.itemById('remove_section_choice')
+        choice.selectedItem = types.SimpleNamespace(index=2, name='Abschnitt 1')
+        self.callbacks['changed'](types.SimpleNamespace(input=choice))
+        self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('remove_section')))
+        groups = parameters.itemById('sections').children
+        self.assertFalse(groups.itemById('section_0').isVisible)
+        self.assertTrue(groups.itemById('section_2').isVisible)
 
     def test_user_preset_save_load_delete_and_cancel(self):
-        fields = self.create.itemById('presets').children
+        fields = self.preset_fields
         fields.itemById('preset_name').value = 'Meine Feder'
         parameters = self.create.itemById('parameter_group').children
         parameters.itemById('start_angle').value = 1.2
@@ -138,7 +237,7 @@ class DialogTests(unittest.TestCase):
         self.assertIn('Mitgelieferte', fields.itemById('preset_note').text)
 
     def test_surface_save_without_face_and_invalid_input(self):
-        fields = self.create.itemById('presets').children
+        fields = self.preset_fields
         self.create.itemById('helix_mode').listItems.item(1).isSelected = True
         fields.itemById('preset_name').value = 'Surface gespeichert'
         surface = self.create.itemById('surface_group').children
@@ -152,12 +251,13 @@ class DialogTests(unittest.TestCase):
         self.assertEqual(self.store.list()[0][0][1].parameters.offset, -0.2)
 
     def test_load_builtin_presets_into_actual_output(self):
-        fields = self.create.itemById('presets').children
+        fields = self.preset_fields
         choice = fields.itemById('preset_choice')
         self.assertEqual(choice.listItems.add.call_count, 3)
         # Packaged order: basic, surface, variable.
         choice.listItems.item(2).isSelected = True
         self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_load')))
+        self.root.itemById('create_tab').activate.assert_called_once()
         with patch.object(self.entry, 'create_sketch') as create:
             self.callbacks['execute'](types.SimpleNamespace())
             model = create.call_args.args[1]

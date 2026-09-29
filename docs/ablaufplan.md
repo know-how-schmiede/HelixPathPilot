@@ -144,7 +144,7 @@ Helix-Konfigurationen speichern, laden, importieren und exportieren.
 - [x] Preset-Datenmodell anlegen (0.4.0: beide Modi, Schema 1, feste Einheiten und JSON-Validierung)
 - [x] Built-in-Presets definieren (0.4.0: Basishelix, variable Abschnitte und Surface-Steigung)
 - [x] Speichern unter frei wählbarem Namen umsetzen (0.4.2: Benutzerprofil, ohne Überschreiben bestehender Namen)
-- [x] Presets laden (0.4.1: Built-ins bestätigt; 0.4.2: eigene Vorlagen implementiert, Fusion-Prüfung offen)
+- [x] Presets laden (0.4.1: Built-ins bestätigt; 0.4.2: eigene Vorlagen vom Benutzer als funktionierend bestätigt)
 - [x] Presets löschen (0.4.2: eigene Vorlagen mit Bestätigung; Built-ins geschützt)
 - [ ] JSON-Export umsetzen
 - [ ] JSON-Import umsetzen
@@ -169,7 +169,7 @@ Eine gute Benutzererfahrung mit Live-Vorschau im Viewport schaffen.
 - [ ] Vorschau für Surface Helix
 - [ ] performante Aktualisierung bei Parameteränderungen
 - [x] unnötige Neuberechnungen reduzieren (0.3.1 ohne Versionswechsel: Custom-Graphics-Vorschau statt Skizze/G1 bei jeder Eingabe, unveränderte Grafik wiederverwenden)
-- [ ] UI-Feinschliff
+- [~] UI-Feinschliff (0.4.3: kompakte Dialoggröße, eigener Vorlagenreiter und farbige Abschnittsvorschau; Farben und Entfernen über zentrale Auswahl vom Benutzer bestätigt, weitere Bildschirmprüfungen offen)
 - [ ] Eingabevalidierung verbessern
 
 ## Zielversion

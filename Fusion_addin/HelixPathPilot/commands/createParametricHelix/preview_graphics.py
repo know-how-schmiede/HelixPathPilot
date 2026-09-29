@@ -1,8 +1,10 @@
 """Transient helix display without sketch entities or constraint solving."""
 
+import adsk.core
 import adsk.fusion
 
 from ...core.variable_helix import segmented_points
+from ...core.preview_colors import section_color
 
 
 class HelixPreview:
@@ -29,13 +31,17 @@ class HelixPreview:
         self.group = self.design.rootComponent.customGraphicsGroups.add()
         try:
             self.group.isSelectable = False
-            line = self.group.addLines(coordinates, [], True)
-            if line is None:
-                raise RuntimeError('Vorschaulinie konnte nicht erzeugt werden.')
-            line.weight = 2.0
             boundaries = [0]
-            for section in sections:
-                boundaries.append(boundaries[-1] + len(section) - 1)
+            for index, section in enumerate(sections):
+                start = boundaries[-1]
+                end = start + len(section) - 1
+                line = self.group.addLines(coordinates, list(range(start, end + 1)), True)
+                if line is None:
+                    raise RuntimeError('Vorschaulinie konnte nicht erzeugt werden.')
+                line.weight = 2.0
+                line.color = adsk.fusion.CustomGraphicsSolidColorEffect.create(
+                    adsk.core.Color.create(*section_color(index), 255))
+                boundaries.append(end)
             self.group.addPointSet(coordinates, boundaries,
                 adsk.fusion.CustomGraphicsPointTypes.PointCloudCustomGraphicsPointType, '')
             self.key = key

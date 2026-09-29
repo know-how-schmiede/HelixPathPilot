@@ -1,11 +1,11 @@
-# Preset-Format und Bedienung – Stand 0.4.2
+# Preset-Format und Bedienung – Stand 0.4.3
 
 Die erste Preset-Ausbaustufe enthält ein Fusion-unabhängiges Datenmodell,
 JSON-Serialisierung und drei mitgelieferte Vorlagen. Seit 0.4.1 sind die Vorlagen
-im Fusion-Dialog unter **Helix erstellen → Vorlagen** sichtbar. Auswählen und
+im Fusion-Dialog sichtbar; seit 0.4.3 liegen sie im eigenen Reiter **Vorlagen**. Auswählen und
 **Vorlage laden** drücken, um Modus und Parameter zu übernehmen. Dabei werden
 aktuelle Parameter ersetzt; Achse und Mantelfläche bleiben separat gewählt.
-Die Auswahl allein verändert noch keine Eingaben. Seit 0.4.2 können eigene
+Nach dem Laden wechselt der Dialog zu „Helix erstellen“. Die Auswahl allein verändert noch keine Eingaben. Seit 0.4.2 können eigene
 Vorlagen gespeichert, geladen und gelöscht werden.
 
 ## Eigene Vorlagen verwalten

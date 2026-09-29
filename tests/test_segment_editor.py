@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 import types
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, PropertyMock
 
 ADDIN = Path(__file__).resolve().parents[1] / 'Fusion_addin' / 'HelixPathPilot'
 sys.path.insert(0, str(ADDIN.parent))
@@ -29,6 +29,18 @@ class Input:
 
 
 class Inputs:
+    def __init__(self):
+        self.texts = {}
+
+    def addTextBoxCommandInput(self, identifier, name, text, *args):
+        item = Input(identifier, name)
+        item.text = text
+        self.texts[identifier] = item
+        return item
+
+    def itemById(self, identifier):
+        return self.texts.get(identifier)
+
     def addGroupCommandInput(self, identifier, name):
         group = Input(identifier, name)
         group.children = Inputs()
@@ -40,6 +52,22 @@ class Inputs:
     def addBoolValueInput(self, identifier, name, *args):
         return Input(identifier, name, False)
 
+    def addDropDownCommandInput(self, identifier, name, style):
+        choice = Input(identifier, name)
+        choice.selectedItem = None
+        entries = []
+        def add(label, selected):
+            item = types.SimpleNamespace(index=len(entries), name=label)
+            entries.append(item)
+            if selected:
+                choice.selectedItem = item
+            return item
+        def clear():
+            entries.clear()
+            choice.selectedItem = None
+        choice.listItems = types.SimpleNamespace(add=add, clear=clear, item=lambda i: entries[i])
+        return choice
+
 
 class EditorTests(unittest.TestCase):
     def setUp(self):
@@ -47,6 +75,7 @@ class EditorTests(unittest.TestCase):
         core = types.ModuleType('adsk.core')
         adsk.core = core
         core.ValueInput = types.SimpleNamespace(createByReal=lambda value: value)
+        core.DropDownStyles = types.SimpleNamespace(TextListDropDownStyle=0)
         modules = patch.dict(sys.modules, {'adsk': adsk, 'adsk.core': core})
         modules.start()
         self.addCleanup(modules.stop)
@@ -57,6 +86,20 @@ class EditorTests(unittest.TestCase):
         spec.loader.exec_module(module)
         self.editor_type = module.SegmentEditor
         self.editor = module.SegmentEditor(Inputs(), 'mm')
+
+    def test_removal_retires_event_source_without_deleting_ui(self):
+        self.editor.changed('add_section')
+        self.editor.changed('add_section')
+        group, _, remove = self.editor.rows[0]
+        with patch.object(group, 'deleteMe', side_effect=AssertionError('Event source deleted')):
+            self.editor.changed(remove.id)
+        self.assertFalse(group.isVisible)
+        self.assertEqual(len(self.editor.retired_rows), 1)
+        self.assertEqual(len(self.editor.read().segments), 2)
+        self.editor.changed(remove.id)  # A late event must not remove another row.
+        self.assertEqual(len(self.editor.rows), 2)
+        for group, _, _ in self.editor.rows:
+            self.assertEqual(group.children.texts, {})
 
     def test_load_replaces_rows_and_keeps_unique_ids(self):
         from HelixPathPilot.core.helix_segments import HelixSegment, SegmentedHelix
@@ -70,6 +113,39 @@ class EditorTests(unittest.TestCase):
         self.assertNotEqual(old.id, self.editor.rows[0][0].id)
         self.editor.changed('add_section')
         self.assertEqual(len(self.editor.rows), 3)
+
+    def test_removal_uses_saved_identifier_not_native_button_properties(self):
+        self.editor.changed('add_section')
+        group, fields, remove = self.editor.rows[0]
+        identifier = remove.id
+        with patch.object(Input, 'id', new_callable=PropertyMock, create=True,
+                          side_effect=RuntimeError('Native ID unavailable')):
+            self.editor.changed(identifier)
+        self.assertEqual(len(self.editor.read().segments), 1)
+        self.assertFalse(group.isVisible)
+
+    def test_every_position_can_be_removed_from_three_loaded_sections(self):
+        from HelixPathPilot.core.helix_segments import HelixSegment, SegmentedHelix
+        model = SegmentedHelix(tuple(HelixSegment.constant(length, 2, 1)
+                                     for length in (2, 3, 4)))
+        for position in range(3):
+            with self.subTest(position=position):
+                self.editor.load(model)
+                group, _, remove = self.editor.rows[position]
+                self.editor.changed(remove.id)
+                self.assertFalse(group.isVisible)
+                self.assertEqual([s.length for s in self.editor.read().segments],
+                                 [length for i, length in enumerate((2, 3, 4)) if i != position])
+
+    def test_first_then_last_removal_leaves_only_middle(self):
+        self.editor.changed('add_section')
+        self.editor.changed('add_section')
+        middle = self.editor.rows[1]
+        first_id, last_id = self.editor.rows[0][2].id, self.editor.rows[2][2].id
+        self.editor.changed(first_id)
+        self.editor.changed(last_id)
+        self.assertEqual(self.editor.rows, [middle])
+        self.assertFalse(middle[2].isEnabled)
 
     def test_failed_load_preserves_original_rows(self):
         from HelixPathPilot.core.helix_segments import HelixSegment, SegmentedHelix
@@ -101,7 +177,8 @@ class EditorTests(unittest.TestCase):
         self.assertEqual(self.editor.rows[1][1]['diameter_start'].value, 7)
         group, _, remove = self.editor.rows[1]
         self.editor.changed(remove.id)
-        self.assertTrue(group.deleted)
+        self.assertFalse(group.deleted)
+        self.assertFalse(group.isVisible)
         self.assertEqual(self.editor.rows[1][0].name, 'Abschnitt 3')
         self.assertEqual(self.editor.read().segments[1].diameter_start, 7)
 
