@@ -4,6 +4,29 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.4.5 – 2026-09-29 – Entwicklung
+
+**GitHub:** Optionalen Drahtdurchmesser und direkten Sweep als neuen Körper
+ergänzt. Numerische Prüfung des gelösten Helixpfads auf zu enge Krümmung und
+Selbstüberschneidungen vor der Körpererzeugung, einschließlich mehrerer Abschnitte.
+
+- Ausgabeoption für parametrische und Surface Helix, standardmäßig aus; farbige Pfadvorschau bleibt erhalten.
+- Kreisprofil senkrecht am Pfadanfang, gesunder geschlossener Einzelkörper erforderlich; Fehler bereinigen die neue Geometrie.
+- Drahtstärke bleibt außerhalb des Preset-Schemas. Numerische Prüfgrenzen und manuelle Fälle in der Entwicklungsanleitung dokumentiert.
+- 140 automatisierte Tests bestanden, einschließlich Mathematik-, Adapter- und Dialogtests für Drahtstärke, Krümmung, Kollisionen, Abschnittskette und Fehlerbereinigung. Benutzer bestätigt die Drahtfunktion in Fusion; einzelne Grenzfälle bleiben offen.
+- Zwei Screenshots mit Drahtausgabe auf Zylinder und Kegel in die deutsche und englische Galerie eingebunden und aus den READMEs verlinkt: [Galerie 0.4.5](screenshots-DE.md#v045).
+- Benutzer bestätigt den vorherigen Stand 0.4.4 als funktionierend.
+
+## 0.4.4 – 2026-09-29 – Entwicklung
+
+**GitHub:** JSON-Import und -Export für Helix-Vorlagen ergänzt. Vorlagen über
+Dateidialoge austauschen und unter eigenem Namen in den Benutzerkatalog übernehmen.
+
+- Import prüft Dateigröße, UTF-8, Schema, Einheiten und Parameter vor dem Speichern. Name frei wählbar; Konflikte überschreiben keine bestehende Vorlage. Import verändert die aktuelle Helix nicht automatisch.
+- Export verwendet die gespeicherte Listenauswahl, ergänzt `.helixpilot.json` und fragt vor dem Ersetzen vorhandener Dateien. Vollständiges Schreiben vor Austausch einer bestehenden Datei; temporäre Dateien werden bei Fehlern entfernt.
+- Abbrechen verändert weder Katalog noch Helix. Status und Dateifehler erscheinen im Vorlagenreiter; Format bleibt Schema 1 mit cm/rad.
+- 122 automatisierte Tests bestanden: beide Modi, UTF-8-BOM, ungültige Dateien, Namenskonflikte, Abbruch, Exportpfad, Überschreibbestätigung und Erhalt vorhandener Dateien bei Schreibfehlern. Dateidialoge in Fusion noch prüfen.
+
 ## 0.4.3 – 2026-09-29 – Entwicklung
 
 **GitHub:** Kompakte Dialoggröße mit scrollbarem Inhalt, eigenem Vorlagenreiter

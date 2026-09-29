@@ -8,6 +8,7 @@ müssen daher nicht dem aktuellen Entwicklungsstand entsprechen.
 
 ## Versionen
 
+- [v0.4.5](#v045) – Drahtkörper auf Zylinder und Kegel
 - [v0.4.1](#v041) – Vorlagenauswahl und geladene variable Helix
 - [v0.3.5](#v035) – variable Surface-Steigung auf Zylinder und Kegel
 - [v0.3.4](#v034) – Surface Offset und Vorschau mit positivem und negativem Abstand
@@ -15,6 +16,27 @@ müssen daher nicht dem aktuellen Entwicklungsstand entsprechen.
 - [v0.2.3](#v023) – tangentiale Übergänge, drei Abschnitte und Zebraanalyse
 - [v0.2.2](#v022) – Anwendungsbeispiel und Abschnittsdialog
 - [v0.1.2](#v012) – Achsausrichtung, Parameterdialog, Menü und Symbolleiste
+
+## v0.4.5
+
+### Drahtdurchmesser und Surface Helix
+
+„Drahtkörper erstellen“ ist aktiviert. Der Dialog zeigt einen Drahtdurchmesser
+von 5, Start- und Endsteigung von jeweils 10 mm sowie Surface Offset 0 mm.
+Die gewählte Zylinderfläche hat 50 mm Radius und 110 mm axiale Länge;
+die Helix umfasst elf Windungen. Im Modell sind magentafarbene Drahtkörper
+auf Zylinder und Kegel sichtbar. Die Körperdarstellung ist nicht die Live-Pfadvorschau.
+
+![Surface-Helix-Dialog in HelixPathPilot v0.4.5 mit aktivierter Drahtausgabe und Drahtkörper am Zylinder](images/screenshots/v0-4-5/HelixPathPilot_v0-4-5_-00.png)
+
+### Drahtkörper am Kegel
+
+Die Detailansicht zeigt den magentafarbenen Drahtkörper entlang des grünen
+Kegelmantels. Der Benutzer bestätigt die Funktion in Fusion. Die Bilder
+dokumentieren die Körperausgabe; sie belegen keinen vollständigen Test aller
+Grenzfälle der Überschneidungsprüfung.
+
+![Helixförmiger Drahtkörper auf einem Kegelmantel in HelixPathPilot v0.4.5](images/screenshots/v0-4-5/HelixPathPilot_v0-4-5_-01.png)
 
 ## v0.4.1
 

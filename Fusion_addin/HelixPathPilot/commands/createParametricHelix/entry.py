@@ -1,6 +1,7 @@
 """Create a section-based helix around a selected axis."""
 
 from pathlib import Path
+from dataclasses import replace
 
 import adsk.core
 import adsk.fusion
@@ -10,9 +11,12 @@ from ...core.variable_helix import sampling_plan
 from ...core.surface_helix import surface_helix
 from ...core.presets import HelixPreset, SurfaceSettings
 from ...core.preset_store import PresetStore
+from ...core.preset_files import read_preset_file, write_preset_file, export_path
 from ...lib import fusionAddInUtils as futil
 from ...version import APP_NAME, VERSION
 from .sketch_builder import create_sketch
+from .wire_builder import create_wire
+from ...core.wire_clearance import validate_diameter
 from .axis_selection import selected_axis, selected_axis_length
 from .segment_editor import SegmentEditor
 from .dialog_tabs import add_settings_and_info
@@ -122,6 +126,10 @@ def command_created(args):
     preset_inputs.addBoolValueInput('preset_save', 'Als eigene Vorlage speichern', False, '', False)
     preset_delete = preset_inputs.addBoolValueInput('preset_delete', 'Eigene Vorlage löschen', False, '', False)
     preset_delete.isEnabled = bool(preset_keys and preset_keys[0])
+    preset_inputs.addBoolValueInput('preset_import', 'JSON-Vorlage importieren', False, '', False)
+    preset_export = preset_inputs.addBoolValueInput('preset_export', 'Ausgewählte Vorlage exportieren', False, '', False)
+    preset_export.isEnabled = bool(presets)
+    preset_export.tooltip = 'Exportiert die gespeicherte Auswahl, nicht ungespeicherte Änderungen der Helix.'
     preset_note = preset_inputs.addTextBoxCommandInput('preset_note', '',
         'Vorlage auswählen und laden. Aktuelle Parameter werden ersetzt; '
         'Achse und Mantelfläche bleiben separat gewählt.', 3, True)
@@ -132,6 +140,14 @@ def command_created(args):
         'helix_mode', 'Modus', adsk.core.DropDownStyles.TextListDropDownStyle)
     mode.listItems.add('Parametrische Helix', True)
     mode.listItems.add('Surface Helix', False)
+    wire_enabled = create_inputs.addBoolValueInput('wire_enabled', 'Drahtkörper erstellen', True, '', False)
+    wire_diameter = create_inputs.addValueInput('wire_diameter', 'Drahtdurchmesser',
+        design.unitsManager.defaultLengthUnits, adsk.core.ValueInput.createByReal(0.1))
+    wire_diameter.isVisible = False
+    wire_note = create_inputs.addTextBoxCommandInput('wire_note', '',
+        'Vorschau zeigt den Pfad. Bei OK: Überschneidungsprüfung und Sweep als neuer Körper. '
+        'Drahtstärke wird nicht in Vorlagen gespeichert.', 3, True)
+    wire_note.isVisible = False
     surface_group = create_inputs.addGroupCommandInput('surface_group', 'Surface Helix')
     surface_group.isExpanded = True
     surface_group.isVisible = False
@@ -218,6 +234,7 @@ def command_created(args):
                 origin = 'Eigene' if preset_keys[index] else 'Mitgeliefert'
                 preset_choice.listItems.add(f'{preset.name} ({mode_label}, {origin})', index == selected)
             preset_load.isEnabled = bool(presets)
+            preset_export.isEnabled = bool(presets)
             preset_delete.isEnabled = bool(preset_keys and preset_keys[selected])
         finally:
             editor.busy = False
@@ -238,6 +255,43 @@ def command_created(args):
         key = store.save(preset)
         errors = refresh_user_presets(key)
         preset_note.text = f'Gespeichert: {preset.name.strip()}.' + ('\n' + errors if errors else '')
+
+    def import_preset():
+        dialog = app.userInterface.createFileDialog()
+        dialog.title = 'Helix-Vorlage importieren'
+        dialog.filter = 'HelixPathPilot (*.helixpilot.json);;JSON (*.json)'
+        dialog.isMultiSelectEnabled = False
+        if dialog.showOpen() != adsk.core.DialogResults.DialogOK:
+            return
+        preset = read_preset_file(dialog.filename)
+        name, cancelled = app.userInterface.inputBox(
+            'Name der importierten eigenen Vorlage:', CMD_NAME, preset.name)
+        if cancelled:
+            return
+        preset = replace(preset, name=name)
+        key = store.save(preset)
+        errors = refresh_user_presets(key)
+        preset_name.value = preset.name.strip()
+        preset_note.text = (f'Importiert: {preset.name.strip()}. Zum Anwenden „Vorlage laden“ drücken.'
+                            + ('\n' + errors if errors else ''))
+
+    def export_preset():
+        index = selected_preset_index()
+        preset = store.load(preset_keys[index]) if preset_keys[index] else presets[index]
+        dialog = app.userInterface.createFileDialog()
+        dialog.title = f'Vorlage exportieren: {preset.name}'
+        dialog.filter = 'HelixPathPilot (*.helixpilot.json)'
+        dialog.isMultiSelectEnabled = False
+        if dialog.showSave() != adsk.core.DialogResults.DialogOK:
+            return
+        path = export_path(dialog.filename)
+        overwrite = path.exists()
+        if overwrite and app.userInterface.messageBox(
+                f'Datei überschreiben?\n{path}', CMD_NAME,
+                adsk.core.MessageBoxButtonTypes.YesNoButtonType) != adsk.core.DialogResults.DialogYes:
+            return
+        path = write_preset_file(path, preset, overwrite=overwrite)
+        preset_note.text = f'Exportiert: {preset.name}\n{path}'
 
     def delete_preset():
         index = selected_preset_index()
@@ -299,6 +353,14 @@ def command_created(args):
         return (_parameters(inputs, editor),
                 selected_axis(axis_input, inputs.itemById('reverse_axis').value))
 
+    def current_wire_diameter():
+        if not wire_enabled.value:
+            return None
+        if not wire_diameter.isValidExpression:
+            raise ValueError('Bitte einen gültigen Drahtdurchmesser eingeben.')
+        validate_diameter(wire_diameter.value)
+        return wire_diameter.value
+
     def validate(event):
         if editor.busy:
             event.areInputsValid = False
@@ -308,6 +370,7 @@ def command_created(args):
                 kind = selected_surface_kind(surface_input)
                 profile = selected_surface_profile(surface_input)
                 model, _ = surface_parameters()
+                current_wire_diameter()
                 fmt = lambda value: design.unitsManager.formatValue(value, units)
                 surface_status.text = (f'{kind}: vollständiger 360°-Mantel.\n'
                     f'Axiale Länge: {fmt(profile.length)}\n'
@@ -323,6 +386,7 @@ def command_created(args):
             return
         try:
             model = _parameters(inputs, editor)
+            current_wire_diameter()
             selected_axis(axis_input, inputs.itemById('reverse_axis').value)
             length = design.unitsManager.formatValue(model.total_length, units)
             turns = sum(t for t, _ in sampling_plan(model))
@@ -336,10 +400,17 @@ def command_created(args):
 
     def build_current_sketch():
         model, axis = current_parameters()
+        diameter = current_wire_diameter()
         sketch = create_sketch(design, model, axis,
             tangent_joins=tangent_joins.value if mode.selectedItem.index == 0 else False)
         if mode.selectedItem.index == 1:
             sketch.name = 'HelixPathPilot – Surface Helix'
+        if diameter is not None:
+            try:
+                create_wire(design, sketch, diameter)
+            except Exception:
+                sketch.deleteMe()
+                raise
         return sketch
 
     def preview(event):
@@ -373,6 +444,10 @@ def command_created(args):
             return
         try:
             changed_id = event.input.id
+            if changed_id == 'wire_enabled':
+                wire_diameter.isVisible = wire_enabled.value
+                wire_note.isVisible = wire_enabled.value
+                return
             if changed_id == 'remove_section_choice':
                 editor.select_remove_target()
                 return
@@ -402,10 +477,11 @@ def command_created(args):
             if changed_id == 'preset_choice':
                 preset_delete.isEnabled = bool(preset_keys[selected_preset_index()])
                 return
-            if changed_id in ('preset_load', 'preset_save', 'preset_delete'):
+            if changed_id in ('preset_load', 'preset_save', 'preset_delete', 'preset_import', 'preset_export'):
                 try:
                     {'preset_load': load_preset, 'preset_save': save_preset,
-                     'preset_delete': delete_preset}[changed_id]()
+                     'preset_delete': delete_preset, 'preset_import': import_preset,
+                     'preset_export': export_preset}[changed_id]()
                 except Exception as error:
                     preset_note.text = f'Vorlagenaktion fehlgeschlagen: {error}'
                 return

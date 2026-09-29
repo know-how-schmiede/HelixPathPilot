@@ -23,7 +23,7 @@ Das Projekt soll deutlich mehr Flexibilität als eine klassische Helix mit konst
 - Surface Helix auf rotationssymmetrischen Körpern
 - Einstellbarer Surface Offset
 - Speichern, Laden, Import und Export von Presets
-- Spätere Erweiterung für Sweep-/Federkörper
+- Optionaler Sweep-Drahtkörper mit Durchmesserangabe und Überschneidungsprüfung
 
 ## Arbeitsmodi
 
@@ -66,16 +66,24 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.4.3** liegt unter `Fusion_addin/HelixPathPilot/`.
+Der Entwicklungsstand **0.4.5** liegt unter `Fusion_addin/HelixPathPilot/`.
+
+**Drahtkörper (0.4.5):** Unter „Helix erstellen“ die Option „Drahtkörper erstellen“
+aktivieren und den Drahtdurchmesser eingeben (Vorgabe 1 mm). Bei OK wird der
+tatsächliche Splinepfad numerisch auf enge Krümmungen und Selbstüberschneidungen
+geprüft und ein kreisförmiges Profil als neuer Körper gesweept. Beide Modi werden
+unterstützt. Die Vorschau zeigt weiterhin den farbigen Pfad. Die Drahtstärke ist
+eine Dialogeinstellung und wird nicht in Vorlagen gespeichert. Details und
+Prüfgrenzen: [Entwicklung](docs/development.md).
 Die [Preset-Grundlage](docs/presets.md) enthält ein validiertes JSON-Datenmodell
-und drei Vorlagen, die im eigenen Reiter „Vorlagen“ ausgewählt und geladen werden. Eigene Vorlagen lassen sich dort benennen, speichern, laden und löschen.
+und drei Vorlagen, die im eigenen Reiter „Vorlagen“ ausgewählt und geladen werden. Eigene Vorlagen lassen sich dort benennen, speichern, laden und löschen sowie als JSON-Dateien importieren und exportieren.
 Parametrische und variable Helices besitzen eine abschaltbare Live-Vorschau mit eigener Farbe je Abschnitt. Der kompakte Dialog verwendet einen scrollbaren Inhaltsbereich.
 Die Punktanzeige beschränkt sich auf Abschnittsgrenzen; Startdurchmesser folgen
 über die gesamte Abschnittskette dem jeweiligen Vorgänger.
 Neu sind die Dialogreiter „Einstellungen“ und „Info“ mit Logo und Projektlinks
 sowie Surface Helix für vollständige Zylinder- und Kegelmäntel mit konstanter oder linear variabler
 Steigung, schneller Vorschau und 3D-Skizzenausgabe.
-**Volumenkörper → Erstellen → HelixPathPilot v0.4.3** erzeugt eine 3D-Skizze um eine gewählte Achse.
+**Volumenkörper → Erstellen → HelixPathPilot v0.4.5** erzeugt eine 3D-Skizze um eine gewählte Achse.
 Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endsteigung
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
 „Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.
@@ -93,9 +101,9 @@ Die genaue Funktionalität und Benutzeroberfläche kann sich während der Entwic
 
 ## Screenshots
 
-Vorlagen in **v0.4.1**: geladene variable Helix mit bearbeiteten Abschnitten und Vorschau.
+Drahtkörper in **v0.4.5**: Surface Helix auf einem Kegel. Die Funktion wurde vom Benutzer in Fusion bestätigt.
 
-[![Geladene variable Vorlage mit Helix-Vorschau, HelixPathPilot v0.4.1](docs/images/screenshots/v0-4-1/HelixPathPilot_v0-4-1_-00.png)](docs/screenshots-DE.md#v041)
+[![Drahtkörper auf einem Kegel, HelixPathPilot v0.4.5](docs/images/screenshots/v0-4-5/HelixPathPilot_v0-4-5_-01.png)](docs/screenshots-DE.md#v045)
 
 Die [Screenshot-Galerie nach Versionen](docs/screenshots-DE.md) zeigt zusätzlich
 Kegel- und Wickelbeispiele sowie frühere Versionen mit Abschnittsdialog, Erstellen-Menü und Symbolleiste. Die Bilder

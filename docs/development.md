@@ -1,6 +1,69 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.4.3 (development)
+## Aktiver Stand – 0.4.5 (development)
+
+### Optionaler Drahtkörper (0.4.5)
+
+Der Benutzer bestätigt die Funktion in Fusion. Die
+[Screenshots zu 0.4.5](screenshots-DE.md#v045) zeigen Drahtkörper auf Zylinder
+und Kegel sowie die neue Durchmessereingabe. Die unten aufgeführten Grenzfälle
+bleiben als gezielte Prüfungen offen.
+
+„Drahtkörper erstellen“ und „Drahtdurchmesser“ stehen oben im Erstellen-Reiter
+für beide Modi bereit. Standard: deaktiviert, Durchmesser 1 mm. Die vorhandenen
+Helixdurchmesser beschreiben weiterhin die Drahtmittellinie. Vorlagen enthalten
+die neue Ausgabeoption nicht. Die Vorschau bleibt eine Pfadgrafik.
+
+Bei OK entsteht zuerst die Helixskizze inklusive G1-Ausgleich. Vor dem Sweep
+werden die tatsächlichen Weltraum-Splines geprüft: Krümmung an mindestens 257
+Parameterstellen je Spline, Tangenten an Abschnittsgrenzen und Abstände zwischen
+nichtlokalen Segmenten einer toleranzgesteuerten Polygonapproximation. Berührung
+zählt als Konflikt. Lokale Nachbarn innerhalb einer halben Drahtumfangslänge
+werden über die Krümmung statt über den Abstand behandelt. Der Abstand enthält
+zwei Approximationstoleranzen als Reserve, die Krümmungsprüfung 2 Prozent Reserve.
+Dies ist eine numerische Vorprüfung, kein mathematischer Beweis für beliebige
+Splines. Fusion muss den Sweep zusätzlich als gesundes Feature mit genau einem
+geschlossenen Volumenkörper akzeptieren. Sehr komplexe Fälle werden bei mehr als
+16000 Prüfpunkten oder 2 Millionen Kandidatenpaaren abgewiesen.
+
+Das Kreisprofil liegt senkrecht am Pfadanfang; alle Abschnittssplines gehören
+zum Sweep. Ausgabe als neuer Körper in der Hauptkomponente, Hilfsskizzen und
+Profilebene ausgeblendet. Fehler bereinigen die erzeugten Hilfsobjekte und den
+Pfad; vorhandene Körper werden nicht verbunden oder verändert. Kollisionen mit
+anderen Körpern, einschließlich des Surface-Formgebers, werden nicht geprüft.
+
+Weiterführende manuelle Fusion-Prüfung (einzeln noch nicht bestätigt):
+
+- Standardhelix: Draht 1 mm erstellen, Körper und Durchmesser prüfen; deaktiviert weiterhin nur Skizze.
+- Bei Steigung 5 mm einen Draht von 5 bzw. 6 mm versuchen: Abweisung ohne Restobjekte.
+- Kleiner Helixradius mit sehr großer Steigung: zu dicken Draht über Krümmung abweisen.
+- Mehrere Abschnitte mit variabler Steigung/Durchmesser und G1, beide Drehrichtungen sowie gedrehte/verschobene Achse prüfen.
+- Surface Helix mit Offset und Randwechsel prüfen; bestehender Formgeber bleibt separat.
+- G1 deaktivieren und einen Knick erzeugen: verständlicher Hinweis. Fehler/Abbruch dürfen keine Hilfselemente hinterlassen.
+
+API-Grundlagen: [Spline-Krümmung](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/core_CurveEvaluator3D_getCurvature.htm),
+[Pfad aus mehreren Kurven](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/fusion_Path_create.htm),
+[Profilebene am Pfad](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/fusion_ConstructionPlaneInput_setByPath.htm)
+mit Rückfall auf `setByDistanceOnPath` für ältere Fusion-Versionen und
+[Sweep-Beispiel](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/sweepFeatures_add_Sample.htm).
+
+### JSON-Import und -Export (0.4.4)
+
+Im Reiter „Vorlagen“ stehen „JSON-Vorlage importieren“ und „Ausgewählte Vorlage
+exportieren“ bereit. Import prüft die Datei zuerst und fragt anschließend nach
+dem Namen für die eigene Kopie. Zum Anwenden danach „Vorlage laden“ drücken.
+Export schreibt die gespeicherte Auswahl; ungespeicherte Helix-Eingaben müssen
+zuerst als eigene Vorlage gespeichert werden. Details: [Presets](presets.md).
+
+Manuelle Fusion-Prüfung (offen):
+
+- Mitgelieferte und eigene Vorlage exportieren; fehlende Endung wird ergänzt.
+- Exportierte Datei importieren, neuen Namen wählen, laden und beide Helix-Modi vergleichen.
+- Datei- und Namensdialog abbrechen: keine Änderungen. Doppelten Namen eingeben: verständlicher Hinweis, bestehende Vorlage unverändert.
+- Defektes JSON, falsche Einheiten und unbekannte Schemaversion importieren: Hinweis statt Änderung der aktuellen Helix.
+- Vorhandene Exportdatei wählen: Überschreiben ablehnen und bestätigen; Zielinhalt entsprechend prüfen.
+
+API-Grundlage: [Autodesk-Dateidialoge](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/FileDialogSample_Sample.htm).
 
 ### Abschnitte gezielt entfernen (Korrektur in 0.4.3)
 
@@ -356,7 +419,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.4.3** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.4.4** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -370,7 +433,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.4.3** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.4.4** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -428,7 +491,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 113 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 122 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

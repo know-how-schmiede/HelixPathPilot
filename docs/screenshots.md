@@ -8,6 +8,7 @@ development version. The Fusion interface in these screenshots is German.
 
 ## Versions
 
+- [v0.4.5](#v045) — wire bodies on a cylinder and cone
 - [v0.4.1](#v041) — preset selection and a loaded variable helix
 - [v0.3.5](#v035) — variable Surface Helix pitch on cylinders and cones
 - [v0.3.4](#v034) — Surface Offset previews with positive and negative distances
@@ -15,6 +16,27 @@ development version. The Fusion interface in these screenshots is German.
 - [v0.2.3](#v023) — tangent transitions, three-section example and zebra analysis
 - [v0.2.2](#v022) — application example and section editor
 - [v0.1.2](#v012) — axis alignment, parameter dialog, menu and toolbar
+
+## v0.4.5
+
+### Wire diameter and Surface Helix
+
+“Drahtkörper erstellen” (Create wire body) is enabled. The dialog shows a wire
+diameter value of 5, start and end pitches of 10 mm, and a Surface Offset of
+0 mm. The selected cylinder has a radius of 50 mm and an axial length of
+110 mm; the helix has eleven turns. Magenta wire bodies are visible on the
+cylinder and cone. These bodies are not the live path preview.
+
+![HelixPathPilot v0.4.5 Surface Helix dialog with wire output enabled and a wire body around a cylinder](images/screenshots/v0-4-5/HelixPathPilot_v0-4-5_-00.png)
+
+### Wire body on a cone
+
+The detail view shows a magenta wire body following the green conical surface.
+The user confirms that the feature works in Fusion. These images document
+body output; they do not establish that all intersection-check edge cases
+have been tested.
+
+![Helical wire body on a conical surface in HelixPathPilot v0.4.5](images/screenshots/v0-4-5/HelixPathPilot_v0-4-5_-01.png)
 
 ## v0.4.1
 

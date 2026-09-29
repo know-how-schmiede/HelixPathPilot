@@ -146,14 +146,14 @@ Helix-Konfigurationen speichern, laden, importieren und exportieren.
 - [x] Speichern unter frei wählbarem Namen umsetzen (0.4.2: Benutzerprofil, ohne Überschreiben bestehender Namen)
 - [x] Presets laden (0.4.1: Built-ins bestätigt; 0.4.2: eigene Vorlagen vom Benutzer als funktionierend bestätigt)
 - [x] Presets löschen (0.4.2: eigene Vorlagen mit Bestätigung; Built-ins geschützt)
-- [ ] JSON-Export umsetzen
-- [ ] JSON-Import umsetzen
+- [x] JSON-Export umsetzen (0.4.4: gespeicherte Auswahl, Dateidialog, Endung und Überschreibbestätigung)
+- [x] JSON-Import umsetzen (0.4.4: Validierung und Import unter wählbarem Namen als eigene Vorlage)
 - [x] Dateiendung `*.helixpilot.json` verwenden (Built-in-Dateien in 0.4.0)
-- [~] Fehlerbehandlung für ungültige Presets ergänzen (Datenvalidierung in 0.4.0; 0.4.2 ergänzt Dateifehler im Dialog; Importprüfung folgt)
+- [x] Fehlerbehandlung für ungültige Presets ergänzen (bis 0.4.4: Daten-/Dateivalidierung, Namenskonflikte, Abbruch und Schreibfehler; Fusion-Prüfung offen)
 
 ## Zielversion
 
-**0.4.0** – Datenmodell und Built-in-Vorlagen implementiert; [Formatbeschreibung](presets.md). 0.4.1 ergänzt Built-in-Auswahl und Laden im Dialog. 0.4.2 ergänzt Speichern/Laden/Löschen eigener Vorlagen. Als Nächstes JSON-Dateiimport/-export.
+**0.4.0** – Datenmodell und Built-in-Vorlagen implementiert; [Formatbeschreibung](presets.md). 0.4.1 ergänzt Built-in-Auswahl und Laden im Dialog. 0.4.2 ergänzt Speichern/Laden/Löschen eigener Vorlagen. 0.4.4 ergänzt JSON-Dateiimport/-export; manuelle Fusion-Prüfung offen.
 
 # Version 0.5.x – Preview / Interaktion
 
@@ -188,7 +188,7 @@ Technische Qualität erhöhen und spätere Erweiterungen vorbereiten.
 - [ ] Kernlogik weiter von Fusion-API trennen
 - [ ] interne Datenmodelle vereinheitlichen
 - [ ] Fehlerbehandlung verbessern
-- [ ] Grundlagen für optionalen Sweep-Output vorbereiten
+- [x] Optionaler Sweep-Output vorgezogen auf Benutzerwunsch in 0.4.5: Drahtdurchmesser, numerische Vorprüfung und neuer Körper; Funktion in Fusion vom Benutzer bestätigt, Screenshots dokumentiert
 - [ ] Logging verbessern
 - [ ] Stabilitätstests durchführen
 
@@ -283,7 +283,7 @@ Erste offiziell veröffentlichbare Version bereitstellen.
 - [x] Vorschau, Geschwindigkeit und Durchmesserverknüpfung der Abschnitte in Fusion prüfen (vom Benutzer bestätigt).
 - [ ] Weitere Sonderfälle in Fusion prüfen: Grenzmarkierungen beim Bearbeiten/Selektieren, Vorschau bei ungültigen Eingaben, Abbrechen, Moduswechsel und Rückgängig.
 
-Surface-Konturableitung, Oberflächenhelix und Offset sind implementiert; variable Surface-Steigung ist seit 0.3.5 implementiert. Testmodelle sind definiert; der vollständige Surface-Testdurchlauf in Fusion bleibt offen. Preset-Dialog und Benutzerdateiverwaltung sind bis 0.4.2 implementiert; als Nächstes JSON-Dateiimport/-export.
+Surface-Konturableitung, Oberflächenhelix und Offset sind implementiert; variable Surface-Steigung ist seit 0.3.5 implementiert. Testmodelle sind definiert; der vollständige Surface-Testdurchlauf in Fusion bleibt offen. Preset-Dialog und Benutzerdateiverwaltung sind bis 0.4.2 implementiert; JSON-Dateiimport/-export ist in 0.4.4 implementiert. Auf Benutzerwunsch ist in 0.4.5 der optionale Draht-Sweep mit numerischer Selbstüberschneidungsprüfung vorgezogen. Der Benutzer bestätigt die Körperausgabe in Fusion; Screenshots auf Zylinder und Kegel sind dokumentiert. Als Nächstes verbleibende Grenzfälle und Preview-/Interaktionspunkte prüfen.
 
 Benutzer bestätigt die Mantelflächenerkennung. Gemeldete Eingabelatenz von
 15–20 Sekunden durch Ersatz der Skizzenvorschau adressiert; Benutzer bestätigt
@@ -292,8 +292,8 @@ anschließend passende Geschwindigkeit und Vorschau sowie korrekte Abschnittsdur
 ## Weitere Ideen
 
 - [x] Helixlänge aus endlicher Skizzenlinie oder gerader Körperkante einmalig übernehmen (0.2.2): positive, endliche Länge prüfen, unendliche Konstruktionsachsen ausschließen, Abschnittslängen proportional skalieren. Fusion-Prüfung noch offen.
-- [ ] direkter Sweep-Output
-- [ ] Drahtdurchmesser als Komfortfunktion
+- [x] direkter Sweep-Output (0.4.5, vom Benutzer in Fusion bestätigt; einzelne Grenzfälle weiterhin offen)
+- [x] Drahtdurchmesser als Komfortfunktion (0.4.5, beide Modi, numerische Selbstüberschneidungsprüfung)
 - [ ] automatische Federerzeugung
 - [ ] Krümmungsstetige Übergänge (G2) untersuchen; G1-Tangentialbedingungen sind seit 0.2.3 implementiert
 - [ ] verbesserte Validierung für Surface-Geometrien

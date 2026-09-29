@@ -23,7 +23,7 @@ The project is intended to provide significantly more flexibility than a convent
 - Surface Helix on rotational bodies
 - Configurable surface offset
 - Save, load, import and export presets
-- Future sweep / spring body generation
+- Optional wire sweep with diameter input and self-intersection preflight
 
 ## Working Modes
 
@@ -66,16 +66,23 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-Development version **0.4.3** lives in `Fusion_addin/HelixPathPilot/`.
+Development version **0.4.5** lives in `Fusion_addin/HelixPathPilot/`.
+
+**Wire body (0.4.5):** Enable “Drahtkörper erstellen” on the creation tab and enter
+the wire diameter (default 1 mm). On OK, the solved spline undergoes a numerical
+curvature and self-intersection preflight before a circular profile is swept as
+a new body. Both modes are supported; the preview continues to show the colored
+path. Wire settings are not stored in presets. See [development notes](docs/development.md)
+for validation limits and Fusion checks still required.
 The [preset foundation](docs/presets.md) includes a validated JSON data model
-and three examples available in the dedicated “Vorlagen” (Presets) tab. Select a preset and click “Vorlage laden” to load it. Named user presets can also be saved, loaded and deleted there.
+and three examples available in the dedicated “Vorlagen” (Presets) tab. Select a preset and click “Vorlage laden” to load it. Named user presets can also be saved, loaded and deleted there, with JSON file import and export.
 Parametric and variable helices have an optional live preview with distinct section colors. The compact dialog uses a scrollable content area. Point display
 is reduced to section boundaries, and start diameters follow the preceding
 section throughout the full chain.
 New Settings and Info tabs provide the G1 option, project logo and links.
 Surface Helix creates a 3D sketch on full cylindrical and conical faces with
 constant or linearly varying axial pitch, a fast preview and a choice of starting rim.
-**Solid → Create → HelixPathPilot v0.4.3** creates a 3D sketch around a selected axis.
+**Solid → Create → HelixPathPilot v0.4.5** creates a 3D sketch around a selected axis.
 Add or remove up to 32 sections with individual lengths, start/end diameters
 and start/end pitches. Handedness and start angle apply to the whole helix.
 “Achslänge übernehmen” fits the total length to a finite straight line or edge once.
@@ -93,9 +100,9 @@ Features and user interface details may change during development.
 
 ## Screenshots
 
-Presets in **v0.4.1**: a loaded variable helix with edited sections and a preview.
+Wire bodies in **v0.4.5**: Surface Helix on a cone. The user has confirmed the feature works in Fusion.
 
-[![Loaded variable preset and helix preview, HelixPathPilot v0.4.1](docs/images/screenshots/v0-4-1/HelixPathPilot_v0-4-1_-00.png)](docs/screenshots.md#v041)
+[![Wire body on a cone, HelixPathPilot v0.4.5](docs/images/screenshots/v0-4-5/HelixPathPilot_v0-4-5_-01.png)](docs/screenshots.md#v045)
 
 See the [versioned screenshot gallery](docs/screenshots.md) for cone and winding examples
 and earlier versions, including the section editor, Create menu and toolbar. Screenshots document the version shown; newer versions

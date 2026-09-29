@@ -1,4 +1,4 @@
-# Preset-Format und Bedienung – Stand 0.4.3
+# Preset-Format und Bedienung – Stand 0.4.4
 
 Die erste Preset-Ausbaustufe enthält ein Fusion-unabhängiges Datenmodell,
 JSON-Serialisierung und drei mitgelieferte Vorlagen. Seit 0.4.1 sind die Vorlagen
@@ -34,12 +34,31 @@ Speicherorte außerhalb des Add-in-Verzeichnisses:
 Die Namen erscheinen im JSON-Inhalt; Dateinamen werden aus normalisierten Namen
 abgeleitet und enthalten keine eingegebenen Pfadzeichen. Der gesamte Ordner kann
 zur Sicherung kopiert werden. Die Dateien unter `presets/user/` im Add-in-Ordner
-werden nicht verwendet. Ein Dateiauswahldialog für Import/Export folgt später.
+werden nicht verwendet. Seit 0.4.4 stehen Dateiauswahldialoge für Import/Export bereit.
 
 [Screenshots der Vorlagenauswahl und einer geladenen Helix](screenshots-DE.md#v041)
 zeigen die Bedienung in Version 0.4.1.
 
 ## Format
+
+### Dateien austauschen
+
+**JSON-Vorlage importieren** öffnet eine Dateiauswahl für `.helixpilot.json` oder
+`.json`. Nach erfolgreicher Prüfung den Namen für die eigene Vorlage bestätigen
+oder ändern. Bei Namenskonflikten erneut mit einem freien Namen importieren.
+Die importierte Kopie wird ausgewählt; erst **Vorlage laden** übernimmt ihre Werte.
+
+**Ausgewählte Vorlage exportieren** schreibt die gespeicherte Listenauswahl,
+einschließlich mitgelieferter Vorlagen. Ungespeicherte Änderungen an Helix-Werten
+sind nicht Bestandteil des Exports. Diese zuerst als eigene Vorlage speichern.
+Fehlt die vollständige Endung `.helixpilot.json`, wird sie angehängt.
+Vor dem Überschreiben einer vorhandenen Zieldatei erscheint eine Bestätigung.
+Datei- oder Namensdialog können ohne Änderungen abgebrochen werden.
+
+Import und Export wirken sofort auf Dateien, unabhängig von OK/Abbrechen des
+Helix-Dialogs. Die Quell-Datei beim Import wird nicht verändert.
+
+### JSON-Struktur
 
 Dateiendung: `*.helixpilot.json`. JSON als UTF-8, maximal 128 KiB.
 `schema_version` ist 1; Längen sind ausdrücklich in **cm**, Winkel in **rad**
@@ -95,4 +114,4 @@ Fusion-Eingaben. Die Kernmethoden selbst verarbeiten weiterhin nur JSON-Text.
 Lesen prüft Größe und Schema erneut; beschädigte Dateien werden beim Auflisten
 einzeln gemeldet und übersprungen. Speichern überschreibt keine vorhandene Datei.
 
-Nächster Schritt: JSON-Dateiimport/-export.
+Dateiaustausch: `core.preset_files` prüft eingelesene Dateien und schreibt JSON als UTF-8 mit LF. Beim bestätigten Überschreiben wird erst eine temporäre Datei im Zielordner vollständig geschrieben und dann die Zieldatei ersetzt.

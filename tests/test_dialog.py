@@ -81,7 +81,7 @@ class DialogTests(unittest.TestCase):
             createByString=lambda text: 0.0, createByReal=lambda value: value)
         adsk.core.DropDownStyles = types.SimpleNamespace(TextListDropDownStyle=0)
         adsk.core.MessageBoxButtonTypes = types.SimpleNamespace(YesNoButtonType=3)
-        adsk.core.DialogResults = types.SimpleNamespace(DialogYes=1)
+        adsk.core.DialogResults = types.SimpleNamespace(DialogYes=1, DialogOK=0)
         self.ui = adsk.core.Application.get.return_value.userInterface
         adsk.fusion.Design = types.SimpleNamespace(cast=lambda value: value)
         package = types.ModuleType('HelixPathPilot.commands')
@@ -116,6 +116,42 @@ class DialogTests(unittest.TestCase):
         self.entry.command_created(types.SimpleNamespace(command=command))
         self.create = self.root.itemById('create_tab').children
         self.preset_fields = self.root.itemById('presets_tab').children.itemById('presets').children
+
+    def test_wire_is_optional_and_sweeps_only_on_execute(self):
+        enabled = self.create.itemById('wire_enabled')
+        diameter = self.create.itemById('wire_diameter')
+        self.assertFalse(enabled.value)
+        self.assertFalse(diameter.isVisible)
+        with patch.object(self.entry, 'create_sketch') as sketch, patch.object(self.entry, 'create_wire') as wire:
+            self.callbacks['execute'](types.SimpleNamespace())
+            wire.assert_not_called()
+            enabled.value = True
+            self.callbacks['changed'](types.SimpleNamespace(input=enabled))
+            self.assertTrue(diameter.isVisible)
+            self.callbacks['preview'](types.SimpleNamespace())
+            wire.assert_not_called()
+            self.callbacks['execute'](types.SimpleNamespace())
+            self.assertEqual(wire.call_args.args[1:], (sketch.return_value, 0.1))
+
+    def test_wire_error_removes_path_and_reports_failure(self):
+        self.create.itemById('wire_enabled').value = True
+        with patch.object(self.entry, 'create_sketch') as sketch, patch.object(
+                self.entry, 'create_wire', side_effect=ValueError('Drahtdurchmesser zu groß')):
+            event = types.SimpleNamespace()
+            self.callbacks['execute'](event)
+            self.assertTrue(event.executeFailed)
+            self.assertIn('zu groß', event.executeFailedMessage)
+            sketch.return_value.deleteMe.assert_called_once()
+
+    def test_invalid_wire_diameter_blocks_execution_before_sketch(self):
+        self.create.itemById('wire_enabled').value = True
+        self.create.itemById('wire_diameter').value = -1
+        event = types.SimpleNamespace()
+        self.callbacks['validate'](event)
+        self.assertFalse(event.areInputsValid)
+        with patch.object(self.entry, 'create_sketch') as sketch:
+            self.callbacks['execute'](event)
+            sketch.assert_not_called()
 
     def test_dialog_size_is_bounded_on_open_and_section_add(self):
         self.command.setDialogSize.assert_called_with(520, 560)
@@ -210,6 +246,79 @@ class DialogTests(unittest.TestCase):
         groups = parameters.itemById('sections').children
         self.assertFalse(groups.itemById('section_0').isVisible)
         self.assertTrue(groups.itemById('section_2').isVisible)
+
+    def test_export_selection_then_import_as_user_preset_without_loading(self):
+        from HelixPathPilot.core.preset_files import read_preset_file
+        fields = self.preset_fields
+        dialog = self.ui.createFileDialog.return_value
+        dialog.filename = str(Path(self.temp.name) / 'export')
+        dialog.showSave.return_value = 0
+        parameters = self.create.itemById('parameter_group').children
+        parameters.itemById('start_angle').value = 1.5
+        self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_export')))
+        path = Path(dialog.filename + '.helixpilot.json')
+        exported = read_preset_file(path)
+        self.assertEqual(exported.parameters.start_angle, 0)  # Saved selection, not edited inputs.
+        dialog.filename = str(path)
+        dialog.showOpen.return_value = 0
+        self.ui.inputBox.return_value = ('Importiert', False)
+        self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_import')))
+        self.assertEqual(self.store.list()[0][0][1].name, 'Importiert')
+        self.assertEqual(parameters.itemById('start_angle').value, 1.5)
+        self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_load')))
+        self.assertEqual(parameters.itemById('start_angle').value, 0)
+
+    def test_import_export_cancel_and_bad_import_leave_state_unchanged(self):
+        fields = self.preset_fields
+        dialog = self.ui.createFileDialog.return_value
+        dialog.showOpen.return_value = 1
+        dialog.showSave.return_value = 1
+        for key in ('preset_import', 'preset_export'):
+            self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById(key)))
+        self.assertEqual(self.store.list()[0], [])
+        path = Path(self.temp.name) / 'broken.json'
+        path.write_text('{', encoding='utf-8')
+        dialog.filename = str(path)
+        dialog.showOpen.return_value = 0
+        self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_import')))
+        self.assertIn('fehlgeschlagen', fields.itemById('preset_note').text)
+        self.ui.inputBox.assert_not_called()
+        self.assertEqual(self.store.list()[0], [])
+
+    def test_export_checks_final_extension_before_overwriting(self):
+        fields = self.preset_fields
+        dialog = self.ui.createFileDialog.return_value
+        dialog.filename = str(Path(self.temp.name) / 'existing')
+        dialog.showSave.return_value = 0
+        target = Path(dialog.filename + '.helixpilot.json')
+        target.write_text('keep', encoding='utf-8')
+        self.ui.messageBox.return_value = 0
+        event = types.SimpleNamespace(input=fields.itemById('preset_export'))
+        self.callbacks['changed'](event)
+        self.assertEqual(target.read_text(), 'keep')
+        self.ui.messageBox.assert_called_once()
+        self.ui.messageBox.return_value = 1
+        self.callbacks['changed'](event)
+        from HelixPathPilot.core.preset_files import read_preset_file
+        self.assertEqual(read_preset_file(target).mode, 'parametric')
+
+    def test_import_name_cancel_and_duplicate_do_not_overwrite(self):
+        from HelixPathPilot.core.presets import HelixPreset, SurfaceSettings
+        preset = HelixPreset('Existing', SurfaceSettings())
+        key = self.store.save(preset)
+        source = Path(self.temp.name) / 'source.json'
+        source.write_text(preset.to_json(), encoding='utf-8')
+        dialog = self.ui.createFileDialog.return_value
+        dialog.filename = str(source)
+        dialog.showOpen.return_value = 0
+        event = types.SimpleNamespace(input=self.preset_fields.itemById('preset_import'))
+        self.ui.inputBox.return_value = ('Renamed', True)
+        self.callbacks['changed'](event)
+        self.assertEqual(len(self.store.list()[0]), 1)
+        self.ui.inputBox.return_value = ('Existing', False)
+        self.callbacks['changed'](event)
+        self.assertIn('existiert bereits', self.preset_fields.itemById('preset_note').text)
+        self.assertEqual(self.store.load(key), preset)
 
     def test_user_preset_save_load_delete_and_cancel(self):
         fields = self.preset_fields
