@@ -1,0 +1,17 @@
+# Keep text consistent across Windows and macOS, regardless of core.autocrlf.
+* text=auto eol=lf
+
+# Binary assets must never undergo line-ending conversion.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.f3d binary
+*.f3z binary
+
+# Native Windows command scripts require CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf

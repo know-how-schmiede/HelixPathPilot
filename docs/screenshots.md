@@ -8,12 +8,35 @@ development version. The Fusion interface in these screenshots is German.
 
 ## Versions
 
+- [v0.4.1](#v041) — preset selection and a loaded variable helix
 - [v0.3.5](#v035) — variable Surface Helix pitch on cylinders and cones
 - [v0.3.4](#v034) — Surface Offset previews with positive and negative distances
 - [v0.3.3](#v033) — Surface Helix on cylinders and cones, previews and application examples
 - [v0.2.3](#v023) — tangent transitions, three-section example and zebra analysis
 - [v0.2.2](#v022) — application example and section editor
 - [v0.1.2](#v012) — axis alignment, parameter dialog, menu and toolbar
+
+## v0.4.1
+
+### Selecting a built-in preset
+
+The open list shows all three presets: “Basishelix 20 × 50 mm”,
+“Surface 5 → 10 mm” and “Zwei variable Abschnitte”. Click **Vorlage laden**
+(Load preset) to apply the selected parameters; selection alone changes no values.
+
+![HelixPathPilot v0.4.1 preset list showing the three built-in parametric and Surface presets](images/screenshots/v0-4-1/HelixPathPilot_v0-4-1_-01.png)
+
+### Loaded preset with edited sections
+
+The message “Geladen: Zwei variable Abschnitte” confirms that the preset was
+loaded. The preview shows subsequently adjusted values: two sections of 50 mm
+each, diameters 10 → 30 → 10 mm and pitches 5 → 10 → 5 mm. These values differ
+from the packaged preset. Section numbers 3 and 4 reflect the continuing
+numbering within the dialog session.
+
+![Loaded variable preset in HelixPathPilot v0.4.1 with two edited sections and a helix preview](images/screenshots/v0-4-1/HelixPathPilot_v0-4-1_-00.png)
+
+The user has confirmed that preset selection and loading work in Fusion.
 
 ## v0.3.5
 

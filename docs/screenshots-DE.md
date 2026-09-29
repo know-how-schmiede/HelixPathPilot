@@ -8,12 +8,35 @@ müssen daher nicht dem aktuellen Entwicklungsstand entsprechen.
 
 ## Versionen
 
+- [v0.4.1](#v041) – Vorlagenauswahl und geladene variable Helix
 - [v0.3.5](#v035) – variable Surface-Steigung auf Zylinder und Kegel
 - [v0.3.4](#v034) – Surface Offset und Vorschau mit positivem und negativem Abstand
 - [v0.3.3](#v033) – Surface Helix auf Zylinder und Kegel, Vorschau und Anwendungsbeispiele
 - [v0.2.3](#v023) – tangentiale Übergänge, drei Abschnitte und Zebraanalyse
 - [v0.2.2](#v022) – Anwendungsbeispiel und Abschnittsdialog
 - [v0.1.2](#v012) – Achsausrichtung, Parameterdialog, Menü und Symbolleiste
+
+## v0.4.1
+
+### Mitgelieferte Vorlagen auswählen
+
+Die aufgeklappte Liste zeigt die drei Vorlagen: „Basishelix 20 × 50 mm“,
+„Surface 5 → 10 mm“ und „Zwei variable Abschnitte“. Erst **Vorlage laden**
+übernimmt die ausgewählten Parameter; die Auswahl allein ändert keine Werte.
+
+![Vorlagenauswahl in HelixPathPilot v0.4.1 mit den drei mitgelieferten parametrischen und Surface-Vorlagen](images/screenshots/v0-4-1/HelixPathPilot_v0-4-1_-01.png)
+
+### Geladene Vorlage mit bearbeiteten Abschnitten
+
+Der Hinweis „Geladen: Zwei variable Abschnitte“ bestätigt die Übernahme.
+Das Bild zeigt die Vorschau mit anschließend angepassten Werten: zwei Abschnitte
+mit jeweils 50 mm Länge, Durchmessern 10 → 30 → 10 mm und Steigungen
+5 → 10 → 5 mm. Diese Werte unterscheiden sich von der mitgelieferten Vorlage.
+Die Abschnittsnummern 3 und 4 bleiben während des Dialogs fortlaufend vergeben.
+
+![Geladene variable Vorlage in HelixPathPilot v0.4.1 mit zwei bearbeiteten Abschnitten und Helix-Vorschau](images/screenshots/v0-4-1/HelixPathPilot_v0-4-1_-00.png)
+
+Der Benutzer bestätigt die sichtbare Vorlagenauswahl und das Laden in Fusion.
 
 ## v0.3.5
 

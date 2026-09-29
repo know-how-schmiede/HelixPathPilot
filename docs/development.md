@@ -402,3 +402,10 @@ bleiben unverändert. Ungültige Werte oder überschrittene Windungs-/Punktlimit
 werden vor der Änderung abgefangen. Konstruktionsachsen sind unendlich und
 liefern keine übernehmbare Länge. Die Richtungsumkehr ändert die Länge nicht;
 bei umgekehrter Richtung verläuft die Helix vom gleichen Ursprung in Gegenrichtung.
+
+## Zeilenenden im Repository
+
+Die Datei `.gitattributes` legt LF für Textdateien fest, unabhängig von der
+lokalen Einstellung `core.autocrlf`. Binärdateien werden nicht konvertiert;
+Windows-Batchdateien verwenden CRLF. `.editorconfig` übernimmt dieselben
+Zeilenenden für unterstützende Editoren. Beim Commit beide Regeldateien mit aufnehmen.

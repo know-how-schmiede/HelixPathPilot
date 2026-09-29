@@ -6,6 +6,8 @@ Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
 ## 0.4.1 – 2026-09-29 – Entwicklung
 
+- Repository-Zeilenenden durch `.gitattributes` und `.editorconfig` vereinheitlicht: LF für Text, CRLF für Windows-Batchdateien, keine Konvertierung von Binärdateien. Bestehende Textdateien normalisiert; Version unverändert.
+
 **GitHub:** Mitgelieferte Vorlagen sind im Helix-Dialog sichtbar und ladbar.
 Die Gruppe „Vorlagen“ bietet eine Auswahl und „Vorlage laden“ für alle drei Built-ins.
 
