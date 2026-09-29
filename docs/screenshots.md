@@ -8,10 +8,40 @@ development version. The Fusion interface in these screenshots is German.
 
 ## Versions
 
+- [v0.3.4](#v034) — Surface Offset previews with positive and negative distances
 - [v0.3.3](#v033) — Surface Helix on cylinders and cones, previews and application examples
 - [v0.2.3](#v023) — tangent transitions, three-section example and zebra analysis
 - [v0.2.2](#v022) — application example and section editor
 - [v0.1.2](#v012) — axis alignment, parameter dialog, menu and toolbar
+
+## v0.3.4
+
+### Positive offset on a cylinder
+
+The preview shows a helix 10 mm away from the cylindrical face. The face radius
+is 50 mm and the helix radius is 60 mm. An axial length of 110 mm and a pitch
+of 20 mm produce 5.5 turns.
+
+![Surface Helix v0.3.4 cylinder preview with a 10 mm offset and 60 mm helix radius](images/screenshots/v0-3-4/HelixPathPilot_v0-3-4_-00.png)
+
+### Negative offset on a cone
+
+A normal offset of −5 mm places the helix inside the transparent conical face.
+Face radii are 35 → 5 mm; displayed helix radii are 30.528 → 0.528 mm.
+An axial length of 60 mm and a pitch of 10 mm produce six turns.
+
+![Surface Helix preview inside a transparent truncated cone with a negative 5 mm offset](images/screenshots/v0-3-4/HelixPathPilot_v0-3-4_-01.png)
+
+### Positive offset on a cone
+
+A normal offset of +5 mm moves the helix outward. The dialog shows face radii
+of 50 → 20 mm and helix radii of 54.472 → 24.472 mm. On a cone, the radial
+change is smaller than the perpendicular distance.
+
+![Surface Helix preview outside a truncated cone with a positive 5 mm offset](images/screenshots/v0-3-4/HelixPathPilot_v0-3-4_-02.png)
+
+The user has confirmed the offset feature and preview, including negative
+distances from the face.
 
 ## v0.3.3
 

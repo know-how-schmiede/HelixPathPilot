@@ -115,11 +115,16 @@ def command_created(args):
     units = design.unitsManager.defaultLengthUnits
     surface_pitch = surface_inputs.addValueInput('surface_pitch', 'Steigung', units,
         adsk.core.ValueInput.createByReal(0.5))
+    surface_offset = surface_inputs.addValueInput('surface_offset', 'Surface Offset', units,
+        adsk.core.ValueInput.createByReal(0.0))
+    surface_offset.tooltip = ('Senkrechter Abstand zur Mantelfläche. Positiv: von der Achse weg; '
+        'negativ: zur Achse hin. Beim Kegel verschieben sich auch die Endpunkte axial. '
+        'Die Richtung ist unabhängig von Innen- oder Außenfläche.')
     surface_angle = surface_inputs.addValueInput('surface_angle', 'Startwinkel', 'deg',
         adsk.core.ValueInput.createByReal(0.0))
     surface_right = surface_inputs.addBoolValueInput('surface_right', 'Rechtsdrehend', True, '', True)
     surface_reverse = surface_inputs.addBoolValueInput('surface_reverse', 'Am anderen Rand starten', True, '', False)
-    surface_status = surface_inputs.addTextBoxCommandInput('surface_status', '', '', 5, True)
+    surface_status = surface_inputs.addTextBoxCommandInput('surface_status', '', '', 6, True)
     parameter_group = create_inputs.addGroupCommandInput('parameter_group', 'Helix-Parameter')
     parameter_group.isExpanded = True
     inputs = parameter_group.children
@@ -156,10 +161,10 @@ def command_created(args):
     _previews.append(graphics)
 
     def surface_parameters():
-        if not surface_pitch.isValidExpression or not surface_angle.isValidExpression:
-            raise ValueError('Bitte gültige Werte für Steigung und Startwinkel eingeben.')
+        if any(not field.isValidExpression for field in (surface_pitch, surface_angle, surface_offset)):
+            raise ValueError('Bitte gültige Werte für Steigung, Startwinkel und Surface Offset eingeben.')
         return surface_helix(selected_surface_profile(surface_input), surface_pitch.value,
-            surface_angle.value, surface_right.value, surface_reverse.value)
+            surface_angle.value, surface_right.value, surface_reverse.value, surface_offset.value)
 
     def current_parameters():
         if mode.selectedItem.index == 1:
@@ -176,9 +181,11 @@ def command_created(args):
                 fmt = lambda value: design.unitsManager.formatValue(value, units)
                 surface_status.text = (f'{kind}: vollständiger 360°-Mantel.\n'
                     f'Axiale Länge: {fmt(profile.length)}\n'
-                    f'Startradius: {fmt(profile.radius_start)} · Endradius: {fmt(profile.radius_end)}\n'
+                    f'Flächenradien: {fmt(profile.radius_start)} → {fmt(profile.radius_end)}\n'
+                    f'Helixradien: {fmt(model.segments[0].diameter_start/2)} → '
+                    f'{fmt(model.segments[0].diameter_end/2)} · Offset: {fmt(surface_offset.value)}\n'
                     f'Windungen: {sum(t for t, _ in sampling_plan(model)):.3f}\n'
-                    'Radiuswerte in Flächenachsrichtung; Randwechsel kehrt die Laufrichtung um.')
+                    'Helixradien in Laufrichtung; Flächenradien in Flächenachsrichtung.')
                 event.areInputsValid = True
             except ValueError as error:
                 surface_status.text = str(error)

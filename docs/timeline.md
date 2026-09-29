@@ -4,6 +4,18 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.3.4 – 2026-09-29 – Entwicklung
+
+**GitHub:** Surface Offset ergänzt. Helix-Pfade lassen sich mit positivem oder
+negativem Normalabstand zu Zylinder- und Kegelmänteln erzeugen und vorab anzeigen.
+
+- Standard 0; positive Werte zeigen von der Achse weg, negative zur Achse hin, unabhängig von Innen-/Außenfläche und Laufrichtung.
+- Am Kegel werden Radius und axialer Ursprung entlang der Mantelnormalen verschoben. Endpunkte sind die versetzten Randpunkte; axiale Spannweite, Steigung und Windungszahl bleiben gleich.
+- Flächenradien, resultierende Helixradien und Offset im Dialog angezeigt. Ungültige Abstände und Erreichen/Überschreiten der Rotationsachse werden abgewiesen.
+- 80 Tests bestanden, einschließlich Normalabstand auf schrägen Zylinder-/Kegelachsen, beide Laufrichtungen und identischer Parameterübergabe an Vorschau/Ausgabe. Benutzer bestätigt Offset-Funktion, Vorschau und negativen Abstand zur Mantelfläche in Fusion; weitere Sonderfälle bleiben offen.
+- Drei Screenshots von 0.3.4 in deutscher und englischer Galerie ergänzt: positiver Zylinderoffset sowie negativer und positiver Kegeloffset. README-Vorschauen aktualisiert. Version bleibt auf Benutzerwunsch 0.3.4.
+- Nächster Schritt: variable Steigung im Surface-Modus.
+
 ## 0.3.3 – 2026-09-29 – Entwicklung
 
 **GitHub:** Surface Helix erzeugt jetzt eine angenäherte 3D-Spline auf vollständigen

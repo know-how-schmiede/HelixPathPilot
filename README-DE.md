@@ -66,14 +66,14 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.3.3** liegt unter `Fusion_addin/HelixPathPilot/`.
+Der Entwicklungsstand **0.3.4** liegt unter `Fusion_addin/HelixPathPilot/`.
 Parametrische und variable Helices besitzen eine abschaltbare Live-Vorschau.
 Die Punktanzeige beschränkt sich auf Abschnittsgrenzen; Startdurchmesser folgen
 über die gesamte Abschnittskette dem jeweiligen Vorgänger.
 Neu sind die Dialogreiter „Einstellungen“ und „Info“ mit Logo und Projektlinks
 sowie Surface Helix für vollständige Zylinder- und Kegelmäntel mit konstanter
 Steigung, schneller Vorschau und 3D-Skizzenausgabe.
-**Volumenkörper → Erstellen → HelixPathPilot v0.3.3** erzeugt eine 3D-Skizze um eine gewählte Achse.
+**Volumenkörper → Erstellen → HelixPathPilot v0.3.4** erzeugt eine 3D-Skizze um eine gewählte Achse.
 Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endsteigung
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
 „Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.
@@ -91,9 +91,9 @@ Die genaue Funktionalität und Benutzeroberfläche kann sich während der Entwic
 
 ## Screenshots
 
-Surface Helix mit **v0.3.3**: Vorschau auf einem Zylinder mit ausgewählter Mantelfläche und Parameterdialog.
+Surface Offset mit **v0.3.4**: Vorschau auf einem Zylinder mit 10 mm Abstand zur Mantelfläche.
 
-[![Surface-Helix-Vorschau auf einem Zylinder, HelixPathPilot v0.3.3](docs/images/screenshots/v0-3-3/HelixPathPilot_v0-3-3_-00.png)](docs/screenshots-DE.md#v033)
+[![Surface-Offset-Vorschau auf einem Zylinder, HelixPathPilot v0.3.4](docs/images/screenshots/v0-3-4/HelixPathPilot_v0-3-4_-00.png)](docs/screenshots-DE.md#v034)
 
 Die [Screenshot-Galerie nach Versionen](docs/screenshots-DE.md) zeigt zusätzlich
 Kegel- und Wickelbeispiele sowie frühere Versionen mit Abschnittsdialog, Erstellen-Menü und Symbolleiste. Die Bilder

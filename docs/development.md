@@ -1,6 +1,32 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.3.3 (development)
+## Aktiver Stand – 0.3.4 (development)
+
+### Surface Offset (0.3.4)
+
+Der Benutzer bestätigt die Offset-Funktion, die Vorschau und ausdrücklich
+den negativen Abstand zur Mantelfläche. Drei [Screenshots von 0.3.4](screenshots-DE.md#v034)
+zeigen die Beispiele. Die weiteren Prüffälle unten sind damit nicht einzeln bestätigt.
+
+„Surface Offset“ im Surface-Modus ist standardmäßig 0. Positive Abstände
+verschieben die Helix entlang der Mantelnormalen von der Rotationsachse weg,
+negative zur Achse hin. Dies gilt auch bei Innenflächen; es ist keine
+automatische Orientierung nach der Außennormalen eines Volumenkörpers.
+
+Bei Kegelsteigung k = (Endradius − Startradius) / Länge und Offset d gilt
+Δr = d / sqrt(1+k²), Δz = −d·k / sqrt(1+k²). Beim Zylinder ist k = 0.
+Die Endpunkte werden zusammen mit der Mantelfläche versetzt und können daher
+beim Kegel über deren ursprüngliche axiale Grenzen hinausragen. Axiale Länge,
+Steigung und Windungszahl ändern sich nicht. Offset wird vor dem Randwechsel
+angewendet. Nichtpositive resultierende Radien und ungültige Werte sperren
+die Ausgabe. Die Spline bleibt eine Näherung der berechneten Punkte.
+
+In Fusion prüfen: Zylinder Radius 10 mm mit +2 mm ergibt Helixradius 12 mm,
+mit −2 mm 8 mm; −10 mm muss abgewiesen werden. Kegelstumpf mit beiden
+Vorzeichen, schräger Achse und beiden Starträndern prüfen. Der senkrechte
+Abstand soll dem Offset entsprechen, nicht die rein radiale Differenz.
+Vorschau aus/ein, Abbrechen und Rückgängig kontrollieren. Offset 0 entspricht
+der bisherigen Ausgabe.
 
 ### Surface Helix erzeugen (0.3.3)
 
@@ -21,7 +47,7 @@ Ausführen erzeugt `HelixPathPilot – Surface Helix` als einzelne 3D-Spline in
 der Hauptkomponente. Die berechneten Stützpunkte liegen auf der analytischen
 Mantelfläche; die Spline dazwischen ist eine Näherung. Es entsteht keine
 assoziative Bindung an den Körper. G1 hat bei dieser einzelnen Spline keine
-Wirkung. Surface Offset und variable Surface-Steigung sind noch nicht enthalten.
+Wirkung. Surface Offset ist seit 0.3.4 enthalten; variable Surface-Steigung folgt.
 
 In Fusion prüfen: Zylinder Radius 10 mm / Länge 50 mm / Steigung 5 mm ergibt
 zehn Windungen. Kegelstumpf mit Radien 10 und 20 mm entsprechend prüfen;
@@ -92,7 +118,7 @@ geteilte Kreisränder und andere Flächentypen werden abgelehnt. Die Maßanzeige
 verwendet die Dokumenteinheit. Der Start liegt am Rand mit der kleineren
 Koordinate entlang der Flächenachse, nicht zwingend am räumlich unteren Rand.
 Bei gültiger Fläche und Steigung sind Vorschau und Skizzenausgabe verfügbar.
-Variable Steigung auf der Oberfläche und Offset folgen später.
+Variable Steigung auf der Oberfläche folgt später; Offset ist seit 0.3.4 verfügbar.
 
 Neue manuelle Prüffälle: Zylinder mit Radius 10 mm und Länge 50 mm ergibt
 50 mm / 10 mm / 10 mm; Kegelstumpf mit Radien 10 und 20 mm und Höhe 50 mm
@@ -178,7 +204,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.3.3** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.3.4** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG
@@ -192,7 +218,7 @@ Menüposition und Icondateien folgen der
 1. Eventuell laufenden Altstand stoppen. Im Dialog **Skripte und Zusatzmodule**
    das vorhandene Add-in aus `<Repo>/Fusion_addin/HelixPathPilot/` hinzufügen.
 2. Ein Design-Dokument öffnen und das Add-in starten. Unter **Volumenkörper →
-   Erstellen** erscheint **HelixPathPilot v0.3.3** mit Helix-Icon, ebenso in der
+   Erstellen** erscheint **HelixPathPilot v0.3.4** mit Helix-Icon, ebenso in der
    Symbolleiste. Im bisherigen Zusatzmodule-Panel darf kein alter Button verbleiben.
 3. Standardwerte für Abschnitt 1 bestätigen: Start-/Enddurchmesser 20 mm,
    Abschnittslänge 50 mm, Start-/Endsteigung 5 mm.
@@ -250,7 +276,7 @@ Mit Python aus dem Repo-Hauptverzeichnis:
 python -B -m unittest discover -s tests -v
 ```
 
-Alle 78 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
+Alle 80 Tests bestanden am 2026-09-29. Sie benötigen keine Fusion-Installation und
 prüfen Mathematik, Segmentmodell, Editor-Zustand, Achstransformation, Metadaten,
 Icons und Fusion-Adapter mit Testdoubles. Für 0.3.0 prüfen sie zusätzlich die
 Flächentyperkennung, verschachtelte Dialogeingaben, G1-Übergabe aus dem

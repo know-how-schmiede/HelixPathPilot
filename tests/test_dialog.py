@@ -162,6 +162,7 @@ class DialogTests(unittest.TestCase):
         self.create.itemById('parameter_group').children.itemById('start_angle').isValidExpression = False
         fields = self.create.itemById('surface_group').children
         fields.itemById('surface_reverse').value = True
+        fields.itemById('surface_offset').value = 0.5
         event = types.SimpleNamespace()
         with patch.object(self.entry, 'selected_surface_profile', return_value=profile), \
              patch.object(self.entry, 'selected_surface_kind', return_value='Kegelmantelfläche'), \
@@ -170,9 +171,10 @@ class DialogTests(unittest.TestCase):
             self.assertTrue(event.areInputsValid)
             self.callbacks['preview'](event)
             model, axis = self.graphics.show.call_args.args
-            self.assertEqual(model.segments[0].diameter_start, 8)
-            self.assertEqual(model.segments[0].diameter_end, 4)
-            self.assertEqual(axis.origin, (10, 5, 0))
+            from HelixPathPilot.core.surface_helix import surface_helix
+            expected_model, expected_axis = surface_helix(profile, 0.5, reverse=True, offset=0.5)
+            self.assertEqual(model, expected_model)
+            self.assertEqual(axis, expected_axis)
             create.assert_not_called()
             self.callbacks['execute'](event)
             self.assertEqual(create.call_args.args[1:], (model, axis))

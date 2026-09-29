@@ -44,3 +44,33 @@ class SurfaceHelixTests(unittest.TestCase):
                 surface_helix(profile, pitch)
         with self.assertRaises(ValueError):
             surface_helix(profile, 1, math.inf)
+
+    def test_normal_offset_distance_both_directions(self):
+        for r1 in (2, 4, 1):
+            profile = SurfaceProfile(AxisFrame((10, 20, 30), (1, 2, 3)), 5, 2, r1)
+            z = profile.axis.basis()[2]
+            slope = (r1-2)/5
+            for reverse in (False, True):
+                for offset in (-0.25, 0, 0.75):
+                    base, base_axis = surface_helix(profile, 0.5, reverse=reverse)
+                    model, axis = surface_helix(profile, 0.5, reverse=reverse, offset=offset)
+                    original = base_axis.transform(segmented_points(base)[0])
+                    shifted = axis.transform(segmented_points(model)[0])
+                    self.assertEqual(len(original), len(shifted))
+                    for p, q in zip(original, shifted):
+                        delta = tuple(q[i]-p[i] for i in range(3))
+                        self.assertAlmostEqual(math.hypot(*delta), abs(offset))
+                        self.assertAlmostEqual(sum(delta[i]*z[i] for i in range(3)),
+                            -offset*slope/math.hypot(1, slope))
+                        local = tuple(q[i]-profile.axis.origin[i] for i in range(3))
+                        height = sum(local[i]*z[i] for i in range(3))
+                        radius = math.hypot(*(local[i]-height*z[i] for i in range(3)))
+                        self.assertAlmostEqual((radius-2-slope*height)/math.hypot(1, slope), offset)
+
+    def test_invalid_offset_and_axis_crossing(self):
+        profile = SurfaceProfile(AxisFrame(), 5, 2, 2)
+        for offset in (-2, -3, math.nan, math.inf, True):
+            with self.assertRaises(ValueError):
+                surface_helix(profile, 1, offset=offset)
+        model, _ = surface_helix(profile, 1, offset=-1.9)
+        self.assertAlmostEqual(model.segments[0].diameter_start, 0.2)

@@ -8,10 +8,40 @@ müssen daher nicht dem aktuellen Entwicklungsstand entsprechen.
 
 ## Versionen
 
+- [v0.3.4](#v034) – Surface Offset und Vorschau mit positivem und negativem Abstand
 - [v0.3.3](#v033) – Surface Helix auf Zylinder und Kegel, Vorschau und Anwendungsbeispiele
 - [v0.2.3](#v023) – tangentiale Übergänge, drei Abschnitte und Zebraanalyse
 - [v0.2.2](#v022) – Anwendungsbeispiel und Abschnittsdialog
 - [v0.1.2](#v012) – Achsausrichtung, Parameterdialog, Menü und Symbolleiste
+
+## v0.3.4
+
+### Positiver Offset am Zylinder
+
+Die Vorschau zeigt die Helix mit 10 mm Abstand zur Zylindermantelfläche.
+Aus 50 mm Flächenradius werden 60 mm Helixradius. Bei 110 mm axialer Länge
+und 20 mm Steigung entstehen 5,5 Windungen.
+
+![Surface-Helix-Vorschau v0.3.4 am Zylinder mit 10 mm Offset und 60 mm Helixradius](images/screenshots/v0-3-4/HelixPathPilot_v0-3-4_-00.png)
+
+### Negativer Offset am Kegel
+
+Mit −5 mm Normalabstand liegt die Helix innerhalb des transparent dargestellten
+Kegelmantels. Die Flächenradien betragen 35 → 5 mm, die angezeigten Helixradien
+30,528 → 0,528 mm. Bei 60 mm Länge und 10 mm Steigung entstehen sechs Windungen.
+
+![Surface-Helix-Vorschau innerhalb eines transparenten Kegelstumpfs mit negativem Offset von 5 mm](images/screenshots/v0-3-4/HelixPathPilot_v0-3-4_-01.png)
+
+### Positiver Offset am Kegel
+
+Der Normalabstand von +5 mm verschiebt die Helix nach außen. Der Dialog zeigt
+Flächenradien von 50 → 20 mm und Helixradien von 54,472 → 24,472 mm.
+Die radiale Differenz ist beim Kegel kleiner als der senkrechte Abstand.
+
+![Surface-Helix-Vorschau außerhalb eines Kegelstumpfs mit positivem Offset von 5 mm](images/screenshots/v0-3-4/HelixPathPilot_v0-3-4_-02.png)
+
+Der Benutzer bestätigt die Offset-Funktion, die Vorschau und ausdrücklich
+auch den negativen Abstand zur Mantelfläche.
 
 ## v0.3.3
 
