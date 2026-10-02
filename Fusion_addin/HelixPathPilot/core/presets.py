@@ -4,6 +4,8 @@ Entity selections are deliberately not serialized. Surface limits depending on
 the selected face are checked when applying the preset to that face.
 """
 
+from ..i18n import tr
+
 from dataclasses import asdict, dataclass
 import json
 
@@ -16,12 +18,12 @@ MAX_JSON_BYTES = 128 * 1024
 
 def _boolean(value, label):
     if type(value) is not bool:
-        raise ValueError(f'{label} muss ein boolescher Wert sein.')
+        raise ValueError(tr('{p0} must be a boolean value.', p0=label))
 
 
 def _keys(value, expected):
     if not isinstance(value, dict) or set(value) != set(expected):
-        raise ValueError('Preset enthält fehlende oder unbekannte Felder.')
+        raise ValueError(tr('Preset contains missing or unknown fields.'))
 
 
 @dataclass(frozen=True)
@@ -34,12 +36,12 @@ class SurfaceSettings:
     reverse: bool = False
 
     def __post_init__(self):
-        _positive(self.pitch_start, 'Startsteigung')
-        _positive(self.pitch_end, 'Endsteigung')
-        _finite(self.offset, 'Surface Offset')
-        _finite(self.start_angle, 'Startwinkel')
-        _boolean(self.right_handed, 'Drehrichtung')
-        _boolean(self.reverse, 'Randwechsel')
+        _positive(self.pitch_start, tr('Start pitch'))
+        _positive(self.pitch_end, tr('End pitch'))
+        _finite(self.offset, tr('Surface offset'))
+        _finite(self.start_angle, tr('Start angle'))
+        _boolean(self.right_handed, tr('Handedness'))
+        _boolean(self.reverse, tr('Switch boundaries'))
 
 
 @dataclass(frozen=True)
@@ -52,16 +54,16 @@ class HelixPreset:
     def __post_init__(self):
         if (not isinstance(self.name, str) or not self.name.strip()
                 or len(self.name) > 100 or any(ord(c) < 32 for c in self.name)):
-            raise ValueError('Preset-Name muss 1 bis 100 Zeichen ohne Steuerzeichen enthalten.')
-        _boolean(self.reverse_axis, 'Achsrichtung')
-        _boolean(self.tangent_joins, 'Tangentiale Übergänge')
+            raise ValueError(tr('Preset name must contain 1 to 100 characters without control characters.'))
+        _boolean(self.reverse_axis, tr('Axis direction'))
+        _boolean(self.tangent_joins, tr('Tangent joins'))
         if isinstance(self.parameters, SegmentedHelix):
             sampling_plan(self.parameters)
         elif isinstance(self.parameters, SurfaceSettings):
             if self.reverse_axis:
-                raise ValueError('Surface-Presets verwenden Randwechsel statt Achsrichtung.')
+                raise ValueError(tr('Surface presets use boundary switching instead of axis direction.'))
         else:
-            raise ValueError('Ungültige Preset-Parameter.')
+            raise ValueError(tr('Invalid preset parameters.'))
 
     @property
     def mode(self):
@@ -83,15 +85,15 @@ class HelixPreset:
         _keys(data, ('schema_version', 'name', 'mode', 'length_unit', 'angle_unit',
                      'parameters', 'reverse_axis', 'tangent_joins'))
         if type(data['schema_version']) is not int or data['schema_version'] != 1:
-            raise ValueError('Nicht unterstützte Preset-Schemaversion.')
+            raise ValueError(tr('Unsupported preset schema version.'))
         if data['length_unit'] != 'cm' or data['angle_unit'] != 'rad':
-            raise ValueError('Preset-Einheiten müssen cm und rad sein.')
+            raise ValueError(tr('Preset units must be cm and rad.'))
         values = data['parameters']
         if data['mode'] == 'parametric':
             _keys(values, ('segments', 'start_angle', 'right_handed'))
             rows = values['segments']
             if not isinstance(rows, list) or not 1 <= len(rows) <= MAX_SEGMENTS:
-                raise ValueError(f'Preset benötigt 1 bis {MAX_SEGMENTS} Abschnitte.')
+                raise ValueError(tr('Preset requires 1 to {p0} sections.', p0=MAX_SEGMENTS))
             segments = []
             for row in rows:
                 _keys(row, HelixSegment.__dataclass_fields__)
@@ -101,28 +103,28 @@ class HelixPreset:
             _keys(values, SurfaceSettings.__dataclass_fields__)
             parameters = SurfaceSettings(**values)
         else:
-            raise ValueError('Unbekannter Preset-Modus.')
+            raise ValueError(tr('Unknown preset mode.'))
         return cls(data['name'], parameters, data['reverse_axis'], data['tangent_joins'])
 
     @classmethod
     def from_json(cls, text):
         if not isinstance(text, str) or len(text.encode('utf-8')) > MAX_JSON_BYTES:
-            raise ValueError('Preset muss JSON-Text mit maximal 128 KiB sein.')
+            raise ValueError(tr('Preset must be JSON text no larger than 128 KiB.'))
 
         def unique_object(pairs):
             result = {}
             for key, value in pairs:
                 if key in result:
-                    raise ValueError(f'Doppeltes JSON-Feld: {key}')
+                    raise ValueError(tr('Duplicate JSON field: {p0}', p0=key))
                 result[key] = value
             return result
 
         def invalid_constant(value):
-            raise ValueError(f'Ungültige JSON-Zahl: {value}')
+            raise ValueError(tr('Invalid JSON number: {p0}', p0=value))
 
         try:
             data = json.loads(text, object_pairs_hook=unique_object,
                               parse_constant=invalid_constant)
             return cls.from_dict(data)
         except (TypeError, OverflowError, RecursionError, ValueError) as error:
-            raise ValueError(f'Ungültiges Preset: {error}') from error
+            raise ValueError(tr('Invalid preset: {p0}', p0=error)) from error

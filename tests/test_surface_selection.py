@@ -40,7 +40,7 @@ class SurfaceSelectionTests(unittest.TestCase):
         return selection
 
     def test_cylinder_and_cone(self):
-        for kind, label in ((1, 'Zylindermantelfläche'), (2, 'Kegelmantelfläche')):
+        for kind, label in ((1, 'Cylindrical lateral face'), (2, 'Conical lateral face')):
             self.assertEqual(self.module.selected_surface_kind(self.selection(kind)), label)
 
     def test_other_surface_types_rejected(self):
@@ -74,5 +74,5 @@ class SurfaceSelectionTests(unittest.TestCase):
         self.assertEqual(profile.length, 5)
         self.assertEqual(profile.radius_at(2), 2)
         face.edges.append(types.SimpleNamespace(geometry=types.SimpleNamespace(kind='arc')))
-        with self.assertRaisesRegex(ValueError, 'Teilflächen'):
+        with self.assertRaisesRegex(ValueError, 'partial faces'):
             self.module.selected_surface_profile(selection)

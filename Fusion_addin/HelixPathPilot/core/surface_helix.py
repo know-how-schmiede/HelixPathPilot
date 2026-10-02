@@ -1,5 +1,7 @@
 """Map a finite rotational profile to the shared sampled helix model."""
 
+from ..i18n import tr
+
 import math
 
 from .axis import AxisFrame
@@ -17,7 +19,7 @@ def surface_helix(profile, pitch, start_angle=0, right_handed=True, reverse=Fals
     Pitch and axial span are unchanged by offset. Offset direction does not depend on
     face orientation (inside/outside of a solid) or helix travel direction.
     """
-    _finite(offset, 'Surface Offset')
+    _finite(offset, tr('Surface offset'))
     slant = math.hypot(profile.length, profile.radius_end - profile.radius_start)
     radial_shift = offset * (profile.length / slant)
     axial_shift = -offset * ((profile.radius_end - profile.radius_start) / slant)
@@ -26,8 +28,7 @@ def surface_helix(profile, pitch, start_angle=0, right_handed=True, reverse=Fals
     axis.basis()
     first, last = profile.radius_start + radial_shift, profile.radius_end + radial_shift
     if min(first, last) <= 0:
-        raise ValueError('Surface Offset erreicht oder überschreitet die Rotationsachse. '
-                         'Bitte einen kleineren negativen Abstand wählen.')
+        raise ValueError(tr('Surface offset reaches or crosses the rotation axis. Please choose a smaller negative offset.'))
     if reverse:
         origin = axis.transform([(0, 0, profile.length)])[0]
         axis = AxisFrame(origin, tuple(-v for v in axis.direction))

@@ -1,5 +1,7 @@
 """Transient helix display without sketch entities or constraint solving."""
 
+from ...i18n import tr
+
 import adsk.core
 import adsk.fusion
 
@@ -42,7 +44,7 @@ class HelixPreview:
                 end = start + len(section) - 1
                 line = self.group.addLines(coordinates, list(range(start, end + 1)), True)
                 if line is None:
-                    raise RuntimeError('Vorschaulinie konnte nicht erzeugt werden.')
+                    raise RuntimeError(tr('Could not create the preview line.'))
                 line.weight = 2.0
                 line.color = adsk.fusion.CustomGraphicsSolidColorEffect.create(
                     adsk.core.Color.create(*section_color(index), 255))

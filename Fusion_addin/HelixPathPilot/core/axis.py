@@ -1,15 +1,17 @@
 """Right-handed coordinate frames for helix placement; no Fusion dependency."""
 
+from ..i18n import tr
+
 from dataclasses import dataclass
 import math
 
 
 def _unit(vector):
     if len(vector) != 3 or not all(math.isfinite(v) for v in vector):
-        raise ValueError('Die Achsrichtung muss endlich sein.')
+        raise ValueError(tr('The axis direction must be finite.'))
     length = math.hypot(*vector)
     if length == 0 or not math.isfinite(length):
-        raise ValueError('Die Achse benötigt eine gültige Richtung.')
+        raise ValueError(tr('The axis requires a valid direction.'))
     return tuple(v / length for v in vector)
 
 
@@ -20,7 +22,7 @@ class AxisFrame:
 
     def basis(self):
         if len(self.origin) != 3 or not all(math.isfinite(v) for v in self.origin):
-            raise ValueError('Der Achsursprung muss endlich sein.')
+            raise ValueError(tr('The axis origin must be finite.'))
         z = _unit(self.direction)
         # Project global X onto the normal plane. Near parallel, use global Y.
         reference = (1.0, 0.0, 0.0) if abs(z[0]) < 0.99 else (0.0, 1.0, 0.0)

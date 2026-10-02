@@ -1,5 +1,7 @@
 """Per-dialog section inputs; Fusion input objects are owned by this editor."""
 
+from ...i18n import tr
+
 import adsk.core
 from dataclasses import replace
 from types import SimpleNamespace
@@ -8,11 +10,11 @@ from ...core.helix_segments import HelixSegment, SegmentedHelix
 from ...core.variable_helix import MAX_SEGMENTS, sampling_plan
 
 FIELDS = (
-    ('length', 'Abschnittslänge'),
-    ('diameter_start', 'Startdurchmesser'),
-    ('diameter_end', 'Enddurchmesser'),
-    ('pitch_start', 'Startsteigung'),
-    ('pitch_end', 'Endsteigung'),
+    ('length', 'Section length'),
+    ('diameter_start', 'Start diameter'),
+    ('diameter_end', 'End diameter'),
+    ('pitch_start', 'Start pitch'),
+    ('pitch_end', 'End pitch'),
 )
 
 
@@ -24,31 +26,31 @@ class SegmentEditor:
         self.remove_ids = {}
         self.next_id = 0
         self.busy = False
-        self.container = inputs.addGroupCommandInput('sections', 'Abschnitte')
+        self.container = inputs.addGroupCommandInput('sections', tr('Sections'))
         self.container.isExpanded = True
         self.remove_choice = inputs.addDropDownCommandInput(
-            'remove_section_choice', 'Abschnitt entfernen', adsk.core.DropDownStyles.TextListDropDownStyle)
-        self.remove_button = inputs.addBoolValueInput('remove_section', 'Ausgewählten Abschnitt entfernen',
+            'remove_section_choice', tr('Remove section'), adsk.core.DropDownStyles.TextListDropDownStyle)
+        self.remove_button = inputs.addBoolValueInput('remove_section', tr('Remove selected section'),
                                                      False, '', False)
         self.remove_target = inputs.addTextBoxCommandInput('remove_section_target', '', '', 1, True)
         self.remove_signature = ()
         self.remove_target_id = None
         self.remove_labels = {}
-        self.add_button = inputs.addBoolValueInput('add_section', 'Abschnitt hinzufügen', False, '', False)
+        self.add_button = inputs.addBoolValueInput('add_section', tr('Add section'), False, '', False)
         self.add(HelixSegment.constant(5, 2, 0.5))
 
     def add(self, segment):
         if len(self.rows) >= MAX_SEGMENTS:
-            raise ValueError(f'Maximal {MAX_SEGMENTS} Abschnitte sind möglich.')
+            raise ValueError(tr('A maximum of {p0} sections is allowed.', p0=MAX_SEGMENTS))
         row_id = self.next_id
         self.next_id += 1
-        group = self.container.children.addGroupCommandInput(f'section_{row_id}', f'Abschnitt {row_id + 1}')
+        group = self.container.children.addGroupCommandInput(f'section_{row_id}', tr('Section {p0}', p0=row_id + 1))
         group.isExpanded = True
         fields = {}
         try:
             for name, label in FIELDS:
                 fields[name] = group.children.addValueInput(
-                    f'section_{row_id}_{name}', label, self.units,
+                    f'section_{row_id}_{name}', tr(label), self.units,
                     adsk.core.ValueInput.createByReal(getattr(segment, name)))
             # Stable Python identity; no dynamically-created per-row action button.
             remove = SimpleNamespace(id=f'remove_section_{row_id}', isEnabled=True)
@@ -87,8 +89,8 @@ class SegmentEditor:
             remove.isEnabled = len(self.rows) > 1
             fields['diameter_start'].isEnabled = index == 0
             fields['diameter_start'].tooltip = (
-                f"Wird automatisch vom Enddurchmesser von {self.rows[index - 1][0].name} übernommen."
-                if index else 'Frei wählbarer Startdurchmesser des ersten Abschnitts.')
+                tr('Automatically taken from the end diameter of {p0}.', p0=self.rows[index - 1][0].name)
+                if index else tr('Freely adjustable start diameter of the first section.'))
             if index:
                 previous = self.rows[index - 1][1]['diameter_end']
                 if previous.isValidExpression and fields['diameter_start'].value != previous.value:
@@ -116,20 +118,20 @@ class SegmentEditor:
 
     def update_remove_caption(self):
         label = next((name for name, key in self.remove_labels.items()
-                      if key == self.remove_target_id), 'Kein Abschnitt')
-        self.remove_target.text = f'Zum Entfernen ausgewählt: {label}'
+                      if key == self.remove_target_id), tr('No section'))
+        self.remove_target.text = tr('Selected for removal: {p0}', p0=label)
 
     def select_remove_target(self):
         selected = self.remove_choice.selectedItem
         target = self.remove_labels.get(selected.name) if selected is not None else None
         if target is None:
-            raise ValueError('Bitte den zu entfernenden Abschnitt erneut auswählen.')
+            raise ValueError(tr('Please select the section to remove again.'))
         self.remove_target_id = target
         self.update_remove_caption()
 
     def selected_remove_id(self):
         if self.remove_target_id not in self.remove_signature:
-            raise ValueError('Bitte den zu entfernenden Abschnitt auswählen.')
+            raise ValueError(tr('Please select the section to remove.'))
         return self.remove_target_id
 
     def read(self, start_angle=0, right_handed=True):
@@ -145,8 +147,7 @@ class SegmentEditor:
         for index, (group, fields, _) in enumerate(self.rows):
             for name, label in FIELDS:
                 if not fields[name].isValidExpression:
-                    raise ValueError(f'{group.name} – {label}: Bitte einen gültigen '
-                                     'Wert mit passenden Einheiten eingeben.')
+                    raise ValueError(tr('{p0} – {p1}: please enter a valid value with appropriate units.', p0=group.name, p1=tr(label)))
             values = {name: value.value for name, value in fields.items()}
             if segments:
                 values['diameter_start'] = segments[-1].diameter_end

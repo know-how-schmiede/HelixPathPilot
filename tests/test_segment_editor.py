@@ -179,7 +179,7 @@ class EditorTests(unittest.TestCase):
         self.editor.changed(remove.id)
         self.assertFalse(group.deleted)
         self.assertFalse(group.isVisible)
-        self.assertEqual(self.editor.rows[1][0].name, 'Abschnitt 3')
+        self.assertEqual(self.editor.rows[1][0].name, 'Section 3')
         self.assertEqual(self.editor.read().segments[1].diameter_start, 7)
 
     def test_first_deletion_unlocks_start_and_last_cannot_be_removed(self):
@@ -212,7 +212,7 @@ class EditorTests(unittest.TestCase):
         self.assertEqual(len(self.editor.rows), 32)
 
     def test_initial_heading_and_read_only_name(self):
-        self.assertEqual(self.editor.rows[0][0].name, 'Abschnitt 1')
+        self.assertEqual(self.editor.rows[0][0].name, 'Section 1')
         self.assertFalse(self.editor.rows[0][2].isEnabled)
         with self.assertRaises(AttributeError):
             self.editor.rows[0][0].name = 'Invalid write'

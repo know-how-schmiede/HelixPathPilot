@@ -26,7 +26,7 @@ class ClearanceTests(unittest.TestCase):
         points = self.helix()
         for permutation in ((0, 1, 2), (2, 0, 1), (1, 2, 0)):
             with self.subTest(permutation=permutation):
-                with self.assertRaisesRegex(ValueError, 'überschneiden'):
+                with self.assertRaisesRegex(ValueError, 'intersect'):
                     check_clearance([tuple(p[k] for k in permutation) for p in points], 0.6, 0.0001)
 
     def test_valid_thin_wire(self):
@@ -34,7 +34,7 @@ class ClearanceTests(unittest.TestCase):
 
     def test_adjacent_turns_overlap_or_touch(self):
         for diameter in (0.5, 0.6):
-            with self.assertRaisesRegex(ValueError, 'überschneiden'):
+            with self.assertRaisesRegex(ValueError, 'intersect'):
                 check_clearance(self.helix(), diameter, 0.0001)
 
     def test_pitch_alone_is_not_sufficient(self):
@@ -115,7 +115,7 @@ class WireBuilderTests(unittest.TestCase):
 
     def test_curvature_rejected_before_auxiliary_geometry(self):
         self.spline.worldGeometry.evaluator.getCurvature.return_value = (True, Mock(), 30)
-        with self.assertRaisesRegex(ValueError, 'Krümmung'):
+        with self.assertRaisesRegex(ValueError, 'curvature'):
             self.builder.create_wire(self.design, self.sketch, 0.1)
         self.design.rootComponent.constructionPlanes.add.assert_not_called()
 
@@ -123,7 +123,7 @@ class WireBuilderTests(unittest.TestCase):
         points = ClearanceTests().helix()
         self.spline.worldGeometry.evaluator.getStrokes.return_value = (
             True, [types.SimpleNamespace(x=x, y=y, z=z) for x, y, z in points])
-        with self.assertRaisesRegex(ValueError, 'überschneiden'):
+        with self.assertRaisesRegex(ValueError, 'intersect'):
             self.builder.create_wire(self.design, self.sketch, 0.6)
         self.design.rootComponent.features.sweepFeatures.add.assert_not_called()
 

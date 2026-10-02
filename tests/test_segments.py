@@ -53,7 +53,7 @@ class SegmentTests(unittest.TestCase):
 
     def test_diameter_gap_rejected_pitch_jump_allowed(self):
         first = HelixSegment.constant(3, 2, 1)
-        with self.assertRaisesRegex(ValueError, 'Abschnitt 2'):
+        with self.assertRaisesRegex(ValueError, 'section 2'):
             SegmentedHelix((first, HelixSegment.constant(3, 4, 1)))
         helix = SegmentedHelix((first, HelixSegment.constant(3, 2, 3)))
         self.assertEqual(helix.total_length, 6)
@@ -74,7 +74,7 @@ class SegmentTests(unittest.TestCase):
 
     def test_total_length_overflow_rejected(self):
         segment = HelixSegment.constant(1e308, 2, 1)
-        with self.assertRaisesRegex(ValueError, 'Gesamtlänge'):
+        with self.assertRaisesRegex(ValueError, 'total length'):
             SegmentedHelix((segment, segment))
 
     def test_basic_helix_conversion_preserves_parameters(self):

@@ -164,7 +164,7 @@ class SketchAdapterTests(unittest.TestCase):
             with self.subTest(failure=failure):
                 self.sketch.deleteMe.reset_mock()
                 self.sketch.geometricConstraints.addTangent.side_effect = [Mock(), failure]
-                with self.assertRaisesRegex(RuntimeError, 'Abschnitt 2 und 3'):
+                with self.assertRaisesRegex(RuntimeError, 'sections 2 and 3'):
                     self.adapter.create_sketch(self.design, model, tangent_joins=True)
                 self.sketch.deleteMe.assert_called_once()
 
@@ -194,7 +194,7 @@ class SketchAdapterTests(unittest.TestCase):
 
     def test_marker_failure_cleans_up_sketch(self):
         self.sketch.sketchPoints.add.return_value = None
-        with self.assertRaisesRegex(RuntimeError, 'Abschnittsmarkierung'):
+        with self.assertRaisesRegex(RuntimeError, 'section marker'):
             self.adapter.create_sketch(self.design, HelixParameters(2, 5, 0.5))
         self.sketch.deleteMe.assert_called_once()
 

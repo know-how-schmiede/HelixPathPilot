@@ -4,6 +4,23 @@ Pro Version gibt es einen kompakten Eintrag mit einem direkt für GitHub nutzbar
 Kurztext, gekennzeichnet durch **GitHub:**. Entwicklungsstände sind keine
 Bestätigung eines abgeschlossenen Fusion-Laufzeittests.
 
+## 0.6.4 – 2026-09-30 – Entwicklung
+
+**GitHub:** Mehrsprachige Oberfläche mit Englisch als Standard und Deutsch,
+Französisch, Spanisch und Polnisch; automatische Auswahl anhand der Fusion-Sprache.
+
+- Zentrale, Fusion-unabhängige Übersetzungsfunktionen und fünf UTF-8-Sprachkataloge.
+- Aktive Dialoge, Hilfetexte, Fehlermeldungen, Vorlagenaktionen, mitgelieferte
+  Vorlagen-Anzeigenamen und Namen erzeugter Objekte lokalisiert.
+- Nicht unterstützte Fusion-Sprachen, fehlende Kataloge und ungültige
+  Übersetzungsplatzhalter verwenden den englischen Ausgangstext.
+- Befehlskennungen, eigene Vorlagennamen, JSON-Schema und Geometrie bleiben
+  sprachunabhängig. Mitgelieferte JSON-Dateien werden nicht verändert.
+- 171 automatisierte Tests bestanden, einschließlich neuer Sprach- und Dialogtests; native Fusion-Prüfung von
+  Layout, Sonderzeichen und Ausgabe in allen fünf Sprachen noch offen.
+- Version und Manifest auf 0.6.4; ausdrücklich kein neuer Installer erstellt.
+  Der vorhandene Installer bleibt auf 0.6.3.
+
 ## 0.6.3 – 2026-09-29 – Entwicklung
 
 **Installer-Nachtrag:** Auf Benutzerwunsch Windows-Paketierung vorgezogen:

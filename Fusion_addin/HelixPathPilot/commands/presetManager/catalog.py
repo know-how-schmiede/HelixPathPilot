@@ -1,5 +1,7 @@
 """Read packaged presets without depending on Fusion."""
 
+from ...i18n import tr
+
 from pathlib import Path
 
 from ...core.presets import HelixPreset, MAX_JSON_BYTES, PRESET_EXTENSION
@@ -17,8 +19,23 @@ def builtin_presets(folder=None):
             with path.open('rb') as stream:
                 data = stream.read(MAX_JSON_BYTES + 1)
             if len(data) > MAX_JSON_BYTES:
-                raise ValueError('Datei überschreitet 128 KiB.')
+                raise ValueError(tr('File exceeds 128 KiB.'))
             presets.append(HelixPreset.from_json(data.decode('utf-8-sig')))
         except (OSError, UnicodeError, ValueError) as error:
             errors.append(f'{path.name}: {error}')
     return presets, errors
+
+
+# Match only packaged names, at the display boundary. Portable JSON and user
+# names retain their original spelling even if they match one of these names.
+_BUILTIN_NAMES = {
+    'Basishelix 20 × 50 mm': 'Basic helix 20 × 50 mm',
+    'Surface 5 → 10 mm': 'Surface 5 → 10 mm',
+    'Zwei variable Abschnitte': 'Two variable sections',
+}
+
+
+def preset_display_name(preset, *, builtin=False):
+    if builtin:
+        return tr(_BUILTIN_NAMES.get(preset.name, preset.name))
+    return preset.name

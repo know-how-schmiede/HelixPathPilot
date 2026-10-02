@@ -14,15 +14,15 @@ APP_AUTHOR = "Know-How-Schmiede"
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 6
-VERSION_PATCH = 3
+VERSION_PATCH = 4
 
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 __version__ = VERSION
 
 RELEASE_STAGE = "development"
-RELEASE_DATE = "2026-09-29"
+RELEASE_DATE = "2026-09-30"
 
-PROJECT_STATUS = "adaptive wire clearance sweep / development"
+PROJECT_STATUS = "multilingual Fusion UI / development"
 
 
 def get_version():

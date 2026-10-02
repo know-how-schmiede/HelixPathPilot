@@ -4,6 +4,8 @@ Lengths use one consistent unit (centimetres in Fusion); angles use radians.
 Right-handed means positive rotation about +Z as Z increases.
 """
 
+from ..i18n import tr
+
 from dataclasses import dataclass
 import math
 
@@ -32,7 +34,7 @@ class HelixParameters:
         self.as_segmented()
         turns = self.length / self.pitch
         if not math.isfinite(turns) or turns > (MAX_POINTS - 1) / SAMPLES_PER_TURN:
-            raise ValueError('Maximal 128 Windungen pro Helix sind möglich.')
+            raise ValueError(tr('A maximum of 128 turns per helix is allowed.'))
         return max(2, math.ceil(turns * SAMPLES_PER_TURN))
 
 

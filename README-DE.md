@@ -66,10 +66,22 @@ Damit können Vorlagen archiviert, mit Git versioniert und zwischen Installation
 
 ## Projektstatus
 
-Der Entwicklungsstand **0.6.3** liegt unter `Fusion_addin/HelixPathPilot/`.
+Der Entwicklungsstand **0.6.4** liegt unter `Fusion_addin/HelixPathPilot/`.
 
-**Windows-Installer:** [EXE mit deutscher/englischer Sprachauswahl](installer/dist/HelixPathPilot-0.6.3-Windows-Setup.exe).
+**Bisheriger Windows-Installer (0.6.3):** [EXE mit deutscher/englischer Sprachauswahl](installer/dist/HelixPathPilot-0.6.3-Windows-Setup.exe).
 [Installation, Build und geprüfte Fusion-Pfade](installer/README.md).
+
+0.6.4 ergänzt Englisch (Standard), Deutsch, Französisch, Spanisch und Polnisch.
+Das Add-in übernimmt beim Start automatisch die in Fusion eingestellte Sprache;
+nicht unterstützte Sprachen fallen auf Englisch zurück. Nach einem Sprachwechsel
+Fusion neu starten. Dialoge, Hilfetexte, Validierung, Vorlagenaktionen und
+Ausgabenamen sind übersetzt. Eigene Vorlagennamen und das portable JSON-Format
+bleiben erhalten.
+
+Für 0.6.4 wird noch kein neuer Installer erstellt. Zum Testen dieses Quellstands
+das Add-in stoppen und den vollständigen Ordner `Fusion_addin/HelixPathPilot/`
+einschließlich `locales/` in die bestehende Add-in-Installation übernehmen,
+anschließend Fusion neu starten.
 
 0.6.3 reduziert unnötige Segmentvergleiche bei der Drahtprüfung durch eine
 automatisch gewählte Prüfrichtung. Die Kollisionsgrenzen bleiben unverändert.
@@ -104,7 +116,7 @@ Die Punktanzeige beschränkt sich auf Abschnittsgrenzen; Startdurchmesser folgen
 Neu sind die Dialogreiter „Einstellungen“ und „Info“ mit Logo und Projektlinks
 sowie Surface Helix für vollständige Zylinder- und Kegelmäntel mit konstanter oder linear variabler
 Steigung, schneller Vorschau und 3D-Skizzenausgabe.
-**Volumenkörper → Erstellen → HelixPathPilot v0.6.3** erzeugt eine 3D-Skizze um eine gewählte Achse.
+**Volumenkörper → Erstellen → HelixPathPilot v0.6.4** erzeugt eine 3D-Skizze um eine gewählte Achse.
 Bis zu 32 Abschnitte mit eigener Länge, Start-/Enddurchmesser und Start-/Endsteigung
 lassen sich hinzufügen und entfernen. Drehrichtung und Startwinkel gelten gemeinsam.
 „Achslänge übernehmen“ passt die Gesamtlänge einmalig an eine endliche Linie oder gerade Kante an.

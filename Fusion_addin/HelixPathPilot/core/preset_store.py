@@ -1,5 +1,7 @@
 """User presets stored outside the add-in installation; no Fusion dependency."""
 
+from ..i18n import tr
+
 from dataclasses import replace
 import hashlib
 import os
@@ -27,17 +29,17 @@ class PresetStore:
 
     def _path(self, key):
         if not isinstance(key, str) or not re.fullmatch(r'[0-9a-f]{64}', key):
-            raise ValueError('Ungültige Vorlagenkennung.')
+            raise ValueError(tr('Invalid preset identifier.'))
         path = self.folder / (key + PRESET_EXTENSION)
         if path.is_symlink():
-            raise ValueError('Verknüpfte Vorlagendateien werden nicht unterstützt.')
+            raise ValueError(tr('Linked preset files are not supported.'))
         return path
 
     def load(self, key):
         with self._path(key).open('rb') as stream:
             data = stream.read(MAX_JSON_BYTES + 1)
         if len(data) > MAX_JSON_BYTES:
-            raise ValueError('Vorlage überschreitet 128 KiB.')
+            raise ValueError(tr('Preset exceeds 128 KiB.'))
         return HelixPreset.from_json(data.decode('utf-8-sig'))
 
     def list(self):
@@ -60,15 +62,14 @@ class PresetStore:
         preset = replace(preset, name=unicodedata.normalize('NFC', preset.name.strip()))
         content = preset.to_json().encode('utf-8')
         if len(content) > MAX_JSON_BYTES:
-            raise ValueError('Vorlage überschreitet 128 KiB.')
+            raise ValueError(tr('Preset exceeds 128 KiB.'))
         key = hashlib.sha256(preset.name.casefold().encode('utf-8')).hexdigest()
         self.folder.mkdir(parents=True, exist_ok=True)
         path = self._path(key)
         try:
             stream = path.open('xb')
         except FileExistsError as error:
-            raise ValueError('Eine eigene Vorlage mit diesem Namen existiert bereits. '
-                             'Bitte einen anderen Namen wählen.') from error
+            raise ValueError(tr('A custom preset with this name already exists. Please choose another name.')) from error
         try:
             with stream:
                 stream.write(content)

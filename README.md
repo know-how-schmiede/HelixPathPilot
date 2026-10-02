@@ -66,10 +66,20 @@ This allows presets to be archived, versioned with Git and transferred between i
 
 ## Project Status
 
-Development version **0.6.3** lives in `Fusion_addin/HelixPathPilot/`.
+Development version **0.6.4** lives in `Fusion_addin/HelixPathPilot/`.
 
-**Windows installer:** [EXE with English/German language selection](installer/dist/HelixPathPilot-0.6.3-Windows-Setup.exe).
+**Previous Windows installer (0.6.3):** [EXE with English/German language selection](installer/dist/HelixPathPilot-0.6.3-Windows-Setup.exe).
 [Installation, build instructions and Fusion paths](installer/README.md).
+
+0.6.4 adds English (default), German, French, Spanish and Polish. The add-in
+uses Fusion’s language automatically when it starts; unsupported languages fall
+back to English. Restart Fusion after changing its language. Dialogs, tooltips,
+validation, preset actions and output names are translated. Custom preset names
+and the portable JSON format are preserved.
+
+No new installer is provided for 0.6.4. To test this source version, stop the
+add-in and copy the complete `Fusion_addin/HelixPathPilot/` folder, including
+`locales/`, into the existing add-in installation, then restart Fusion.
 
 0.6.3 reduces unnecessary wire-clearance comparisons by choosing the least
 crowded sweep coordinate. Collision thresholds remain unchanged.
@@ -89,25 +99,25 @@ Surface input errors in the visible Surface panel.
 0.5.0 improves preview updates: unchanged path values retain the existing
 graphics, while changed or invalid inputs remove stale previews.
 
-**Wire body (0.4.5):** Enable “Drahtkörper erstellen” on the creation tab and enter
+**Wire body (0.4.5):** Enable “Create wire body” on the creation tab and enter
 the wire diameter (default 1 mm). On OK, the solved spline undergoes a numerical
 curvature and self-intersection preflight before a circular profile is swept as
 a new body. Both modes are supported; the preview continues to show the colored
 path. Wire settings are not stored in presets. See [development notes](docs/development.md)
 for validation limits and Fusion checks still required.
 The [preset foundation](docs/presets.md) includes a validated JSON data model
-and three examples available in the dedicated “Vorlagen” (Presets) tab. Select a preset and click “Vorlage laden” to load it. Named user presets can also be saved, loaded and deleted there, with JSON file import and export.
+and three examples available in the dedicated “Presets” (Presets) tab. Select a preset and click “Vorlage laden” to load it. Named user presets can also be saved, loaded and deleted there, with JSON file import and export.
 Parametric and variable helices have an optional live preview with distinct section colors. The compact dialog uses a scrollable content area. Point display
 is reduced to section boundaries, and start diameters follow the preceding
 section throughout the full chain.
 New Settings and Info tabs provide the G1 option, project logo and links.
 Surface Helix creates a 3D sketch on full cylindrical and conical faces with
 constant or linearly varying axial pitch, a fast preview and a choice of starting rim.
-**Solid → Create → HelixPathPilot v0.6.3** creates a 3D sketch around a selected axis.
+**Solid → Create → HelixPathPilot v0.6.4** creates a 3D sketch around a selected axis.
 Add or remove up to 32 sections with individual lengths, start/end diameters
 and start/end pitches. Handedness and start angle apply to the whole helix.
-“Achslänge übernehmen” fits the total length to a finite straight line or edge once.
-The new “Tangentiale Übergänge (G1)” option aligns section tangents for sweeping;
+“Use axis length” fits the total length to a finite straight line or edge once.
+The new “Tangent joins (G1)” option aligns section tangents for sweeping;
 the user reports an improved transition in the sweep example.
 Construction axes, straight edges and sketch lines are supported, with global Z
 as the default. The user confirmed the basic command, axis selection and icons work.

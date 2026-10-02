@@ -5,6 +5,8 @@ The CAD kernel must still accept the final sweep. Local neighbours are excluded
 from the distance test; their admissibility is checked by curvature instead.
 """
 
+from ..i18n import tr
+
 import math
 import heapq
 
@@ -30,7 +32,7 @@ def _sweep_axis(edges, clearance):
 
 def validate_diameter(diameter):
     if isinstance(diameter, bool) or not math.isfinite(diameter) or diameter <= 0:
-        raise ValueError('Der Drahtdurchmesser muss endlich und größer als null sein.')
+        raise ValueError(tr('Wire diameter must be finite and greater than zero.'))
 
 
 def _sub(a, b):
@@ -47,7 +49,7 @@ def segment_distance(a, b, c, d):
     aa, bb, cc = _dot(u, u), _dot(u, v), _dot(v, v)
     dd, ee = _dot(u, w), _dot(v, w)
     if aa == 0 or cc == 0:
-        raise ValueError('Der Helixpfad enthält ein Segment ohne Länge.')
+        raise ValueError(tr('The helix path contains a zero-length segment.'))
     clamp = lambda x: max(0.0, min(1.0, x))
     candidates = [(0, clamp(ee / cc)), (1, clamp((ee + bb) / cc)),
                   (clamp(-dd / aa), 0), (clamp((bb - dd) / aa), 1)]
@@ -69,15 +71,15 @@ def check_clearance(points, diameter, tolerance):
     """
     validate_diameter(diameter)
     if len(points) < 2 or len(points) > 16000:
-        raise ValueError('Drahtprüfung: Pfad zu kurz oder zu komplex (maximal 16000 Prüfpunkte).')
+        raise ValueError(tr('Wire check: path too short or too complex (maximum 16000 check points).'))
     if any(len(p) != 3 or any(not math.isfinite(v) for v in p) for p in points):
-        raise ValueError('Drahtprüfung: ungültige Pfadkoordinaten.')
+        raise ValueError(tr('Wire check: invalid path coordinates.'))
     clearance = diameter + 2 * tolerance
     edges, length = [], 0.0
     for index, (a, b) in enumerate(zip(points, points[1:])):
         step = math.dist(a, b)
         if step <= 1e-12:
-            raise ValueError('Drahtprüfung: Pfad enthält doppelte Punkte.')
+            raise ValueError(tr('Wire check: path contains duplicate points.'))
         low = tuple(min(x, y) for x, y in zip(a, b))
         high = tuple(max(x, y) for x, y in zip(a, b))
         edges.append((low[0], high[0], index, a, b, low, high, length, length + step))
@@ -91,7 +93,7 @@ def check_clearance(points, diameter, tolerance):
         for other in active:
             checks += 1
             if checks > 2000000:
-                raise ValueError('Drahtprüfung zu aufwendig. Bitte weniger Windungen verwenden.')
+                raise ValueError(tr('Wire check too expensive. Please use fewer turns.'))
             _, _, j, c, d, lo, hi, begin, finish = other
             if abs(index - j) <= 1:
                 continue
@@ -101,7 +103,7 @@ def check_clearance(points, diameter, tolerance):
             if any(low[k] > hi[k] + clearance or lo[k] > high[k] + clearance for k in remaining_axes):
                 continue
             if segment_distance(a, b, c, d) <= clearance:
-                raise ValueError('Drahtdurchmesser zu groß: Windungen oder Abschnitte berühren '
-                                 'oder überschneiden sich. Bitte die Drahtstärke reduzieren '
-                                 'oder den Helixverlauf ändern.')
+                raise ValueError(tr(
+                    'Wire diameter too large: turns or sections touch or intersect. Please reduce'
+                    ' the wire diameter or change the helix path.'))
         active.append(edge)

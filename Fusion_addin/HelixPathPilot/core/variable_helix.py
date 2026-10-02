@@ -1,5 +1,7 @@
 """Sample piecewise helices with pitch linear in axial distance."""
 
+from ..i18n import tr
+
 import math
 
 from .helix_math import MAX_POINTS, SAMPLES_PER_TURN
@@ -25,13 +27,13 @@ def segment_turns(segment):
 
 def sampling_plan(model):
     if len(model.segments) > MAX_SEGMENTS:
-        raise ValueError(f'Maximal {MAX_SEGMENTS} Abschnitte sind möglich.')
+        raise ValueError(tr('A maximum of {p0} sections is allowed.', p0=MAX_SEGMENTS))
     turns = [segment_turns(segment) for segment in model.segments]
     if any(not math.isfinite(t) or t <= 0 or t > 128 for t in turns) or math.fsum(turns) > 128:
-        raise ValueError('Maximal 128 Windungen insgesamt; bitte Länge und Steigung prüfen.')
+        raise ValueError(tr('Maximum 128 turns in total; please check length and pitch.'))
     counts = [max(2, math.ceil(t * SAMPLES_PER_TURN)) for t in turns]
     if sum(counts) + 1 > MAX_POINTS:
-        raise ValueError('Zu viele Stützpunkte. Bitte Abschnitte oder Windungszahl reduzieren.')
+        raise ValueError(tr('Too many sample points. Please reduce the number of sections or turns.'))
     return list(zip(turns, counts))
 
 

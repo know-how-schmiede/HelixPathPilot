@@ -1,5 +1,7 @@
 """Create a section-based helix around a selected axis."""
 
+from ...i18n import configure_from_fusion, tr
+
 from pathlib import Path
 from dataclasses import replace
 
@@ -23,7 +25,7 @@ from .segment_editor import SegmentEditor
 from .dialog_tabs import add_settings_and_info
 from .preview_graphics import HelixPreview
 from ..createSurfaceHelix.surface_selection import selected_surface_kind, selected_surface_profile
-from ..presetManager.catalog import builtin_presets
+from ..presetManager.catalog import builtin_presets, preset_display_name
 
 CMD_ID = f'{config.COMPANY_NAME}_{config.ADDIN_NAME}_createParametricHelix'
 CMD_NAME = f'{APP_NAME} v{VERSION}'
@@ -42,14 +44,16 @@ def _panel(ui):
 
 
 def start():
-    ui = adsk.core.Application.get().userInterface
+    app = adsk.core.Application.get()
+    configure_from_fusion(app)
+    ui = app.userInterface
     stop()
     panel = _panel(ui)
     if panel is None:
-        raise RuntimeError('Das Erstellen-Panel im Volumenkörper-Bereich fehlt.')
+        raise RuntimeError(tr('The Create panel in the Solid workspace is missing.'))
     try:
         definition = ui.commandDefinitions.addButtonDefinition(
-            CMD_ID, CMD_NAME, 'Helix mit mehreren Abschnitten, variablem Durchmesser und variabler Steigung erstellen.',
+            CMD_ID, CMD_NAME, tr('Create a multi-section helix with variable diameter and pitch.'),
             ICON_FOLDER,
         )
         futil.add_handler(definition.commandCreated, command_created,
@@ -86,7 +90,7 @@ def stop():
 
 def _parameters(inputs, editor):
     if not inputs.itemById('start_angle').isValidExpression:
-        raise ValueError('Bitte einen gültigen Startwinkel eingeben.')
+        raise ValueError(tr('Please enter a valid start angle.'))
     parameters = editor.read(inputs.itemById('start_angle').value,
                              inputs.itemById('right_handed').value)
     sampling_plan(parameters)
@@ -97,19 +101,19 @@ def command_created(args):
     app = adsk.core.Application.get()
     design = adsk.fusion.Design.cast(app.activeProduct)
     if design is None:
-        app.userInterface.messageBox('Bitte zuerst ein Design-Dokument öffnen.', CMD_NAME)
+        app.userInterface.messageBox(tr('Please open a design document first.'), CMD_NAME)
         return
     command = args.command
     command.isExecutedWhenPreEmpted = False
     root_inputs = command.commandInputs
-    create_tab = root_inputs.addTabCommandInput('create_tab', 'Helix erstellen')
+    create_tab = root_inputs.addTabCommandInput('create_tab', tr('Create helix'))
     create_inputs = create_tab.children
-    preset_tab = root_inputs.addTabCommandInput('presets_tab', 'Vorlagen')
-    preset_group = preset_tab.children.addGroupCommandInput('presets', 'Vorlagen verwalten')
+    preset_tab = root_inputs.addTabCommandInput('presets_tab', tr('Presets'))
+    preset_group = preset_tab.children.addGroupCommandInput('presets', tr('Manage presets'))
     preset_group.isExpanded = True
     preset_inputs = preset_group.children
     preset_choice = preset_inputs.addDropDownCommandInput(
-        'preset_choice', 'Vorlage', adsk.core.DropDownStyles.TextListDropDownStyle)
+        'preset_choice', tr('Preset'), adsk.core.DropDownStyles.TextListDropDownStyle)
     presets, preset_errors = builtin_presets()
     store = PresetStore()
     user_entries, user_errors = store.list()
@@ -118,95 +122,104 @@ def command_created(args):
     builtin_count = len(presets)
     presets.extend(preset for _, preset in user_entries)
     for index, preset in enumerate(presets):
-        label = 'Surface' if preset.mode == 'surface' else 'Parametrisch'
-        origin = 'Eigene' if preset_keys[index] else 'Mitgeliefert'
-        preset_choice.listItems.add(f'{preset.name} ({label}, {origin})', index == 0)
-    preset_load = preset_inputs.addBoolValueInput('preset_load', 'Vorlage laden', False, '', False)
+        label = tr('Surface') if preset.mode == 'surface' else tr('Parametric')
+        origin = tr('Custom') if preset_keys[index] else tr('Built-in')
+        preset_choice.listItems.add(f'{preset_display_name(preset, builtin=preset_keys[index] is None)} ({label}, {origin})', index == 0)
+    preset_load = preset_inputs.addBoolValueInput('preset_load', tr('Load preset'), False, '', False)
     preset_load.isEnabled = bool(presets)
-    preset_name = preset_inputs.addStringValueInput('preset_name', 'Name für eigene Vorlage', '')
-    preset_inputs.addBoolValueInput('preset_save', 'Als eigene Vorlage speichern', False, '', False)
-    preset_delete = preset_inputs.addBoolValueInput('preset_delete', 'Eigene Vorlage löschen', False, '', False)
+    preset_name = preset_inputs.addStringValueInput('preset_name', tr('Custom preset name'), '')
+    preset_inputs.addBoolValueInput('preset_save', tr('Save as custom preset'), False, '', False)
+    preset_delete = preset_inputs.addBoolValueInput('preset_delete', tr('Delete custom preset'), False, '', False)
     preset_delete.isEnabled = bool(preset_keys and preset_keys[0])
-    preset_inputs.addBoolValueInput('preset_import', 'JSON-Vorlage importieren', False, '', False)
-    preset_export = preset_inputs.addBoolValueInput('preset_export', 'Ausgewählte Vorlage exportieren', False, '', False)
+    preset_inputs.addBoolValueInput('preset_import', tr('Import JSON preset'), False, '', False)
+    preset_export = preset_inputs.addBoolValueInput('preset_export', tr('Export selected preset'), False, '', False)
     preset_export.isEnabled = bool(presets)
-    preset_export.tooltip = 'Exportiert die gespeicherte Auswahl, nicht ungespeicherte Änderungen der Helix.'
+    preset_export.tooltip = tr('Exports the saved selection, not unsaved helix changes.')
     preset_note = preset_inputs.addTextBoxCommandInput('preset_note', '',
-        'Vorlage auswählen und laden. Aktuelle Parameter werden ersetzt; '
-        'Achse und Mantelfläche bleiben separat gewählt.', 3, True)
+        tr(
+            'Select and load a preset. Current parameters will be replaced; axis and lateral face'
+            ' remain selected separately.'), 3, True)
     if preset_errors or not presets:
-        preset_note.text = 'Vorlagen nicht vollständig verfügbar: ' + (
-            '\n'.join(preset_errors) if preset_errors else 'Keine Vorlagendateien gefunden.')
+        preset_note.text = tr('Presets partially unavailable: ') + (
+            '\n'.join(preset_errors) if preset_errors else tr('No preset files found.'))
     mode = create_inputs.addDropDownCommandInput(
-        'helix_mode', 'Modus', adsk.core.DropDownStyles.TextListDropDownStyle)
-    mode.listItems.add('Parametrische Helix', True)
-    mode.listItems.add('Surface Helix', False)
-    wire_enabled = create_inputs.addBoolValueInput('wire_enabled', 'Drahtkörper erstellen', True, '', False)
-    wire_diameter = create_inputs.addValueInput('wire_diameter', 'Drahtdurchmesser',
+        'helix_mode', tr('Mode'), adsk.core.DropDownStyles.TextListDropDownStyle)
+    mode.listItems.add(tr('Parametric helix'), True)
+    mode.listItems.add(tr('Surface helix'), False)
+    wire_enabled = create_inputs.addBoolValueInput('wire_enabled', tr('Create wire body'), True, '', False)
+    wire_diameter = create_inputs.addValueInput('wire_diameter', tr('Wire diameter'),
         design.unitsManager.defaultLengthUnits, adsk.core.ValueInput.createByReal(0.1))
     wire_diameter.isVisible = False
     wire_note = create_inputs.addTextBoxCommandInput('wire_note', '',
-        'Vorschau zeigt den Pfad. Bei OK: Überschneidungsprüfung und Sweep als neuer Körper. '
-        'Drahtstärke wird nicht in Vorlagen gespeichert.', 3, True)
+        tr(
+            'Preview shows the path. On OK: intersection check and sweep as a new body. Wire '
+            'diameter is not saved in presets.'), 3, True)
     wire_note.isVisible = False
-    surface_group = create_inputs.addGroupCommandInput('surface_group', 'Surface Helix')
+    surface_group = create_inputs.addGroupCommandInput('surface_group', tr('Surface helix'))
     surface_group.isExpanded = True
     surface_group.isVisible = False
     surface_inputs = surface_group.children
     surface_inputs.addTextBoxCommandInput('surface_help', '',
-        'Zylinder- oder Kegelmantel mit zwei vollständigen Kreisrändern auswählen. '
-        'Länge und Radius folgen der Fläche. Die Steigung bezeichnet den axialen '
-        'Abstand pro Windung. Ausgabe als angenäherte 3D-Spline.', 3, True)
-    surface_input = surface_inputs.addSelectionInput('surface', 'Mantelfläche', 'Mantelfläche auswählen')
+        tr(
+            'Select a cylindrical or conical lateral face with two complete circular boundaries. '
+            'Length and radius follow the face. Pitch is the axial distance per turn. Output is '
+            'an approximated 3D spline.'), 3, True)
+    surface_input = surface_inputs.addSelectionInput('surface', tr('Lateral face'), tr('Select lateral face'))
     surface_input.addSelectionFilter('Faces')
     surface_input.setSelectionLimits(0, 1)
     surface_input.isUseCurrentSelections = False
     units = design.unitsManager.defaultLengthUnits
-    surface_pitch = surface_inputs.addValueInput('surface_pitch', 'Startsteigung', units,
+    surface_pitch = surface_inputs.addValueInput('surface_pitch', tr('Start pitch'), units,
         adsk.core.ValueInput.createByReal(0.5))
-    surface_pitch_end = surface_inputs.addValueInput('surface_pitch_end', 'Endsteigung', units,
+    surface_pitch_end = surface_inputs.addValueInput('surface_pitch_end', tr('End pitch'), units,
         adsk.core.ValueInput.createByReal(0.5))
-    surface_pitch.tooltip = 'Axiale Steigung am gewählten Startrand; muss positiv sein.'
-    surface_pitch_end.tooltip = ('Steigung am Zielrand, linear entlang der axialen Länge. '
-        'Gleiche Start- und Endwerte ergeben konstante Steigung. '
-        'Beim Randwechsel gelten die Werte weiterhin in Laufrichtung.')
-    surface_offset = surface_inputs.addValueInput('surface_offset', 'Surface Offset', units,
+    surface_pitch.tooltip = tr('Axial pitch at the selected start boundary; must be positive.')
+    surface_pitch_end.tooltip = (tr(
+        'Pitch at the end boundary, linear along the axial length. Equal start and end values '
+        'give constant pitch. When switching boundaries, values still follow the travel '
+        'direction.'))
+    surface_offset = surface_inputs.addValueInput('surface_offset', tr('Surface offset'), units,
         adsk.core.ValueInput.createByReal(0.0))
-    surface_offset.tooltip = ('Senkrechter Abstand zur Mantelfläche. Positiv: von der Achse weg; '
-        'negativ: zur Achse hin. Beim Kegel verschieben sich auch die Endpunkte axial. '
-        'Die Richtung ist unabhängig von Innen- oder Außenfläche.')
-    surface_angle = surface_inputs.addValueInput('surface_angle', 'Startwinkel', 'deg',
+    surface_offset.tooltip = (tr(
+        'Perpendicular distance to the lateral face. Positive: away from the axis; negative: '
+        'towards the axis. On a cone, endpoints also shift axially. Direction is independent of '
+        'inner or outer face.'))
+    surface_angle = surface_inputs.addValueInput('surface_angle', tr('Start angle'), 'deg',
         adsk.core.ValueInput.createByReal(0.0))
-    surface_right = surface_inputs.addBoolValueInput('surface_right', 'Rechtsdrehend', True, '', True)
-    surface_reverse = surface_inputs.addBoolValueInput('surface_reverse', 'Am anderen Rand starten', True, '', False)
+    surface_right = surface_inputs.addBoolValueInput('surface_right', tr('Right-handed'), True, '', True)
+    surface_reverse = surface_inputs.addBoolValueInput('surface_reverse', tr('Start at the other boundary'), True, '', False)
     surface_status = surface_inputs.addTextBoxCommandInput('surface_status', '', '', 6, True)
-    parameter_group = create_inputs.addGroupCommandInput('parameter_group', 'Helix-Parameter')
+    parameter_group = create_inputs.addGroupCommandInput('parameter_group', tr('Helix parameters'))
     parameter_group.isExpanded = True
     inputs = parameter_group.children
     inputs.addTextBoxCommandInput(
-        'axis_info', '', 'Ohne Auswahl: globale Z-Achse. Bei Linien beginnt die Helix am '
-        'Linienanfang, bei Konstruktionsachsen am Achsursprung. '
-        'Ausgabe in der Hauptkomponente; Steigung pro Windung.', 3, True
+        'axis_info', '', tr(
+            'Without selection: global Z axis. For lines, the helix starts at the line start; for'
+            ' construction axes, at the axis origin. Output in the root component; pitch per '
+            'turn.'), 3, True
     )
-    axis_input = inputs.addSelectionInput('axis', 'Achse (optional)',
-                                          'Konstruktionsachse, gerade Kante oder Skizzenlinie wählen')
+    axis_input = inputs.addSelectionInput('axis', tr('Axis (optional)'),
+                                          tr('Select a construction axis, straight edge or sketch line'))
     for selection_filter in ('ConstructionLines', 'LinearEdges', 'SketchLines'):
         axis_input.addSelectionFilter(selection_filter)
     axis_input.setSelectionLimits(0, 1)
     axis_input.isUseCurrentSelections = False
-    inputs.addBoolValueInput('reverse_axis', 'Achsrichtung umkehren', True, '', False)
-    fit_length = inputs.addBoolValueInput('fit_axis_length', 'Achslänge übernehmen', False, '', False)
+    inputs.addBoolValueInput('reverse_axis', tr('Reverse axis direction'), True, '', False)
+    fit_length = inputs.addBoolValueInput('fit_axis_length', tr('Use axis length'), False, '', False)
     fit_length.isEnabled = False
-    fit_length.tooltip = 'Gesamtlänge einmalig aus einer endlichen Linie oder geraden Kante übernehmen. Abschnitte werden proportional skaliert.'
+    fit_length.tooltip = tr(
+        'Use the total length of a finite line or straight edge once. Sections are scaled '
+        'proportionally.')
     units = design.unitsManager.defaultLengthUnits
-    inputs.addValueInput('start_angle', 'Startwinkel', 'deg',
+    inputs.addValueInput('start_angle', tr('Start angle'), 'deg',
                          adsk.core.ValueInput.createByString('0 deg'))
-    inputs.addBoolValueInput('right_handed', 'Rechtsdrehend', True, '', True)
+    inputs.addBoolValueInput('right_handed', tr('Right-handed'), True, '', True)
     tangent_joins, live_preview = add_settings_and_info(root_inputs)
     editor = SegmentEditor(inputs, units)
     inputs.addTextBoxCommandInput('section_info', '',
-        'Durchmesser und Steigung ändern sich linear entlang der Abschnittslänge. '
-        'Ab Abschnitt 2 wird der Startdurchmesser vom vorherigen Ende übernommen.', 2, True)
+        tr(
+            'Diameter and pitch vary linearly along each section. From section 2 onwards, the '
+            'start diameter is taken from the previous end.'), 2, True)
     summary = inputs.addTextBoxCommandInput('summary', '', '', 2, True)
     inputs.addTextBoxCommandInput('error', '', '', 2, True)
     preview_status = inputs.addTextBoxCommandInput('preview_status', '', '', 2, True)
@@ -218,7 +231,7 @@ def command_created(args):
     def selected_preset_index():
         choice = preset_choice.selectedItem
         if choice is None or not 0 <= choice.index < len(presets):
-            raise ValueError('Bitte eine Vorlage auswählen.')
+            raise ValueError(tr('Please select a preset.'))
         return choice.index
 
     def refresh_user_presets(selected_key=None):
@@ -231,9 +244,9 @@ def command_created(args):
         try:
             preset_choice.listItems.clear()
             for index, preset in enumerate(presets):
-                mode_label = 'Surface' if preset.mode == 'surface' else 'Parametrisch'
-                origin = 'Eigene' if preset_keys[index] else 'Mitgeliefert'
-                preset_choice.listItems.add(f'{preset.name} ({mode_label}, {origin})', index == selected)
+                mode_label = tr('Surface') if preset.mode == 'surface' else tr('Parametric')
+                origin = tr('Custom') if preset_keys[index] else tr('Built-in')
+                preset_choice.listItems.add(f'{preset_display_name(preset, builtin=preset_keys[index] is None)} ({mode_label}, {origin})', index == selected)
             preset_load.isEnabled = bool(presets)
             preset_export.isEnabled = bool(presets)
             preset_delete.isEnabled = bool(preset_keys and preset_keys[selected])
@@ -245,7 +258,7 @@ def command_created(args):
         if mode.selectedItem.index == 1:
             if any(not field.isValidExpression for field in
                    (surface_pitch, surface_pitch_end, surface_offset, surface_angle)):
-                raise ValueError('Bitte gültige Surface-Werte eingeben.')
+                raise ValueError(tr('Please enter valid surface values.'))
             parameters = SurfaceSettings(surface_pitch.value, surface_pitch_end.value,
                 surface_offset.value, surface_angle.value, surface_right.value, surface_reverse.value)
             reverse = False
@@ -255,32 +268,32 @@ def command_created(args):
         preset = HelixPreset(preset_name.value, parameters, reverse, tangent_joins.value)
         key = store.save(preset)
         errors = refresh_user_presets(key)
-        preset_note.text = f'Gespeichert: {preset.name.strip()}.' + ('\n' + errors if errors else '')
+        preset_note.text = tr('Saved: {p0}.', p0=preset.name.strip()) + ('\n' + errors if errors else '')
 
     def import_preset():
         dialog = app.userInterface.createFileDialog()
-        dialog.title = 'Helix-Vorlage importieren'
+        dialog.title = tr('Import helix preset')
         dialog.filter = 'HelixPathPilot (*.helixpilot.json);;JSON (*.json)'
         dialog.isMultiSelectEnabled = False
         if dialog.showOpen() != adsk.core.DialogResults.DialogOK:
             return
         preset = read_preset_file(dialog.filename)
         name, cancelled = app.userInterface.inputBox(
-            'Name der importierten eigenen Vorlage:', CMD_NAME, preset.name)
+            tr('Name of the imported custom preset:'), CMD_NAME, preset.name)
         if cancelled:
             return
         preset = replace(preset, name=name)
         key = store.save(preset)
         errors = refresh_user_presets(key)
         preset_name.value = preset.name.strip()
-        preset_note.text = (f'Importiert: {preset.name.strip()}. Zum Anwenden „Vorlage laden“ drücken.'
+        preset_note.text = (tr('Imported: {p0}. Press “Load preset” to apply.', p0=preset.name.strip())
                             + ('\n' + errors if errors else ''))
 
     def export_preset():
         index = selected_preset_index()
         preset = store.load(preset_keys[index]) if preset_keys[index] else presets[index]
         dialog = app.userInterface.createFileDialog()
-        dialog.title = f'Vorlage exportieren: {preset.name}'
+        dialog.title = tr('Export preset: {p0}', p0=preset_display_name(preset, builtin=preset_keys[index] is None))
         dialog.filter = 'HelixPathPilot (*.helixpilot.json)'
         dialog.isMultiSelectEnabled = False
         if dialog.showSave() != adsk.core.DialogResults.DialogOK:
@@ -288,24 +301,24 @@ def command_created(args):
         path = export_path(dialog.filename)
         overwrite = path.exists()
         if overwrite and app.userInterface.messageBox(
-                f'Datei überschreiben?\n{path}', CMD_NAME,
+                tr('Overwrite file?\n{p0}', p0=path), CMD_NAME,
                 adsk.core.MessageBoxButtonTypes.YesNoButtonType) != adsk.core.DialogResults.DialogYes:
             return
         path = write_preset_file(path, preset, overwrite=overwrite)
-        preset_note.text = f'Exportiert: {preset.name}\n{path}'
+        preset_note.text = tr('Exported: {p0}\n{p1}', p0=preset_display_name(preset, builtin=preset_keys[index] is None), p1=path)
 
     def delete_preset():
         index = selected_preset_index()
         key = preset_keys[index]
         if key is None:
-            raise ValueError('Mitgelieferte Vorlagen können nicht gelöscht werden.')
+            raise ValueError(tr('Built-in presets cannot be deleted.'))
         name = presets[index].name
-        if app.userInterface.messageBox(f'Eigene Vorlage „{name}“ löschen?', CMD_NAME,
+        if app.userInterface.messageBox(tr('Delete custom preset “{p0}”?', p0=name), CMD_NAME,
                 adsk.core.MessageBoxButtonTypes.YesNoButtonType) != adsk.core.DialogResults.DialogYes:
             return
         store.delete(key)
         errors = refresh_user_presets()
-        preset_note.text = f'Gelöscht: {name}.' + ('\n' + errors if errors else '')
+        preset_note.text = tr('Deleted: {p0}.', p0=name) + ('\n' + errors if errors else '')
 
     def load_preset():
         index = selected_preset_index()
@@ -332,21 +345,21 @@ def command_created(args):
             mode.listItems.item(1 if is_surface else 0).isSelected = True
             parameter_group.isVisible = not is_surface
             surface_group.isVisible = is_surface
-            preset_note.text = f'Geladen: {preset.name}.' + (
-                ' Bitte eine geeignete Mantelfläche auswählen bzw. prüfen.' if is_surface else '')
-            preset_name.value = preset.name
+            preset_note.text = tr('Loaded: {p0}.', p0=preset_display_name(preset, builtin=preset_keys[index] is None)) + (
+                tr(' Please select or check a suitable lateral face.') if is_surface else '')
+            preset_name.value = preset_display_name(preset, builtin=preset_keys[index] is None)
             create_tab.activate()
             command.setDialogSize(520, 560)
         finally:
             editor.busy = False
 
     def surface_parameters():
-        for field, label in ((surface_pitch, 'Startsteigung'),
-                             (surface_pitch_end, 'Endsteigung'),
-                             (surface_angle, 'Startwinkel'),
-                             (surface_offset, 'Surface Offset')):
+        for field, label in ((surface_pitch, tr('Start pitch')),
+                             (surface_pitch_end, tr('End pitch')),
+                             (surface_angle, tr('Start angle')),
+                             (surface_offset, tr('Surface offset'))):
             if not field.isValidExpression:
-                raise ValueError(f'{label}: Bitte einen gültigen Wert mit passenden Einheiten eingeben.')
+                raise ValueError(tr('{p0}: please enter a valid value with appropriate units.', p0=label))
         return surface_helix(selected_surface_profile(surface_input), surface_pitch.value,
             surface_angle.value, surface_right.value, surface_reverse.value, surface_offset.value,
             pitch_end=surface_pitch_end.value)
@@ -361,7 +374,7 @@ def command_created(args):
         if not wire_enabled.value:
             return None
         if not wire_diameter.isValidExpression:
-            raise ValueError('Bitte einen gültigen Drahtdurchmesser eingeben.')
+            raise ValueError(tr('Please enter a valid wire diameter.'))
         validate_diameter(wire_diameter.value)
         return wire_diameter.value
 
@@ -376,13 +389,10 @@ def command_created(args):
                 model, _ = surface_parameters()
                 current_wire_diameter()
                 fmt = lambda value: design.unitsManager.formatValue(value, units)
-                surface_status.text = (f'{kind}: vollständiger 360°-Mantel.\n'
-                    f'Axiale Länge: {fmt(profile.length)}\n'
-                    f'Flächenradien: {fmt(profile.radius_start)} → {fmt(profile.radius_end)}\n'
-                    f'Helixradien: {fmt(model.segments[0].diameter_start/2)} → '
-                    f'{fmt(model.segments[0].diameter_end/2)} · Offset: {fmt(surface_offset.value)}\n'
-                    f'Windungen: {sum(t for t, _ in sampling_plan(model)):.3f}\n'
-                    'Helixradien in Laufrichtung; Flächenradien in Flächenachsrichtung.')
+                surface_status.text = (tr(
+                    '{p0}: complete 360° lateral face.\nAxial length: {p1}\nSurface radii: {p2} → '
+                    '{p3}\nHelix radii: {p4} → {p5} · Offset: {p6}\nTurns: {p7:.3f}\nHelix radii in '
+                    'travel direction; surface radii in surface axis direction.', p0=kind, p1=fmt(profile.length), p2=fmt(profile.radius_start), p3=fmt(profile.radius_end), p4=fmt(model.segments[0].diameter_start / 2), p5=fmt(model.segments[0].diameter_end / 2), p6=fmt(surface_offset.value), p7=sum((t for t, _ in sampling_plan(model)))))
                 event.areInputsValid = True
             except ValueError as error:
                 surface_status.text = str(error)
@@ -394,7 +404,7 @@ def command_created(args):
             selected_axis(axis_input, inputs.itemById('reverse_axis').value)
             length = design.unitsManager.formatValue(model.total_length, units)
             turns = sum(t for t, _ in sampling_plan(model))
-            summary.text = f'{len(model.segments)} Abschnitt(e) · Gesamtlänge: {length} · Windungen: {turns:.3f}'
+            summary.text = tr('{p0} section(s) · Total length: {p1} · Turns: {p2:.3f}', p0=len(model.segments), p1=length, p2=turns)
             inputs.itemById('error').text = ''
             event.areInputsValid = True
         except ValueError as error:
@@ -409,11 +419,11 @@ def command_created(args):
             tangent_joins=tangent_joins.value if mode.selectedItem.index == 0 else False)
         try:
             if mode.selectedItem.index == 1:
-                sketch.name = 'HelixPathPilot – Surface Helix'
+                sketch.name = tr('HelixPathPilot – Surface helix')
             if diameter is not None:
                 create_wire(design, sketch, diameter)
         except Exception as error:
-            cleanup_created([('Helixskizze', sketch)], error)
+            cleanup_created([(tr('Helix sketch'), sketch)], error)
             raise
         return sketch
 
@@ -428,11 +438,11 @@ def command_created(args):
             model, axis = current_parameters()
             graphics.show(model, axis)
             if tangent_joins.value and mode.selectedItem.index == 0:
-                preview_status.text = 'Pfadvorschau; G1-Übergänge werden beim Erstellen angeglichen.'
+                preview_status.text = tr('Path preview; G1 joins are adjusted on creation.')
         except Exception as error:
             graphics.clear()
             status = surface_status if mode.selectedItem.index == 1 else preview_status
-            status.text = f'Vorschau nicht verfügbar: {error}'
+            status.text = tr('Preview unavailable: {p0}', p0=error)
 
     def execute(event):
         try:
@@ -472,11 +482,11 @@ def command_created(args):
                         # scheduling of validateInputs / executePreview.
                         model = _parameters(inputs, editor)
                         length = design.unitsManager.formatValue(model.total_length, units)
-                        summary.text = f'{len(model.segments)} Abschnitt(e) · Gesamtlänge: {length}'
+                        summary.text = tr('{p0} section(s) · Total length: {p1}', p0=len(model.segments), p1=length)
                         inputs.itemById('error').text = ''
                 except Exception as error:
                     inputs.itemById('error').text = str(error)
-                    futil.handle_error('Abschnitt entfernen', show_message_box=True)
+                    futil.handle_error(tr('Remove section'), show_message_box=True)
                 return
             if changed_id == 'preset_choice':
                 preset_delete.isEnabled = bool(preset_keys[selected_preset_index()])
@@ -487,7 +497,7 @@ def command_created(args):
                      'preset_delete': delete_preset, 'preset_import': import_preset,
                      'preset_export': export_preset}[changed_id]()
                 except Exception as error:
-                    preset_note.text = f'Vorlagenaktion fehlgeschlagen: {error}'
+                    preset_note.text = tr('Preset action failed: {p0}', p0=error)
                 return
             affects_preview = (changed_id.startswith(('section_', 'surface_')) or changed_id in
                     ('surface', 'helix_mode', 'live_preview', 'axis', 'reverse_axis', 'start_angle',

@@ -1,6 +1,53 @@
 # Entwicklung und Funktionstest
 
-## Aktiver Stand – 0.6.3 (development)
+## Aktiver Stand – 0.6.4 (development)
+
+### Mehrsprachigkeit (0.6.4)
+
+`i18n.py` enthält `tr(englischer_text, **werte)` und UTF-8-Kataloge unter
+`locales/{en,de,fr,es,pl}.json`. Englisch ist Ausgangs- und Rückfallsprache.
+Beim Add-in-Start liest `configure_from_fusion(app)` ausschließlich
+`app.preferences.generalPreferences.userLanguage`; die Betriebssystemsprache
+und Fusion-Einstellungen werden nicht verändert. Fusion übernimmt einen
+Sprachwechsel nach einem Neustart. Die Sprachzuordnung verwendet die symbolischen
+`adsk.core.UserLanguages`-Werte, keine fest eingebauten Enum-Zahlen.
+Siehe Autodesk: [userLanguage](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/core_GeneralPreferences_userLanguage.htm)
+und [UserLanguages](https://help.autodesk.com/cloudhelp/ENU/Fusion-360-API/files/core_UserLanguages.htm).
+
+Die aktiven Helix-Dialoge samt Hilfetexten, Validierung, Vorlagenaktionen und
+Objektnamen verwenden die Kataloge. Unregistrierte Autodesk-Beispielbefehle
+(`commandDialog`, `paletteShow`, `paletteSend`) gehören nicht zur aktiven Oberfläche.
+Von Fusion, Betriebssystem oder JSON-Parser gelieferte Fehlerdetails bleiben
+im Original. Zahlen mit Längeneinheiten formatiert weiterhin Fusions UnitsManager.
+Eigene Vorlagennamen, IDs, Filter, JSON-Schlüssel und Geometrie werden nicht
+übersetzt; mitgelieferte Vorlagennamen erhalten nur eine übersetzte Anzeige.
+
+Neue Texte als vollständige englische Nachricht an `tr()` übergeben, Werte
+über benannte Platzhalter erst nach der Übersetzung einsetzen. Keine übersetzten
+Texte beim Modulimport berechnen; Feldlisten speichern englische Schlüssel und
+übersetzen beim Dialogaufbau. Den identischen Schlüssel in allen fünf Katalogen
+pflegen und Platzhalter inklusive Formatangaben sowie Linkziele beibehalten.
+Fehlende/defekte Kataloge, leere Einträge und abweichende Platzhalter fallen
+auf den englischen Text zurück. Neue Sprachen benötigen einen Katalog sowie
+Einträge in `SUPPORTED_LANGUAGES` und `_FUSION_LANGUAGES`.
+
+171 automatisierte Tests bestanden. Geprüft werden Katalogvollständigkeit,
+Platzhalter, Linkziele, englischer Rückfall,
+alle fünf Fusion-Enum-Zuordnungen, übersetzte Werkzeugleiste/Dialoge/Feldfehler,
+unveränderte eigene Namen, Vorlagen-JSON und Geometrie. Ausführen mit
+`python -B -m unittest discover -s tests`.
+
+Manuelle Fusion-Prüfung (offen):
+
+- Jede der fünf Sprachen in Fusion einstellen, Fusion neu starten und 0.6.4 im Dialog prüfen.
+- Reiter, lange Hilfetexte, Abschnittsauswahl, Akzente und polnische Sonderzeichen auf lesbare Darstellung prüfen.
+- Parametrische und Surface-Helix erstellen; ungültige Werte und Drahtkollisionen auslösen.
+- Vorlagen laden, eigene Namen mit Sonderzeichen speichern, exportieren und nach Sprachwechsel importieren.
+- Eine nicht unterstützte Sprache einstellen und den englischen Rückfall prüfen.
+
+Kein Installer-Build für 0.6.4. Für den manuellen Test den vollständigen aktiven
+Add-in-Ordner einschließlich `locales/` übernehmen; der vorhandene Installer
+enthält weiterhin 0.6.3.
 
 ### Aufwandlimit der Drahtprüfung (0.6.3)
 
@@ -16,7 +63,7 @@ Das gemeldete Fusion-Modell muss mit dem aktualisierten Add-in erneut geprüft w
 Das Benutzerprotokoll zeigte 0.6.0 aus dem installierten AddIns-Verzeichnis:
 Fusion beenden, den vollständigen Inhalt von `Fusion_addin/HelixPathPilot/` in
 die verwendete Installation übernehmen, Fusion neu starten und im Dialog
-**0.6.3** kontrollieren. Nur Dateien aus dem aktiven Quellordner verwenden,
+**0.6.4** kontrollieren. Nur Dateien aus dem aktiven Quellordner verwenden,
 nicht den historischen Ordner `HelixPathPilot/` im Repository-Hauptverzeichnis.
 
 ### Stabilitätsprüfungen (0.6.2)
@@ -532,7 +579,7 @@ ihre Geometrie im Auswahl-/Baugruppenkontext. Die Ausgabe liegt in der Hauptkomp
 ## Versions- und Iconpflege
 
 Der Buttonname wird direkt aus `version.py` als `HelixPathPilot v<VERSION>` gebildet.
-Die statische Manifest-Version ist ebenfalls auf **0.4.4** gesetzt. Nach künftigen
+Die statische Manifest-Version ist ebenfalls auf **0.6.4** gesetzt. Nach künftigen
 Versionsänderungen `python -B tools/sync_manifest.py` ausführen; ein Test prüft den Gleichstand.
 
 Die Icons liegen unter `resources/icons/helix/` in 16, 32 und 64 Pixeln als SVG

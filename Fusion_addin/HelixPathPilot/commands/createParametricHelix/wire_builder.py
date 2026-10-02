@@ -1,5 +1,7 @@
 """Check the solved spline chain, then sweep a circular wire as a new body."""
 
+from ...i18n import tr
+
 import math
 
 import adsk.core
@@ -17,34 +19,32 @@ def _check_path(splines, diameter):
         evaluator = spline.worldGeometry.evaluator
         ok, start, end = evaluator.getParameterExtents()
         if not ok:
-            raise ValueError('Drahtprüfung: Spline-Parameter nicht verfügbar.')
+            raise ValueError(tr('Wire check: spline parameters unavailable.'))
         ok, strokes = evaluator.getStrokes(start, end, tolerance)
         if not ok or len(strokes) < 2:
-            raise ValueError('Drahtprüfung: Spline konnte nicht abgetastet werden.')
+            raise ValueError(tr('Wire check: spline could not be sampled.'))
         if len(points) + len(strokes) > 16000:
-            raise ValueError('Drahtprüfung: Pfad zu komplex (maximal 16000 Prüfpunkte).')
+            raise ValueError(tr('Wire check: path too complex (maximum 16000 check points).'))
         # Check the actual solved spline, including G1 changes, before sweeping.
         count = max(256, len(strokes))
         for i in range(count + 1):
             parameter = start + (end - start) * i / count
             ok, _, curvature = evaluator.getCurvature(parameter)
             if not ok or not math.isfinite(curvature):
-                raise ValueError('Drahtprüfung: Krümmung konnte nicht bestimmt werden.')
+                raise ValueError(tr('Wire check: curvature could not be determined.'))
             if abs(curvature) * (diameter / 2 + tolerance) >= 0.98:
-                raise ValueError('Drahtdurchmesser zu groß für die lokale Krümmung. '
-                                 'Bitte die Drahtstärke reduzieren.')
+                raise ValueError(tr('Wire diameter too large for the local curvature. Please reduce the wire diameter.'))
         ok, tangent = evaluator.getTangent(start)
         if not ok:
-            raise ValueError('Drahtprüfung: Starttangente fehlt.')
+            raise ValueError(tr('Wire check: start tangent missing.'))
         if previous_tangent is not None and previous_tangent.angleTo(tangent) > 1e-3:
-            raise ValueError('Drahtkörper benötigt tangentiale Abschnittsübergänge. '
-                             'Bitte G1 aktivieren oder die Abschnittswerte angleichen.')
+            raise ValueError(tr('Wire body requires tangent section joins. Please enable G1 or adjust the section values.'))
         ok, previous_tangent = evaluator.getTangent(end)
         if not ok:
-            raise ValueError('Drahtprüfung: Endtangente fehlt.')
+            raise ValueError(tr('Wire check: end tangent missing.'))
         xyz = [(p.x, p.y, p.z) for p in strokes]
         if points and math.dist(points[-1], xyz[0]) > tolerance:
-            raise ValueError('Drahtprüfung: Abschnitte sind nicht verbunden.')
+            raise ValueError(tr('Wire check: sections are not connected.'))
         points.extend(xyz[1:] if points else xyz)
     check_clearance(points, diameter, tolerance)
 
@@ -55,7 +55,7 @@ def create_wire(design, sketch, diameter):
     curves = sketch.sketchCurves.sketchFittedSplines
     splines = [curves.item(i) for i in range(curves.count)]
     if not splines:
-        raise ValueError('Kein Helixpfad für den Drahtkörper vorhanden.')
+        raise ValueError(tr('No helix path available for the wire body.'))
     _check_path(splines, diameter)
     root = design.rootComponent
     created = []
@@ -65,7 +65,7 @@ def create_wire(design, sketch, diameter):
             collection.add(spline)
         path = adsk.fusion.Path.create(collection, adsk.fusion.ChainedCurveOptions.noChainedCurves)
         if path is None:
-            raise RuntimeError('Fusion konnte den Sweep-Pfad nicht erstellen.')
+            raise RuntimeError(tr('Fusion could not create the sweep path.'))
         plane_input = root.constructionPlanes.createInput()
         start_path = adsk.fusion.Path.create(splines[0], adsk.fusion.ChainedCurveOptions.noChainedCurves)
         zero = adsk.core.ValueInput.createByReal(0)
@@ -75,38 +75,38 @@ def create_wire(design, sketch, diameter):
         else:
             success = plane_input.setByDistanceOnPath(splines[0], zero)
         if not success:
-            raise RuntimeError('Profilebene am Helixanfang konnte nicht erstellt werden.')
+            raise RuntimeError(tr('Could not create the profile plane at the start of the helix.'))
         plane = root.constructionPlanes.add(plane_input)
         if plane is None:
-            raise RuntimeError('Fusion konnte die Profilebene nicht erstellen.')
-        created.append(('Drahtebene', plane))
-        plane.name = 'HelixPathPilot – Drahtebene'
+            raise RuntimeError(tr('Fusion could not create the profile plane.'))
+        created.append((tr('Wire plane'), plane))
+        plane.name = tr('HelixPathPilot – Wire plane')
         profile_sketch = root.sketches.add(plane)
         if profile_sketch is None:
-            raise RuntimeError('Fusion konnte die Profilskizze nicht erstellen.')
-        created.append(('Drahtprofil', profile_sketch))
-        profile_sketch.name = 'HelixPathPilot – Drahtprofil'
+            raise RuntimeError(tr('Fusion could not create the profile sketch.'))
+        created.append((tr('Wire profile'), profile_sketch))
+        profile_sketch.name = tr('HelixPathPilot – Wire profile')
         center = profile_sketch.modelToSketchSpace(splines[0].startSketchPoint.worldGeometry)
         profile_sketch.sketchCurves.sketchCircles.addByCenterRadius(center, diameter / 2)
         if profile_sketch.profiles.count != 1:
-            raise RuntimeError('Das Drahtprofil ist nicht geschlossen.')
+            raise RuntimeError(tr('The wire profile is not closed.'))
         sweeps = root.features.sweepFeatures
         sweep_input = sweeps.createInput(profile_sketch.profiles.item(0), path,
             adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
         sweep_input.orientation = adsk.fusion.SweepOrientationTypes.PerpendicularOrientationType
         feature = sweeps.add(sweep_input)
         if feature is None:
-            raise RuntimeError('Fusion konnte den Draht-Sweep nicht erstellen.')
-        created.append(('Draht-Sweep', feature))
+            raise RuntimeError(tr('Fusion could not create the wire sweep.'))
+        created.append((tr('Wire sweep'), feature))
         if (feature.healthState != adsk.fusion.FeatureHealthStates.HealthyFeatureHealthState
                 or feature.bodies.count != 1 or not feature.bodies.item(0).isSolid):
-            raise RuntimeError('Fusion meldet einen ungültigen Drahtkörper. '
+            raise RuntimeError(tr('Fusion reports an invalid wire body. ')
                                + feature.errorOrWarningMessage)
-        feature.name = 'HelixPathPilot – Draht-Sweep'
-        feature.bodies.item(0).name = 'HelixPathPilot – Draht'
+        feature.name = tr('HelixPathPilot – Wire sweep')
+        feature.bodies.item(0).name = tr('HelixPathPilot – Wire')
         for entity in (plane, profile_sketch, sketch):
             entity.isLightBulbOn = False
         return feature
     except Exception as error:
         cleanup_created(created, error)
-        raise RuntimeError('Draht-Sweep fehlgeschlagen: ' + str(error)) from error
+        raise RuntimeError(tr('Wire sweep failed: ') + str(error)) from error

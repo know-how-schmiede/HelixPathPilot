@@ -1,5 +1,7 @@
 """Settings and project information shared by the helix dialog."""
 
+from ...i18n import tr
+
 from pathlib import Path
 
 from ...version import APP_NAME, VERSION
@@ -8,37 +10,41 @@ REPOSITORY = 'https://github.com/know-how-schmiede/HelixPathPilot'
 
 
 def add_settings_and_info(root):
-    settings = root.addTabCommandInput('settings_tab', 'Einstellungen').children
-    preview = settings.addBoolValueInput('live_preview', 'Live-Vorschau', True, '', True)
-    preview.tooltip = ('Schnelle Pfadvorschau ohne Skizzenberechnung. '
-                       'G1-Übergänge werden erst beim Erstellen angeglichen.')
+    settings = root.addTabCommandInput('settings_tab', tr('Settings')).children
+    preview = settings.addBoolValueInput('live_preview', tr('Live preview'), True, '', True)
+    preview.tooltip = (tr('Fast path preview without sketch calculation. G1 joins are adjusted only on creation.'))
     tangent = settings.addBoolValueInput(
-        'tangent_joins', 'Tangentiale Übergänge (G1)', True, '', True)
-    tangent.tooltip = ('Gleicht die Tangenten benachbarter Splines für einen knickfreien Pfad an. '
-                       'Fusion kann die Kurvenform am Übergang anpassen. '
-                       'Gleiche Krümmung (G2) wird nicht erzwungen.')
+        'tangent_joins', tr('Tangent joins (G1)'), True, '', True)
+    tangent.tooltip = (tr(
+        'Aligns tangents of adjacent splines for a path without kinks. Fusion may adjust the '
+        'curve shape at the join. Equal curvature (G2) is not enforced.'))
     settings.addTextBoxCommandInput('settings_help', '',
-        'G1 gleicht die Richtung an Abschnittsgrenzen an und erleichtert anschließende Sweeps. '
-        'Ohne diese Option bleiben die berechneten Abschnittsübergänge unverändert.<br><br>'
-        'Die Einstellungen gelten für den aktuellen Dialogaufruf.', 5, True)
+        tr(
+            'G1 aligns direction at section boundaries and simplifies subsequent sweeps. Without '
+            'this option, calculated section joins remain unchanged.<br><br>Settings apply to the'
+            ' current dialog session.'), 5, True)
 
-    info = root.addTabCommandInput('info_tab', 'Info').children
+    info = root.addTabCommandInput('info_tab', tr('About')).children
     info.addTextBoxCommandInput('info_title', '', f'{APP_NAME} {VERSION}', 1, True)
     logo = info.addImageCommandInput('info_logo', '', str(
         Path(__file__).resolve().parents[2] / 'resources' / 'logo.png'))
     logo.isFullWidth = True
     paragraphs = [
-        ('description', 'HelixPathPilot von Know-How-Schmiede erstellt Helix-Pfade in Autodesk Fusion. '
-         'Mehrere Abschnitte mit variablem Durchmesser und variabler Steigung werden als 3D-Skizze ausgegeben.', 3),
-        ('website', 'Tutorials zu Fusion und weitere Plugins finden Sie auf der '
-         '<a href="https://www.know-how-schmiede.de">Homepage der Know-How-Schmiede</a>.', 3),
-        ('source', f'Der Quellcode kann im <a href="{REPOSITORY}">GitHub-Repository</a> eingesehen werden.', 2),
-        ('releases', f'Updates finden Sie unter <a href="{REPOSITORY}/releases">Releases im GitHub-Repository</a>.', 2),
-        ('issues', f'Fehler gefunden? Bitte unter <a href="{REPOSITORY}/issues">Issues im Repository</a> melden '
-         '– mit Add-in-Version und Schritten zum Nachstellen.', 3),
-        ('youtube', 'Gefällt Ihnen das Plugin? Dann lassen Sie gerne ein kostenloses YouTube-Abo bei '
-         '<a href="https://www.youtube.com/@knowhowschmiede">@knowhowschmiede</a> da!', 3),
-        ('license', 'Rene Triebenstein · MIT-Lizenz', 1),
+        ('description', tr(
+            'HelixPathPilot by Know-How-Schmiede creates helix paths in Autodesk Fusion. Multiple'
+            ' sections with variable diameter and pitch are output as a 3D sketch.'), 3),
+        ('website', tr(
+            'Find Fusion tutorials and more add-ins on the <a '
+            'href="https://www.know-how-schmiede.de">Know-How-Schmiede website</a>.'), 3),
+        ('source', tr('View the source code in the <a href="{p0}">GitHub repository</a>.', p0=REPOSITORY), 2),
+        ('releases', tr('Find updates under <a href="{p0}/releases">releases in the GitHub repository</a>.', p0=REPOSITORY), 2),
+        ('issues', tr(
+            'Found a bug? Please report it under <a href="{p0}/issues">repository issues</a> with'
+            ' the add-in version and steps to reproduce.', p0=REPOSITORY), 3),
+        ('youtube', tr(
+            'Enjoying the add-in? Consider a free YouTube subscription to <a '
+            'href="https://www.youtube.com/@knowhowschmiede">@knowhowschmiede</a>!'), 3),
+        ('license', tr('Rene Triebenstein · MIT License'), 1),
     ]
     for key, text, rows in paragraphs:
         info.addTextBoxCommandInput(f'info_{key}', '', text, rows, True).isFullWidth = True

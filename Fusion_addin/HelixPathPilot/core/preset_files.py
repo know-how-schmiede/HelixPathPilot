@@ -1,5 +1,7 @@
 """Portable JSON file exchange, independent of the Fusion file dialog."""
 
+from ..i18n import tr
+
 import os
 from pathlib import Path
 import tempfile
@@ -11,7 +13,7 @@ def read_preset_file(filename):
     with Path(filename).open('rb') as stream:
         data = stream.read(MAX_JSON_BYTES + 1)
     if len(data) > MAX_JSON_BYTES:
-        raise ValueError('Vorlagendatei überschreitet 128 KiB.')
+        raise ValueError(tr('Preset file exceeds 128 KiB.'))
     return HelixPreset.from_json(data.decode('utf-8-sig'))
 
 
@@ -26,7 +28,7 @@ def write_preset_file(filename, preset, overwrite=False):
     path = export_path(filename)
     data = preset.to_json().encode('utf-8')
     if len(data) > MAX_JSON_BYTES:
-        raise ValueError('Vorlagendatei überschreitet 128 KiB.')
+        raise ValueError(tr('Preset file exceeds 128 KiB.'))
     if not overwrite:
         # Exclusive creation protects files that appeared after the save dialog.
         stream = path.open('xb')

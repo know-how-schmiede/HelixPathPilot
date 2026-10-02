@@ -186,6 +186,7 @@ Technische Qualität erhöhen und spätere Erweiterungen vorbereiten.
 
 ## Schritte
 
+- [x] Mehrsprachigkeit (0.6.4): Englisch als Standard, Deutsch/Französisch/Spanisch/Polnisch, automatische Fusion-Sprachwahl und zentrale Kataloge; native Layoutprüfung noch offen, kein neuer Installer
 - [~] Code aufräumen (0.6.0: gemeinsame Bereinigung für Skizzen- und Sweep-Ausgabe)
 - [ ] Kernlogik weiter von Fusion-API trennen
 - [ ] interne Datenmodelle vereinheitlichen

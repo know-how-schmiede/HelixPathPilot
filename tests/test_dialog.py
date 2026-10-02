@@ -117,6 +117,49 @@ class DialogTests(unittest.TestCase):
         self.create = self.root.itemById('create_tab').children
         self.preset_fields = self.root.itemById('presets_tab').children.itemById('presets').children
 
+    def test_fusion_language_controls_toolbar_dialog_and_dynamic_validation(self):
+        from HelixPathPilot import i18n
+        self.addCleanup(i18n.set_language, i18n.get_language())
+        core = sys.modules['adsk.core']
+        core.UserLanguages = types.SimpleNamespace(
+            EnglishLanguage=3, GermanLanguage=5, FrenchLanguage=4,
+            SpanishLanguage=13, PolishLanguage=10)
+        app = core.Application.get()
+        cases = [
+            (3, 'Create helix', 'Section length', 'Section 1'),
+            (5, 'Helix erstellen', 'Abschnittslänge', 'Abschnitt 1'),
+            (4, 'Créer une hélice', 'Longueur de section', 'Section 1'),
+            (13, 'Crear hélice', 'Longitud del tramo', 'Tramo 1'),
+            (10, 'Utwórz helisę', 'Długość odcinka', 'Odcinek 1'),
+            (999, 'Create helix', 'Section length', 'Section 1'),
+        ]
+        self.callbacks['destroy'](types.SimpleNamespace())
+        for value, title, field_name, section_name in cases:
+            with self.subTest(language=value):
+                app.preferences.generalPreferences.userLanguage = value
+                # Exercise actual startup language resolution and toolbar setup.
+                with patch.object(self.entry, '_panel', return_value=Mock()):
+                    self.entry.start()
+                definition = self.ui.commandDefinitions.addButtonDefinition.call_args
+                self.assertEqual(definition.args[2], i18n.tr(
+                    'Create a multi-section helix with variable diameter and pitch.'))
+                self.command.commandInputs = Inputs()
+                self.entry.command_created(types.SimpleNamespace(command=self.command))
+                root = self.command.commandInputs
+                self.assertEqual(root.itemById('create_tab').name, title)
+                parameters = root.itemById('create_tab').children.itemById('parameter_group').children
+                section = parameters.itemById('sections').children.itemById('section_0')
+                self.assertEqual(section.name, section_name)
+                length = section.children.itemById('section_0_length')
+                self.assertEqual(length.name, field_name)
+                length.isValidExpression = False
+                event = types.SimpleNamespace()
+                self.callbacks['validate'](event)
+                self.assertFalse(event.areInputsValid)
+                self.assertIn(field_name, parameters.itemById('error').text)
+                self.assertIn(section_name, parameters.itemById('error').text)
+                self.callbacks['destroy'](types.SimpleNamespace())
+
     def test_repeated_dialog_open_close_releases_sessions(self):
         self.callbacks['destroy'](types.SimpleNamespace())
         for _ in range(20):
@@ -232,7 +275,7 @@ class DialogTests(unittest.TestCase):
             self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('remove_section')))
         self.assertFalse(group.isVisible)
         self.assertIn('Graphics rollback', parameters.itemById('error').text)
-        self.entry.futil.handle_error.assert_called_with('Abschnitt entfernen', show_message_box=True)
+        self.entry.futil.handle_error.assert_called_with('Remove section', show_message_box=True)
         with patch.object(self.entry, 'create_sketch') as create:
             self.callbacks['execute'](types.SimpleNamespace())
             self.assertEqual(len(create.call_args.args[1].segments), 1)
@@ -270,7 +313,7 @@ class DialogTests(unittest.TestCase):
         choice = parameters.itemById('remove_section_choice')
         choice.listItems.item(1).isSelected = True
         self.callbacks['changed'](types.SimpleNamespace(input=choice))
-        self.assertIn('Abschnitt 2', parameters.itemById('remove_section_target').text)
+        self.assertIn('Section 2', parameters.itemById('remove_section_target').text)
         # Simulate native selection changing before the action event. The user's
         # selection event, not a later native list index, determines the target.
         choice.listItems.item(2).isSelected = True
@@ -279,14 +322,14 @@ class DialogTests(unittest.TestCase):
         groups = parameters.itemById('sections').children
         self.assertFalse(groups.itemById('section_1').isVisible)
         self.assertTrue(groups.itemById('section_2').isVisible)
-        self.assertIn('Abschnitt 1', parameters.itemById('remove_section_target').text)
+        self.assertIn('Section 1', parameters.itemById('remove_section_target').text)
 
     def test_remove_target_uses_label_even_if_native_index_is_stale(self):
         parameters = self.create.itemById('parameter_group').children
         for _ in range(2):
             self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('add_section')))
         choice = parameters.itemById('remove_section_choice')
-        choice.selectedItem = types.SimpleNamespace(index=2, name='Abschnitt 1')
+        choice.selectedItem = types.SimpleNamespace(index=2, name='Section 1')
         self.callbacks['changed'](types.SimpleNamespace(input=choice))
         self.callbacks['changed'](types.SimpleNamespace(input=parameters.itemById('remove_section')))
         groups = parameters.itemById('sections').children
@@ -327,7 +370,7 @@ class DialogTests(unittest.TestCase):
         dialog.filename = str(path)
         dialog.showOpen.return_value = 0
         self.callbacks['changed'](types.SimpleNamespace(input=fields.itemById('preset_import')))
-        self.assertIn('fehlgeschlagen', fields.itemById('preset_note').text)
+        self.assertIn('failed', fields.itemById('preset_note').text)
         self.ui.inputBox.assert_not_called()
         self.assertEqual(self.store.list()[0], [])
 
@@ -363,7 +406,7 @@ class DialogTests(unittest.TestCase):
         self.assertEqual(len(self.store.list()[0]), 1)
         self.ui.inputBox.return_value = ('Existing', False)
         self.callbacks['changed'](event)
-        self.assertIn('existiert bereits', self.preset_fields.itemById('preset_note').text)
+        self.assertIn('already exists', self.preset_fields.itemById('preset_note').text)
         self.assertEqual(self.store.load(key), preset)
 
     def test_user_preset_save_load_delete_and_cancel(self):
@@ -380,7 +423,7 @@ class DialogTests(unittest.TestCase):
         click('preset_load')
         self.assertEqual(parameters.itemById('start_angle').value, 1.2)
         click('preset_save')
-        self.assertIn('existiert bereits', fields.itemById('preset_note').text)
+        self.assertIn('already exists', fields.itemById('preset_note').text)
         self.ui.messageBox.return_value = 0
         click('preset_delete')
         self.assertEqual(len(self.store.list()[0]), 1)
@@ -389,7 +432,7 @@ class DialogTests(unittest.TestCase):
         self.assertEqual(self.store.list()[0], [])
         self.assertFalse(fields.itemById('preset_delete').isEnabled)
         click('preset_delete')
-        self.assertIn('Mitgelieferte', fields.itemById('preset_note').text)
+        self.assertIn('Built-in', fields.itemById('preset_note').text)
 
     def test_surface_save_without_face_and_invalid_input(self):
         fields = self.preset_fields
@@ -533,16 +576,16 @@ class DialogTests(unittest.TestCase):
         event = types.SimpleNamespace()
         self.callbacks['validate'](event)
         self.assertFalse(event.areInputsValid)
-        self.assertIn('Abschnitt 1', parameters.itemById('error').text)
-        self.assertIn('Endsteigung', parameters.itemById('error').text)
+        self.assertIn('Section 1', parameters.itemById('error').text)
+        self.assertIn('End pitch', parameters.itemById('error').text)
 
     def test_surface_input_error_is_visible_and_names_field(self):
         self.create.itemById('helix_mode').selectedItem.index = 1
         fields = self.create.itemById('surface_group').children
-        for key, label in (('surface_pitch', 'Startsteigung'),
-                           ('surface_pitch_end', 'Endsteigung'),
-                           ('surface_angle', 'Startwinkel'),
-                           ('surface_offset', 'Surface Offset')):
+        for key, label in (('surface_pitch', 'Start pitch'),
+                           ('surface_pitch_end', 'End pitch'),
+                           ('surface_angle', 'Start angle'),
+                           ('surface_offset', 'Surface offset')):
             field = fields.itemById(key)
             field.isValidExpression = False
             self.callbacks['changed'](types.SimpleNamespace(input=field))
@@ -585,7 +628,7 @@ class DialogTests(unittest.TestCase):
             self.callbacks['execute'](event)
             self.assertEqual(create.call_args.args[1:], (model, axis))
             self.assertFalse(create.call_args.kwargs['tangent_joins'])
-            self.assertEqual(create.return_value.name, 'HelixPathPilot – Surface Helix')
+            self.assertEqual(create.return_value.name, 'HelixPathPilot – Surface helix')
             end_pitch = fields.itemById('surface_pitch_end')
             end_pitch.isValidExpression = False
             self.callbacks['changed'](types.SimpleNamespace(input=end_pitch))

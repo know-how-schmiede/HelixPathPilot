@@ -1,5 +1,7 @@
 """Fusion adapter for the sampled helix, in root-component coordinates."""
 
+from ...i18n import tr
+
 import adsk.core
 
 from ...core.helix_math import helix_points
@@ -15,7 +17,7 @@ def create_sketch(design, parameters, axis=None, tangent_joins=False):
     root = design.rootComponent
     sketch = root.sketches.add(root.xYConstructionPlane)
     try:
-        sketch.name = 'HelixPathPilot – Helix'
+        sketch.name = tr('HelixPathPilot – Helix')
         previous_endpoint = None
         splines = []
         for section in coordinates:
@@ -27,7 +29,7 @@ def create_sketch(design, parameters, axis=None, tangent_joins=False):
                     points.add(sketch.modelToSketchSpace(adsk.core.Point3D.create(*xyz)))
             spline = sketch.sketchCurves.sketchFittedSplines.add(points)
             if spline is None:
-                raise RuntimeError('Fusion konnte die Helix-Spline nicht erzeugen.')
+                raise RuntimeError(tr('Fusion could not create the helix spline.'))
             previous_endpoint = spline.endSketchPoint
             splines.append(spline)
         if tangent_joins:
@@ -36,12 +38,13 @@ def create_sketch(design, parameters, axis=None, tangent_joins=False):
                 try:
                     constraint = sketch.geometricConstraints.addTangent(first, second)
                     if constraint is None:
-                        raise RuntimeError('Fusion hat keine Tangentialbedingung erzeugt.')
+                        raise RuntimeError(tr('Fusion did not create a tangent constraint.'))
                 except Exception as error:
                     raise RuntimeError(
-                        f'Tangentialer Übergang zwischen Abschnitt {index} und {index + 1} '
-                        'konnte nicht erzeugt werden. Bitte Steigungen und Durchmesserverläufe '
-                        'angleichen oder „Tangentiale Übergänge (G1)“ deaktivieren.'
+                        tr(
+                            'Could not create a tangent join between sections {p0} and {p1}. '
+                            'Please align pitch and diameter transitions or disable “Tangent '
+                            'joins (G1)”.', p0=index, p1=index + 1)
                     ) from error
         # Keep all fit points for accuracy, but display only section boundaries.
         # Unconnected sketch points remain visible when arePointsShown is false.
@@ -51,9 +54,9 @@ def create_sketch(design, parameters, axis=None, tangent_joins=False):
         for endpoint in boundaries:
             marker = sketch.sketchPoints.add(endpoint.geometry)
             if marker is None:
-                raise RuntimeError('Abschnittsmarkierung konnte nicht erzeugt werden.')
+                raise RuntimeError(tr('Could not create the section marker.'))
         return sketch
     except Exception as error:
         # Do not leave an empty sketch when spline creation fails.
-        cleanup_created([('Helixskizze', sketch)], error)
+        cleanup_created([(tr('Helix sketch'), sketch)], error)
         raise
